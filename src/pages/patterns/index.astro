@@ -1,0 +1,39 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PatternCard from '../../components/PatternCard.astro';
+import { getCollection } from 'astro:content';
+const posts = (await getCollection('patterns', ({data}) => !data.draft)).sort((a,b)=> b.data.publishedDate.valueOf()-a.data.publishedDate.valueOf());
+---
+<BaseLayout title="Free crochet patterns" description="Browse free crochet patterns, stitch tutorials, and cozy DIY projects. Filter by category and find your next handmade project.">
+  <section class="page-heading page-heading-pink"><div class="site-container"><span class="eyebrow">A LIBRARY FULL OF LITTLE JOYS</span><h1>Find your next <em>happy project.</em></h1><p>Free patterns, clear instructions, and lots of things to make with love.</p></div></section>
+  <section class="site-container listing-section">
+    <div class="filter-bar"><div class="search-wrap"><label for="pattern-search" class="visually-hidden">Search patterns</label><span aria-hidden="true">⌕</span><input type="search" id="pattern-search" placeholder="Search patterns, stitches, projects…" autocomplete="off" /></div><div class="filter-options"><label for="category-filter">Category</label><select id="category-filter"><option value="">All categories</option><option value="stitch guides">Stitch guides</option><option value="home & decor">Home & decor</option><option value="accessories">Accessories</option><option value="amigurumi">Amigurumi</option></select></div></div>
+    <div class="filter-count"><span id="visible-count">{posts.length}</span> lovely projects to explore <span aria-hidden="true">✳</span></div>
+    <div id="pattern-list" class="cards-grid listing-grid">{posts.map((post) => <PatternCard post={post} />)}</div>
+    <p id="no-results" class="no-results" hidden>Nothing in the basket yet! Try another search or category.</p>
+  </section>
+<script>
+  const search = document.querySelector<HTMLInputElement>('#pattern-search');
+  const category = document.querySelector<HTMLSelectElement>('#category-filter');
+  const cards = Array.from(document.querySelectorAll<HTMLElement>('#pattern-list [data-filter-card]'));
+  const count = document.querySelector<HTMLElement>('#visible-count');
+  const empty = document.querySelector<HTMLElement>('#no-results');
+  const params = new URLSearchParams(window.location.search);
+  if (category && params.has('category')) category.value = (params.get('category') || '').toLowerCase();
+  function filterCards() {
+    const text = (search?.value || '').toLowerCase().trim();
+    const selected = category?.value || '';
+    let visible = 0;
+    for (const card of cards) {
+      const matches = (!text || (card.dataset.keywords || '').includes(text)) && (!selected || card.dataset.category === selected);
+      card.hidden = !matches;
+      if (matches) visible++;
+    }
+    if (count) count.textContent = String(visible);
+    if (empty) empty.hidden = visible > 0;
+  }
+  search?.addEventListener('input', filterCards);
+  category?.addEventListener('change', filterCards);
+  filterCards();
+</script>
+</BaseLayout>

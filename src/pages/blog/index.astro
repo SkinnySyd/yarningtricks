@@ -1,0 +1,10 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PatternCard from '../../components/PatternCard.astro';
+import {getCollection} from 'astro:content';
+const posts = (await getCollection('patterns', ({data})=>!data.draft)).sort((a,b)=>b.data.publishedDate.valueOf()-a.data.publishedDate.valueOf());
+---
+<BaseLayout title="The crochet journal" description="Browse the latest crochet articles, free patterns, tips, and step-by-step lessons from Thread & Petal.">
+<section class="page-heading page-heading-peach"><div class="site-container"><span class="eyebrow">NOTES FROM THE MAKING TABLE</span><h1>Welcome to <em>the journal.</em></h1><p>Fresh crochet patterns, small creative adventures, and our favorite slow afternoons.</p></div></section>
+<section class="site-container section"><div class="cards-grid">{posts.map((post)=><PatternCard post={post}/>)}</div></section>
+</BaseLayout>

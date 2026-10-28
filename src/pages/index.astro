@@ -1,0 +1,35 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PatternCard from '../components/PatternCard.astro';
+const posts = (await getCollection('patterns', ({ data }) => !data.draft)).sort((a,b) => b.data.publishedDate.valueOf()-a.data.publishedDate.valueOf());
+const featured = posts.filter((post) => post.data.featured).slice(0,3);
+const cards = featured.length >= 3 ? featured : posts.slice(0,3);
+---
+<BaseLayout>
+  <section class="hero">
+    <div class="site-container hero-grid">
+      <div class="hero-copy">
+        <span class="eyebrow"><span class="eyebrow-flower">✳</span> A little handmade happiness</span>
+        <h1>Make space<br />for <em>something</em><br /><span class="swash">beautiful.</span></h1>
+        <p>Slow down, pick up your hook, and make something lovely. Free crochet patterns, cozy projects, and happy little stitches for every maker.</p>
+        <div class="hero-buttons"><a class="btn btn-primary" href="/patterns/">Explore free patterns <span aria-hidden="true">↗</span></a><a class="text-link" href="/learn/">New to crochet? Start here <span aria-hidden="true">→</span></a></div>
+        <div class="hero-proof"><span class="proof-burst">✽</span><span>Easy to follow. Made for real life.<br /><strong>Always beginner-friendly.</strong></span></div>
+      </div>
+      <div class="hero-visual" aria-label="Illustration of a handmade crochet granny square">
+        <span class="hero-spark hero-spark-one" aria-hidden="true">✳</span>
+        <span class="hero-spark hero-spark-two" aria-hidden="true">✿</span>
+        <div class="hero-visual-inner"><img src="/images/hero-crochet.svg" alt="Colorful crocheted granny squares on a warm pink background" width="820" height="890" /></div>
+        <div class="hero-sticker"><span>one stitch<br />at a time</span><span aria-hidden="true">♡</span></div>
+      </div>
+    </div>
+  </section>
+  <div class="benefit-strip"><div class="site-container benefit-inner"><span>✿ Thoughtful free patterns</span><span>✳ Stitch by stitch tutorials</span><span>♡ Made with patience & love</span></div></div>
+  <section class="section site-container" id="featured">
+    <div class="section-heading"><div><span class="eyebrow">FOR YOUR NEXT SLOW AFTERNOON</span><h2>Fresh from <em>the basket</em><span class="heading-dot">.</span></h2><p>Pretty little things to make with your own two hands.</p></div><a href="/patterns/" class="text-link">View all patterns <span aria-hidden="true">↗</span></a></div>
+    <div class="cards-grid">{cards.map((post) => <PatternCard post={post} />)}</div>
+  </section>
+  <section class="beginners-band"><div class="site-container beginners-inner"><div class="beginners-illustration"><div class="round-icon">✳</div><div class="doodle-thread" aria-hidden="true">⌁﹏⌁</div></div><div class="beginners-copy"><span class="eyebrow">NEVER HELD A HOOK?</span><h2>Everyone starts with <em>one little loop.</em></h2><p>We'll help you learn your first stitches, find your rhythm, and feel the joy of making something by hand.</p><a class="btn btn-light" href="/learn/">Learn crochet with us <span aria-hidden="true">→</span></a></div></div></section>
+  <section class="site-container section categories-section"><div class="section-heading"><div><span class="eyebrow">FIND YOUR KIND OF COZY</span><h2>What are we <em>making today?</em></h2></div></div><div class="category-grid"><a href="/patterns/?category=Home%20%26%20decor" class="category-tile category-peach"><span class="category-icon">▧</span><h3>Home & decor</h3><span>Cozy corners & little details ↗</span></a><a href="/patterns/?category=Accessories" class="category-tile category-sage"><span class="category-icon">❀</span><h3>Accessories</h3><span>Lovely things to wear ↗</span></a><a href="/patterns/?category=Stitch%20guides" class="category-tile category-lilac"><span class="category-icon">✳</span><h3>Stitch guides</h3><span>Learn every little loop ↗</span></a></div></section>
+  <section class="newsletter-callout"><div class="site-container callout-inner"><span class="callout-heart">♡</span><div><span class="eyebrow">A SMALL NOTE FROM US</span><h2>Good things take <em>time (and yarn).</em></h2><p>Pick a project, put the kettle on, and make a little magic. We'd love to see what you create.</p></div><a class="btn btn-primary" href="/blog/">Visit the journal <span aria-hidden="true">↗</span></a></div></section>
+</BaseLayout>

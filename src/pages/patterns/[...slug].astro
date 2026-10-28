@@ -1,0 +1,47 @@
+---
+import { getCollection, render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PatternCard from '../../components/PatternCard.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import { siteConfig } from '../../site-config';
+export async function getStaticPaths() {
+  const entries = await getCollection('patterns', ({data}) => !data.draft);
+  return entries.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+interface Props { post: CollectionEntry<'patterns'> }
+const { post } = Astro.props;
+const { Content } = await render(post);
+const allPosts = await getCollection('patterns', ({data}) => !data.draft);
+const related = allPosts.filter((p) => p.id !== post.id && p.data.category === post.data.category).slice(0,2);
+const others = related.length ? related : allPosts.filter((p) => p.id !== post.id).slice(0,2);
+const url = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).toString();
+const imageURL = new URL(post.data.image, Astro.site ?? Astro.url.origin).toString();
+const pinUrl = `https://www.pinterest.com/pin/create/button/?url=${encodeURIComponent(url)}&media=${encodeURIComponent(imageURL)}&description=${encodeURIComponent(post.data.title)}`;
+const ld = {
+  '@context': 'https://schema.org', '@type': 'BlogPosting',
+  headline: post.data.title, description: post.data.description, image: imageURL,
+  datePublished: post.data.publishedDate.toISOString(),
+  ...(post.data.updatedDate ? {dateModified:post.data.updatedDate.toISOString()} : {}),
+  author: { '@type': 'Organization', name: siteConfig.author },
+  publisher: { '@type': 'Organization', name: siteConfig.name }, mainEntityOfPage: url,
+};
+---
+<BaseLayout title={post.data.title} description={post.data.description} image={post.data.image} type="article" publishedTime={post.data.publishedDate.toISOString()}>
+  <script type="application/ld+json" set:html={JSON.stringify(ld).replace(/</g, '\\u003c')} />
+  <div class="site-container breadcrumb"><a href="/">Home</a><span>/</span><a href="/patterns/">Free patterns</a><span>/</span><span>{post.data.title}</span></div>
+  <div class="site-container article-layout">
+    <article class="tutorial-article">
+      <header class="tutorial-header"><span class="eyebrow">{post.data.category.toUpperCase()} · {post.data.difficulty.toUpperCase()}</span><h1>{post.data.title}</h1><p class="article-lede">{post.data.description}</p><div class="article-byline"><span>✳ {siteConfig.name}</span><span aria-hidden="true">·</span><time datetime={post.data.publishedDate.toISOString()}>{post.data.publishedDate.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}</time></div></header>
+      <figure class="article-cover"><img src={post.data.image} alt={post.data.imageAlt} width="600" height="750" fetchpriority="high" /></figure>
+      <div class="recipe-info"><div><span>Skill level</span><strong>{post.data.difficulty}</strong></div><div><span>Time needed</span><strong>{post.data.duration}</strong></div><div><span>Pattern price</span><strong>Free ♡</strong></div></div>
+      {post.data.supplies.length > 0 && <section class="supplies-box"><h2>✳ Gather your supplies</h2><ul>{post.data.supplies.map((s) => <li>{s}</li>)}</ul></section>}
+      <div class="prose tutorial-content"><Content /></div>
+      <AdSlot placement="inline" />
+      <div class="article-actions"><a class="btn btn-primary" href={pinUrl} target="_blank" rel="noopener noreferrer">Save this pattern on Pinterest ↗</a><button class="btn btn-outline" type="button" onclick="window.print()">Print pattern ⎙</button></div>
+      <p class="pattern-disclaimer">This is a sample tutorial template. Please replace examples with your own tested instructions and original project photos before publishing.</p>
+    </article>
+    <aside class="article-sidebar"><div class="sidebar-card"><span class="sidebar-heart">♡</span><h3>Hello, maker!</h3><p>Grab your favorite yarn and settle in. Your next cozy project is only a stitch away.</p><a href="/learn/">New to crochet? Start here →</a></div><AdSlot placement="sidebar" /><div class="sidebar-tips"><h3>Quick tips</h3><p>Using a different yarn? Make a small swatch first and adjust your hook size for the best result.</p></div></aside>
+  </div>
+  {others.length > 0 && <section class="site-container section related-section"><div class="section-heading"><div><span class="eyebrow">YOU MIGHT ALSO LOVE</span><h2>Keep the <em>good stitches</em> going.</h2></div></div><div class="cards-grid related-grid">{others.map((p) => <PatternCard post={p} compact />)}</div></section>}
+</BaseLayout>

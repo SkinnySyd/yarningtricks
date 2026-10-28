@@ -1,0 +1,8 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { siteConfig } from '../site-config';
+---
+<BaseLayout title="About us" description={`Learn about ${siteConfig.name}, a home for thoughtful crochet patterns and tutorials.`}>
+<section class="page-heading page-heading-pink"><div class="site-container"><span class="eyebrow">BEHIND EVERY STITCH</span><h1>Made with yarn, <em>shared with love.</em></h1><p>The story behind this little crochet corner.</p></div></section>
+<section class="site-container about-content prose"><h2>Hello, lovely maker ♡</h2><p>Welcome to {siteConfig.name}, a cozy home for patterns, lessons, and creative ideas. This is placeholder copy—replace it with your own story, your experience with crochet, and why you created the site.</p><p>We believe learning new stitches should feel exciting, approachable, and fun. Whether you're picking up your first hook or trying a new texture, there's always something wonderful to make.</p><p><strong>Before launch:</strong> replace this sample About page with accurate information about yourself or your business, and include a contact method.</p>{siteConfig.contactEmail && <p>Say hello: <a href={`mailto:${siteConfig.contactEmail}`}>{siteConfig.contactEmail}</a></p>}</section>
+</BaseLayout>

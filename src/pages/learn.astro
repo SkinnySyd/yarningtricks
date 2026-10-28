@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PatternCard from '../components/PatternCard.astro';
+import { getCollection } from 'astro:content';
+const posts = (await getCollection('patterns', ({data}) => !data.draft)).filter((p)=>p.data.category === 'Stitch guides' || p.data.difficulty === 'Beginner');
+---
+<BaseLayout title="Learn crochet from scratch" description="New to crochet? Learn the basics one stitch at a time with friendly step-by-step lessons and free beginner patterns.">
+<section class="page-heading page-heading-sage"><div class="site-container"><span class="eyebrow">WELCOME TO YOUR CROCHET ERA</span><h1>You can learn <em>this. We promise.</em></h1><p>Learn the language of yarn, get comfortable with a hook, and enjoy those first proud stitches.</p></div></section>
+<section class="site-container section lesson-steps"><div class="section-heading"><div><span class="eyebrow">YOUR GENTLE STARTER GUIDE</span><h2>Three little steps <em>to begin.</em></h2></div></div><div class="step-grid"><div class="step-card"><span class="step-number">01</span><div class="step-emoji">♧</div><h3>Gather the basics</h3><p>Find a 5 mm hook, light-colored medium-weight yarn, scissors, and a yarn needle.</p></div><div class="step-card"><span class="step-number">02</span><div class="step-emoji">⌁</div><h3>Learn your first stitches</h3><p>Begin with a slip knot and chain stitch, then try single and double crochet.</p></div><div class="step-card"><span class="step-number">03</span><div class="step-emoji">♡</div><h3>Make something real</h3><p>Start with a tiny flower or coaster. Small projects build confidence quickly.</p></div></div></section>
+<section class="site-container section"><div class="section-heading"><div><span class="eyebrow">LESSONS & FIRST PROJECTS</span><h2>A happy place <em>to start.</em></h2></div></div><div class="cards-grid">{posts.map((post)=><PatternCard post={post}/>)}</div></section>
+</BaseLayout>

@@ -1,0 +1,16 @@
+---
+/**
+ * Ad units are intentionally disabled unless PUBLIC_ENABLE_ADS=true and
+ * publisher/slot IDs are present. Set up an appropriate CMP before enabling.
+ */
+interface Props { placement?: 'inline' | 'sidebar' }
+const { placement = 'inline' } = Astro.props;
+const client = import.meta.env.PUBLIC_ADSENSE_CLIENT;
+const slot = import.meta.env.PUBLIC_ADSENSE_SLOT;
+const enabled = import.meta.env.PUBLIC_ENABLE_ADS === 'true' && Boolean(client && slot);
+---
+{enabled && <div class:list={['ad-container', placement === 'sidebar' && 'ad-sidebar']} aria-label="Advertisement">
+  <span class="ad-label">Advertisement</span>
+  <ins class="adsbygoogle" style="display:block" data-ad-client={client} data-ad-slot={slot} data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script is:inline>(window.adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>}
