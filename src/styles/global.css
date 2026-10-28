@@ -129,3 +129,52 @@
 @media(max-width:620px){.editorial-pumpkin .pumpkin-facts{grid-template-columns:1fr 1fr}.editorial-pumpkin .pumpkin-facts>div{padding:12px}.editorial-pumpkin .pumpkin-facts strong{font-size:17px}.editorial-pumpkin .pumpkin-finish-card{grid-template-columns:1fr}.editorial-pumpkin .pumpkin-feature-photo img{max-height:320px}}
 @media(max-width:400px){.editorial-pumpkin .pumpkin-facts{grid-template-columns:1fr}}
 @media print{.editorial-pumpkin .pumpkin-intro-note,.editorial-pumpkin .pumpkin-tip,.editorial-pumpkin .pumpkin-facts>div{break-inside:avoid}.editorial-pumpkin .pumpkin-feature-photo img{max-height:260px}}
+
+
+/* Crocheted Poppet: cocoa / oatmeal / crimson editorial styling. */
+.editorial-pattern.editorial-poppet{--editorial-accent:#a95252;--editorial-tint:#f8ece7;--editorial-ink:#713a3b}
+.editorial-poppet .tutorial-header{background:linear-gradient(130deg,#f7e3df 0%,#fff9f3 96%)}
+.editorial-poppet .editorial-kicker{color:#97504a}
+.editorial-poppet .tutorial-hero-photo{background:#f1ebe4}
+.editorial-poppet .tutorial-hero-photo img{object-fit:contain;object-position:center}
+.editorial-poppet .recipe-info{background:#f4d6d0}
+.editorial-poppet .prose h2{font-family:Georgia,serif;letter-spacing:-.035em;margin-top:44px}
+.editorial-poppet .prose h2:before{content:'✽';font-size:18px;display:inline-block;margin-right:10px;color:#ba706b}
+.editorial-poppet .prose h3{color:#774b45}
+.editorial-poppet .prose strong{color:#633d3a}
+.poppet-open-note,.poppet-tip,.poppet-safety{border-radius:18px;padding:20px 23px;margin:23px 0;line-height:1.7}
+.poppet-open-note{background:linear-gradient(140deg,#fcf0e6,#fff9f3);border:1px solid #edd9ce}
+.poppet-open-note strong{font:600 21px Georgia,serif;color:#743a3d}
+.poppet-open-note p,.poppet-tip p,.poppet-safety p{margin:7px 0 0;font-size:14px;line-height:1.75}
+.poppet-tip{background:#f0f4ed;border:1px solid #dce7d5}
+.poppet-tip strong{font:600 17px Georgia,serif;color:#466547}
+.poppet-safety{background:#fff1ed;border:1px solid #f0d6ce}
+.poppet-safety strong{font:600 17px Georgia,serif;color:#994d47}
+.poppet-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:26px 0}
+.poppet-facts>div{border-radius:14px;border:1px solid #efdbd0;padding:18px;background:#fff8f3;display:flex;flex-direction:column;gap:7px}
+.poppet-facts span{font:800 10px/1.3 system-ui,sans-serif;color:#a76761;letter-spacing:.12em;text-transform:uppercase}
+.poppet-facts strong{font:600 19px/1.2 Georgia,serif;color:#713b3b}
+.poppet-facts small{font:400 12px/1.4 system-ui,sans-serif;color:#756965}
+.poppet-photo-flow{background:#fff8f3;padding:18px;border:1px solid #ecdcd4;border-radius:19px;margin:22px 0 28px}
+.poppet-photo-flow h3{font:600 19px/1.3 Georgia,serif;color:#773e3f;margin:0 0 6px!important}
+.poppet-photo-flow>p{margin:0 0 15px!important;font-size:12px;color:#7c6e69}
+.poppet-photo-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.poppet-photo-grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.poppet-photo-card{margin:0;min-width:0}
+.poppet-photo-card a{display:block;border-radius:12px;overflow:hidden;background:#efebe6;border:1px solid #e7dcd5}
+.poppet-photo-card img{width:100%;height:177px;display:block;object-fit:cover;object-position:center;transition:transform .22s}
+.poppet-photo-card a:hover img{transform:scale(1.05)}
+.poppet-photo-card figcaption{font-size:12px;color:#694f4b;line-height:1.5;margin:9px 2px 2px}
+.poppet-photo-card figcaption b{display:inline-flex;align-items:center;justify-content:center;background:#ab605e;color:white;border-radius:50%;font-size:10px;width:19px;height:19px;margin-right:6px}
+.poppet-note-line{font-size:12px;color:#796c67;line-height:1.6;padding:9px 0}
+.poppet-faq details{background:#fff7f2;border:1px solid #eadbd3;border-radius:12px;padding:16px 18px;margin:12px 0}
+.poppet-faq summary{cursor:pointer;font-weight:750;color:#6f4141}
+.poppet-faq p{font-size:14px;margin:12px 0 0!important}
+.poppet-ideas{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:22px 0}
+.poppet-ideas>div{padding:19px;border-radius:14px;background:#f9eeeb;border:1px solid #eddcd6}
+.poppet-ideas strong{font:600 18px Georgia,serif}
+.poppet-ideas p{margin:8px 0 0;font-size:13px;line-height:1.65}
+.poppet-credit{display:block;background:#f6f1ec;border-radius:12px;padding:15px 18px;font-size:12px;line-height:1.7;color:#6c6662;margin-top:35px}
+@media(max-width:600px){.poppet-photo-grid,.poppet-photo-grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}.poppet-photo-card img{height:145px}.poppet-facts>div{padding:13px}.poppet-facts strong{font-size:16px}.poppet-ideas{grid-template-columns:1fr}}
+@media(max-width:380px){.poppet-facts{grid-template-columns:1fr}.poppet-photo-card img{height:125px}.poppet-photo-flow{padding:12px}}
+@media print{.poppet-photo-grid{grid-template-columns:repeat(3,1fr)}.poppet-photo-card img{height:85px}.poppet-faq details{break-inside:avoid}.poppet-open-note,.poppet-tip,.poppet-safety{break-inside:avoid}}

@@ -20,7 +20,7 @@ const patterns = defineCollection({
     tags: z.array(z.string()).default([]),
     supplies: z.array(z.string()).default([]),
     featured: z.boolean().default(false),
-    editorialTheme: z.enum(['eucalyptus', 'coral', 'sunshine', 'rose', 'lilac', 'hibiscus', 'pumpkin']).optional(),
+    editorialTheme: z.enum(['eucalyptus', 'coral', 'sunshine', 'rose', 'lilac', 'hibiscus', 'pumpkin', 'poppet']).optional(),
     editorialSubtitle: z.string().optional(),
     draft: z.boolean().default(false),
   }),
