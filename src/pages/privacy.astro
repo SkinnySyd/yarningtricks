@@ -1,8 +1,169 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { siteConfig } from '../site-config';
+
+/**
+ * SITE OWNER NOTE (not displayed to visitors):
+ * This draft uses the Thread & Petal brand and the Morocco contact location
+ * because the owner prefers not to publish a personal name or home address.
+ * This may not fully satisfy Moroccan Law 09-08, Art. 5, which calls for the
+ * identity of the person responsible for the data processing. Seek advice
+ * from the Moroccan CNDP or qualified counsel before treating it as compliant.
+ * Also assess whether the email/hosting data processing requires a CNDP
+ * notification and/or authorization for international data transfers.
+ * Verify the actual email retention, Cloudflare features and any other trackers.
+ */
+const updatedOn = 'October 29, 2026';
 ---
-<BaseLayout title="Privacy policy" description="Privacy information for this crochet website.">
-<section class="page-heading page-heading-sage"><div class="site-container"><span class="eyebrow">THE IMPORTANT LITTLE DETAILS</span><h1>Privacy <em>policy.</em></h1></div></section>
-<section class="site-container legal-content prose"><p><strong>Important:</strong> This page is a template placeholder, <strong>not</strong> a legally complete privacy policy. Replace it before launching, especially if you use analytics, advertising, or cookies.</p><h2>Who we are</h2><p>This website is operated by {siteConfig.name}. Add your real legal or business identity and contact information here.</p><h2>Information and services</h2><p>Explain which analytics, hosting, advertising, forms, and external embeds your deployed website actually uses, and what data each may collect.</p><h2>Advertising and consent</h2><p>If you enable Google AdSense, explain how advertising technology, cookies or other identifiers are used and provide any disclosures and consent controls required for your visitors' locations.</p><h2>Your choices</h2><p>Add the applicable rights and ways users can exercise them, including consent withdrawal where relevant.</p><h2>Contact</h2><p>Add an email address or other appropriate contact method.</p></section>
+
+<BaseLayout
+  title="Privacy Policy"
+  description="Learn how Thread & Petal handles website visits, Cloudflare analytics, email enquiries and privacy requests."
+>
+  <section class="page-heading page-heading-sage">
+    <div class="site-container">
+      <span class="eyebrow">THE IMPORTANT LITTLE DETAILS</span>
+      <h1>Privacy <em>policy.</em></h1>
+      <p>We care about handmade things — and about being clear with how this little corner of the internet works.</p>
+    </div>
+  </section>
+
+  <div class="site-container policy-wrap">
+    <div class="policy-summary">
+      <span aria-hidden="true" class="policy-summary-icon">♡</span>
+      <div>
+        <strong>Privacy at a glance</strong>
+        <p>You can enjoy our crochet tutorials without creating an account. We use Cloudflare to host and protect the site, Cloudflare Web Analytics to understand overall site performance, and email to respond when you write to us. We do not currently run third-party advertising.</p>
+      </div>
+    </div>
+
+    <p class="policy-updated">Last updated: <time datetime="2026-10-29">{updatedOn}</time></p>
+
+    <nav class="policy-nav" aria-label="Privacy policy sections">
+      <strong>Jump to a section</strong>
+      <a href="#who-we-are">Who we are</a>
+      <a href="#information">Information</a>
+      <a href="#analytics">Analytics</a>
+      <a href="#email">Email</a>
+      <a href="#cookies">Cookies</a>
+      <a href="#your-rights">Your rights</a>
+      <a href="#contact">Contact</a>
+    </nav>
+
+    <div class="legal-content prose policy-copy">
+      <p>This Privacy Policy explains how <strong>{siteConfig.name}</strong> handles information when you visit <a href="https://threadnpetal.com/">threadnpetal.com</a>, read our crochet patterns, follow our links or contact us. It describes our current website services. If we introduce new features such as advertising, forms or mailing lists, we will review and update this policy.</p>
+
+      <section id="who-we-are">
+        <h2>1. Who we are</h2>
+        <p><strong>Website:</strong> {siteConfig.name} — <a href="https://threadnpetal.com/">threadnpetal.com</a></p>
+        <p><strong>Website operator:</strong> Thread & Petal is an independently maintained crochet blog, operated by an individual based in Morocco. It is not presented as a registered company.</p>
+        <p><strong>Operating country:</strong> Morocco</p>
+        <p><strong>Privacy contact:</strong> <a href={`mailto:${siteConfig.contactEmail}`}>{siteConfig.contactEmail}</a></p>
+        <p>The person operating Thread & Petal determines the purposes and means of the processing described here. For privacy inquiries or identification requests, please use the contact email above.</p>
+      </section>
+
+      <section id="information">
+        <h2>2. Information processed when you visit</h2>
+        <p>You can read our crochet patterns without signing up, creating an account or providing your name to us. We do not currently offer visitor accounts, public comments or a newsletter sign-up form.</p>
+        <p>When your browser requests a page, our hosting and security provider, Cloudflare, may process technical request information such as an IP address, requested URLs, timestamps, browser or device information, and security-related signals. This helps deliver the website, protect it from abuse and troubleshoot technical problems.</p>
+        <p>We do not ask visitors to provide sensitive personal information to access our tutorials.</p>
+      </section>
+
+      <section id="hosting">
+        <h2>3. Cloudflare hosting and security</h2>
+        <p>Our website is hosted on <strong>Cloudflare Pages</strong> and uses Cloudflare services for delivery, performance and security. Cloudflare processes information necessary to provide these services according to its applicable terms and privacy practices.</p>
+        <p>More information is available in <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer">Cloudflare’s Privacy Policy</a>.</p>
+      </section>
+
+      <section id="analytics">
+        <h2>4. Cloudflare Web Analytics</h2>
+        <p>We use <strong>Cloudflare Web Analytics</strong> to understand overall site usage and performance, such as page views and page-loading measurements. These insights help us identify popular crochet tutorials and improve how the website works.</p>
+        <p>Cloudflare states that its Web Analytics service is privacy-focused, does not collect or use visitors’ personal data, and does not track individual visitors across websites. This analytics service does not rely on cookies to follow individual visitors.</p>
+        <p>Cloudflare’s website-delivery and security processing is separate from these Web Analytics measurements and may involve the technical information described above.</p>
+      </section>
+
+      <section id="email">
+        <h2>5. When you email us</h2>
+        <p>If you write to <a href={`mailto:${siteConfig.contactEmail}`}>{siteConfig.contactEmail}</a>, we receive the email address you send from, the contents of your message and any information you choose to include. We use this information to read and respond to your request, such as a crochet question, correction, permissions enquiry or privacy request.</p>
+        <p>Our domain uses <strong>Cloudflare Email Routing</strong> to forward incoming messages to our designated email inbox. The provider that hosts that destination inbox also processes messages as part of delivering our email service.</p>
+        <p>Please avoid including private or sensitive information that is not needed for your enquiry.</p>
+      </section>
+
+      <section id="cookies">
+        <h2>6. Cookies and similar technologies</h2>
+        <p>Cloudflare Web Analytics does not need cookies to track individual visitors. Some features of Cloudflare’s website security or delivery services may use strictly necessary cookies or similar signals, depending on the protections enabled.</p>
+        <p>We do not currently use advertising cookies, and our website source does not enable Google AdSense. If we add non-essential cookies or tracking technologies later, we will update this policy and implement the necessary consent choices before using them where required by law.</p>
+      </section>
+
+      <section id="advertising">
+        <h2>7. Advertising</h2>
+        <p>Our tutorials are currently available without third-party display advertisements. We may apply to an advertising service, such as Google AdSense, in the future to help support free crochet content.</p>
+        <p>Before enabling such advertising, we will update this section to identify the provider, explain how relevant data and cookies are used, and provide any consent controls required by applicable law.</p>
+      </section>
+
+      <section id="external-links">
+        <h2>8. External websites and Pinterest</h2>
+        <p>Some pages include links or sharing actions that open third-party websites, including Pinterest. If you choose to open an external website, its own privacy policy and practices apply. Linking to an external service does not mean we control its privacy practices.</p>
+      </section>
+
+      <section id="why-process">
+        <h2>9. Why we process information</h2>
+        <p>We process relevant technical information to operate and secure the website, and correspondence to respond to visitors who contact us. Under applicable laws, processing may rely on legitimate interests where permitted, consent where required, or the need to comply with a legal obligation. We will not introduce optional tracking or advertising without reviewing the relevant requirements.</p>
+        <p>Cloudflare Web Analytics uses aggregated performance insights as described above, rather than a visitor account or an individual browsing profile created by Thread & Petal.</p>
+      </section>
+
+      <section id="sharing-retention">
+        <h2>10. Sharing and retention</h2>
+        <p>We do not sell visitor information to advertisers or data brokers. Information can be processed by the services needed to operate this site, including Cloudflare and our destination email inbox provider. We may also disclose information where legally required.</p>
+        <p>We keep email correspondence only for as long as reasonably needed to address the enquiry, maintain appropriate records or comply with legal duties, after which it is deleted or otherwise handled according to applicable retention practices. Technical records managed by our service providers are subject to their service-specific retention periods and arrangements.</p>
+      </section>
+
+      <section id="international">
+        <h2>11. International processing</h2>
+        <p>Some providers we rely on, including our website hosting and email providers, may process data outside Morocco. International processing is subject to applicable data-protection requirements, which can include CNDP formalities under Moroccan law. Contact us if you have a question about processing related to your message or website visit.</p>
+      </section>
+
+      <section id="your-rights">
+        <h2>12. Your privacy rights</h2>
+        <p>Morocco’s Law 09-08 provides rights in relation to personal data, including the right to be informed, to access relevant information, to request rectification and to object in applicable circumstances. Additional rights, such as erasure, restrictions, portability or withdrawal of consent, may apply under other data-protection laws depending on the circumstances.</p>
+        <p>For more information about personal-data protection in Morocco, you can visit the <a href="https://www.cndp.ma/" target="_blank" rel="noopener noreferrer">Commission Nationale de contrôle de la protection des Données à caractère Personnel (CNDP)</a>.</p>
+        <p>To make a request, email <a href={`mailto:${siteConfig.contactEmail}`}>{siteConfig.contactEmail}</a>. We will review it and respond according to applicable law. Because our Cloudflare Web Analytics does not create a personal browsing account, we may not be able to link aggregated analytics measurements to an individual visitor.</p>
+      </section>
+
+      <section id="children">
+        <h2>13. Children’s privacy</h2>
+        <p>Crochet is a creative activity enjoyed by people of many ages. Our website does not offer accounts or forms designed to collect information from children. If you believe a child has sent us personal information by email and want us to review it, please contact us.</p>
+      </section>
+
+      <section id="updates">
+        <h2>14. Updates to this policy</h2>
+        <p>We may revise this policy when our website changes, when we enable new tools or when legal requirements change. The date near the top of the page shows when it was last updated.</p>
+      </section>
+
+      <section id="contact">
+        <h2>15. Questions? Get in touch</h2>
+        <p>If you have a question about this policy, our crochet website or a privacy request, please email us.</p>
+        <p><a class="policy-contact-link" href={`mailto:${siteConfig.contactEmail}`}>✉ {siteConfig.contactEmail}</a></p>
+      </section>
+    </div>
+  </div>
 </BaseLayout>
+
+<style>
+  .policy-wrap{padding-top:48px;padding-bottom:100px;max-width:860px}
+  .policy-summary{background:#f4e9e3;border:1px solid #ead9d1;border-radius:18px;padding:23px 26px;display:flex;gap:18px;align-items:flex-start}
+  .policy-summary-icon{font-family:Georgia,serif;font-size:33px;color:#b66c83;line-height:1}
+  .policy-summary strong{display:block;font-family:Georgia,serif;font-size:24px;font-weight:500;color:#63474d;margin-bottom:7px}
+  .policy-summary p{font-size:14px;line-height:1.75;color:#6c5d5a;margin:0}
+  .policy-updated{color:#8b7478;font-size:12px;margin:20px 0 25px}
+  .policy-nav{display:flex;flex-wrap:wrap;gap:10px 15px;background:#edf0e7;border-radius:14px;padding:17px 20px;margin:0 0 28px;font-size:13px}
+  .policy-nav strong{width:100%;color:#4c6050;font-family:Georgia,serif;font-size:17px;font-weight:500}
+  .policy-nav a{color:#52684e;text-decoration:underline;text-underline-offset:3px}
+  .policy-copy{max-width:none;padding:0;margin:0}
+  .policy-copy section{padding:0 0 8px;scroll-margin-top:20px}
+  .policy-copy h2{font-size:clamp(24px,4vw,34px)}
+  .policy-copy a{text-decoration:underline;text-underline-offset:3px}
+  .policy-contact-link{display:inline-flex;align-items:center;border-radius:30px;padding:12px 19px;background:#a85e76;color:white!important;text-decoration:none!important;font-weight:700;font-size:14px}
+  .policy-contact-link:hover{background:#84465a}
+  @media(max-width:600px){.policy-wrap{padding-top:30px;padding-bottom:65px}.policy-summary{padding:19px 17px;gap:12px}.policy-summary strong{font-size:21px}.policy-nav{padding:15px}}
+</style>
