@@ -9,7 +9,7 @@ import { siteConfig } from '../site-config';
     </div>
     <div class="footer-links">
       <div><h3>Make something</h3><a href="/patterns/">All patterns</a><a href="/learn/">Start learning</a><a href="/blog/">The journal</a></div>
-      <div><h3>Good to know</h3><a href="/about/">Our story</a><a href="/privacy/">Privacy policy</a><a href="/rss.xml">RSS feed</a>{siteConfig.pinterestUrl && <a href={siteConfig.pinterestUrl} target="_blank" rel="noopener noreferrer">Pinterest ↗</a>}</div>
+      <div><h3>Good to know</h3><a href="/about/">Our story</a><a href="/privacy/">Privacy policy</a><a href={`mailto:${siteConfig.contactEmail}`}>Contact us</a><a href="/rss.xml">RSS feed</a>{siteConfig.pinterestUrl && <a href={siteConfig.pinterestUrl} target="_blank" rel="noopener noreferrer">Pinterest ↗</a>}</div>
     </div>
   </div>
   <div class="site-container footer-bottom"><span>© {new Date().getFullYear()} {siteConfig.name}. Made with yarn & heart.</span><span>Free patterns, forever cozy. ✿</span></div>
