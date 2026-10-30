@@ -1,8 +1,184 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { siteConfig } from '../site-config';
+
+const discoveries = [
+  {
+    icon: '✳',
+    title: 'Free crochet patterns',
+    description: 'Thoughtful little projects, cozy accessories, seasonal favorites, and handmade gifts worth sharing.',
+  },
+  {
+    icon: '♡',
+    title: 'Amigurumi & playful makes',
+    description: 'Sweet characters, soft companions, cheerful flowers, and unexpected things to create with yarn.',
+  },
+  {
+    icon: '✿',
+    title: 'Guides for growing makers',
+    description: 'Stitch explanations, illustrated steps, and gentle encouragement as your skills grow.',
+  },
+];
 ---
-<BaseLayout title="About us" description={`Learn about ${siteConfig.name}, a home for thoughtful crochet patterns and tutorials.`}>
-<section class="page-heading page-heading-pink"><div class="site-container"><span class="eyebrow">BEHIND EVERY STITCH</span><h1>Made with yarn, <em>shared with love.</em></h1><p>The story behind this little crochet corner.</p></div></section>
-<section class="site-container about-content prose"><h2>Hello, lovely maker ♡</h2><p>Welcome to {siteConfig.name}, a cozy home for patterns, lessons, and creative ideas. This is placeholder copy—replace it with your own story, your experience with crochet, and why you created the site.</p><p>We believe learning new stitches should feel exciting, approachable, and fun. Whether you're picking up your first hook or trying a new texture, there's always something wonderful to make.</p><p><strong>Before launch:</strong> replace this sample About page with accurate information about yourself or your business, and include a contact method.</p>{siteConfig.contactEmail && <p>Say hello: <a href={`mailto:${siteConfig.contactEmail}`}>{siteConfig.contactEmail}</a></p>}</section>
+
+<BaseLayout
+  title="About Thread & Petal"
+  description="Get to know Thread & Petal, a welcoming crochet blog sharing free patterns, amigurumi, flowers, and creative inspiration for makers around the world."
+>
+  <section class="page-heading page-heading-pink about-page-heading">
+    <div class="site-container">
+      <span class="eyebrow">A LITTLE ABOUT OUR CROCHET CORNER</span>
+      <h1>Made with yarn, <em>shared with love.</em></h1>
+      <p>A welcoming place for curious hands and creative hearts, wherever in the world you happen to be.</p>
+    </div>
+  </section>
+
+  <div class="site-container about-page">
+    <section class="about-introduction" aria-labelledby="about-welcome">
+      <div class="about-introduction-copy">
+        <span class="about-small-label">HELLO, LOVELY MAKER ♡</span>
+        <h2 id="about-welcome">Welcome to <em>Thread & Petal.</em></h2>
+        <p>Pull up a cozy chair, find your favorite yarn, and make yourself at home.</p>
+        <p><strong>Thread & Petal</strong> is an independently run crochet blog celebrating the little joys of making things by hand. Whether you're picking up a crochet hook for the very first time or looking for your next creative challenge, there's a place for you here.</p>
+        <p>To us, crochet is more than a collection of stitches. It's a chance to slow down, try something new, and watch a simple strand of yarn become something wonderful.</p>
+        <p>And the lovely thing about making? There's always another idea waiting at the end of the thread.</p>
+      </div>
+      <figure class="about-photo-card">
+        <img
+          src="/images/finished-projects/koala-bottle-buddy.webp"
+          alt="A playful crocheted koala bottle buddy with decorative eucalyptus-inspired charms"
+          width="600"
+          height="720"
+          loading="lazy"
+          decoding="async"
+        />
+        <figcaption><span aria-hidden="true">✿</span> One little stitch at a time.</figcaption>
+      </figure>
+    </section>
+
+    <section class="about-discover" aria-labelledby="about-find">
+      <div class="about-section-heading">
+        <span class="eyebrow">TAKE A PEEK INSIDE</span>
+        <h2 id="about-find">What you'll find <em>around here.</em></h2>
+        <p>Some projects are quick and simple. Others take a little more patience. We love the whole journey.</p>
+      </div>
+      <div class="about-discover-grid">
+        {discoveries.map((item) => (
+          <article class="about-discover-card">
+            <span class="about-card-icon" aria-hidden="true">{item.icon}</span>
+            <h3>{item.title}</h3>
+            <p>{item.description}</p>
+          </article>
+        ))}
+      </div>
+      <p class="about-honest-note">You'll find a mix of beginner-friendly lessons and more involved patterns. Each tutorial shows its skill level, so you can choose the project that feels right for you.</p>
+    </section>
+
+    <section class="about-world" aria-labelledby="about-everywhere">
+      <div class="about-world-symbol" aria-hidden="true">✺ <span>♡</span> ✺</div>
+      <span class="eyebrow">DIFFERENT PLACES, SHARED CREATIVITY</span>
+      <h2 id="about-everywhere">Made for makers <em>everywhere.</em></h2>
+      <p>One of the most beautiful things about crochet is how it connects people across countries, cultures, and generations. You might be stitching on a rainy afternoon, making a gift on a sunny weekend, or squeezing a few peaceful rows into a busy day.</p>
+      <p>Wherever you're joining us from, <strong>you're welcome at Thread & Petal.</strong> Different yarns, different stories, and different places — but the same wonderful feeling of making something with your own hands.</p>
+    </section>
+
+    <section class="about-philosophy" aria-labelledby="about-journey">
+      <span class="eyebrow">A GENTLE REMINDER</span>
+      <h2 id="about-journey">Perfect stitches? <em>Not required.</em></h2>
+      <p>Sometimes a stitch goes missing. Sometimes a flower turns out a little wonky. Sometimes the yarn has completely different plans.</p>
+      <p>That's part of learning. Every loop is a chance to practice, experiment, and find your own rhythm. Celebrate the small victories, enjoy the process, and remember that handmade things have a charm all their own.</p>
+    </section>
+
+    <section class="about-next" aria-labelledby="about-next-title">
+      <span class="eyebrow">READY TO MAKE SOMETHING?</span>
+      <h2 id="about-next-title">Your next lovely project <em>starts here.</em></h2>
+      <p>Browse the pattern basket or begin with the basics. There's plenty to explore, one stitch at a time.</p>
+      <div class="about-actions">
+        <a class="btn btn-primary" href="/patterns/">Explore free patterns <span aria-hidden="true">↗</span></a>
+        <a class="btn btn-outline" href="/learn/">Learn crochet from scratch <span aria-hidden="true">→</span></a>
+      </div>
+    </section>
+
+    <section class="about-contact" aria-labelledby="about-contact-title">
+      <div>
+        <span class="eyebrow">KEEP IN TOUCH</span>
+        <h2 id="about-contact-title">Have a question? <em>Say hello.</em></h2>
+        <p>Need help finding a tutorial, spotted something that could be clearer, or have a question about a pattern? We'd be happy to hear from you.</p>
+      </div>
+      {siteConfig.contactEmail && (
+        <a class="about-contact-link" href={`mailto:${siteConfig.contactEmail}`}>
+          <span aria-hidden="true">✉</span> {siteConfig.contactEmail}
+        </a>
+      )}
+    </section>
+
+    <p class="about-signoff">Thank you for visiting this little corner of the internet. <em>Keep stitching, keep curious, and make something lovely.</em> <span aria-hidden="true">✿</span></p>
+  </div>
 </BaseLayout>
+
+<style>
+  .about-page { padding-top: 70px; padding-bottom: 88px; }
+  .about-page-heading > div > p { max-width: 720px; }
+  .about-introduction { display: grid; grid-template-columns: minmax(0, 1.18fr) minmax(270px, .82fr); gap: clamp(32px, 6vw, 92px); align-items: center; }
+  .about-small-label { color: #a26075; letter-spacing: .14em; font-size: 11px; font-weight: 800; }
+  .about-introduction h2, .about-section-heading h2, .about-world h2, .about-philosophy h2, .about-next h2, .about-contact h2 { font-size: clamp(32px, 4.1vw, 52px); line-height: 1.18; letter-spacing: -.05em; margin: 14px 0 23px; }
+  .about-introduction h2 em, .about-section-heading h2 em, .about-world h2 em, .about-philosophy h2 em, .about-next h2 em, .about-contact h2 em { color: var(--berry); }
+  .about-introduction-copy p, .about-section-heading p, .about-discover-card p, .about-world p, .about-philosophy p, .about-next p, .about-contact p { font-size: 15px; line-height: 1.85; color: var(--muted); }
+  .about-introduction-copy p { margin-bottom: 16px; }
+  .about-introduction-copy p:first-of-type { color: var(--ink); font-weight: 600; font-size: 17px; }
+  .about-photo-card { margin: 0; background: #f4e4df; padding: 15px; border-radius: 28px; transform: rotate(1.2deg); box-shadow: 17px 17px 0 #f5e9df; }
+  .about-photo-card img { width: 100%; aspect-ratio: 4/4.5; height: auto; object-fit: cover; border-radius: 18px; }
+  .about-photo-card figcaption { color: #915e6d; font: italic 17px Georgia, serif; text-align: center; padding: 15px 2px 3px; }
+  .about-discover { padding-top: 115px; }
+  .about-section-heading { max-width: 680px; margin-bottom: 32px; }
+  .about-section-heading h2 { margin-bottom: 12px; }
+  .about-discover-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+  .about-discover-card { padding: 30px 28px 24px; border-radius: 18px; background: #fff4ed; border: 1px solid #f0dfd3; }
+  .about-discover-card:nth-child(2) { background: #f2f0e8; border-color: #e5e7d8; }
+  .about-discover-card:nth-child(3) { background: #f2eaf3; border-color: #e9dbed; }
+  .about-card-icon { font-size: 38px; color: var(--berry); line-height: 1; }
+  .about-discover-card h3 { font: 500 24px/1.25 Georgia, serif; letter-spacing: -.035em; margin: 20px 0 11px; }
+  .about-discover-card p { font-size: 13px; margin-bottom: 0; }
+  .about-honest-note { margin: 21px 0 0; color: #867473; font-size: 13px; line-height: 1.8; }
+  .about-world { text-align: center; max-width: 930px; margin: 110px auto 105px; background: #edf1e8; padding: 60px clamp(22px, 7vw, 92px) 55px; border-radius: 28px; }
+  .about-world .eyebrow { color: #748066; }
+  .about-world h2 { margin-bottom: 22px; }
+  .about-world p { max-width: 680px; margin: 0 auto 16px; }
+  .about-world-symbol { color: #b98b90; font-size: 35px; letter-spacing: 10px; margin-bottom: 12px; }
+  .about-world-symbol span { color: #b26d86; }
+  .about-philosophy { max-width: 760px; margin: 0 auto 110px; text-align: center; }
+  .about-philosophy p { max-width: 700px; margin: 0 auto 16px; }
+  .about-next { background: #fae8e4; border-radius: 26px; padding: 53px clamp(25px, 6vw, 75px); text-align: center; }
+  .about-next p { max-width: 550px; margin: 0 auto 27px; }
+  .about-next h2 { margin-bottom: 18px; }
+  .about-actions { display: flex; flex-wrap: wrap; gap: 13px; justify-content: center; }
+  .about-contact { display: flex; align-items: center; justify-content: space-between; gap: 30px; padding: 78px 10px 40px; border-bottom: 1px solid var(--line); }
+  .about-contact > div { max-width: 640px; }
+  .about-contact h2 { font-size: clamp(30px, 3.7vw, 43px); margin-bottom: 13px; }
+  .about-contact p { margin: 0; }
+  .about-contact-link { flex-shrink: 0; border: 1px solid #caabb2; color: var(--berry); background: #fffdf8; border-radius: 50px; padding: 16px 22px; font-size: 14px; font-weight: 700; }
+  .about-contact-link:hover { background: #f8e8e8; }
+  .about-signoff { max-width: 840px; margin: 37px auto 0; text-align: center; color: #806e6e; font-size: 14px; line-height: 1.8; }
+  .about-signoff em { color: var(--berry); }
+  @media (max-width: 850px) {
+    .about-introduction { grid-template-columns: 1fr; gap: 35px; }
+    .about-photo-card { max-width: 470px; width: 100%; justify-self: center; }
+    .about-contact { flex-direction: column; align-items: flex-start; }
+  }
+  @media (max-width: 650px) {
+    .about-page { padding-top: 46px; padding-bottom: 65px; }
+    .about-discover { padding-top: 75px; }
+    .about-discover-grid { grid-template-columns: 1fr; }
+    .about-discover-card { padding: 24px; }
+    .about-world { margin: 77px auto; padding: 43px 22px 38px; }
+    .about-philosophy { margin-bottom: 77px; }
+    .about-next { padding: 38px 22px; }
+    .about-actions { flex-direction: column; }
+    .about-actions .btn { width: 100%; }
+    .about-contact { padding: 55px 0 34px; }
+    .about-contact-link { max-width: 100%; overflow-wrap: anywhere; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .about-photo-card { transform: none; }
+  }
+</style>
