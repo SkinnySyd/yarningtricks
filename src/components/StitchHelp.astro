@@ -1,0 +1,73 @@
+---
+/**
+ * Curated, contextual links from each project to existing Learn Crochet lessons.
+ * Add a new entry when publishing a pattern; no links point to unfinished pages.
+ */
+interface Props { patternId: string }
+const { patternId } = Astro.props;
+type Skill = { label: string; href: string; hint: string };
+
+const lessons: Record<string, Skill> = {
+  supplies: { label: 'Beginner crochet supplies', href: '/learn/crochet-supplies-for-beginners/', hint: 'Choose your first yarn and hook' },
+  chain: { label: 'Slip knot & chain', href: '/patterns/first-crochet-chain/', hint: 'Start with the foundation' },
+  sc: { label: 'Single crochet', href: '/learn/single-crochet-stitch/', hint: 'Make short, even stitches' },
+  hdc: { label: 'Half double crochet', href: '/learn/half-double-crochet-stitch/', hint: 'Work through three loops' },
+  dc: { label: 'Double crochet', href: '/learn/double-crochet-stitch/', hint: 'Learn a taller stitch' },
+  edges: { label: 'Straight edges & counting', href: '/learn/crochet-straight-edges/', hint: 'Keep your stitch count steady' },
+  ring: { label: 'Magic ring & rounds', href: '/learn/magic-ring-crochet-in-the-round/', hint: 'Begin working in a circle' },
+  shaping: { label: 'Increases & decreases', href: '/learn/crochet-increases-and-decreases/', hint: 'Shape and count each round' },
+  pattern: { label: 'Read pattern abbreviations', href: '/learn/how-to-read-crochet-patterns/', hint: 'Decode US/UK stitch terms' },
+  finishing: { label: 'Fix mistakes & finish', href: '/learn/fix-crochet-mistakes-and-finish/', hint: 'Weave in ends and join pieces' },
+};
+const byPattern: Record<string, string[]> = {
+  'first-crochet-chain': ['supplies', 'sc'],
+  'simple-yarn-bookmark': ['chain', 'sc', 'edges'],
+  'granny-square-coaster': ['dc', 'ring', 'pattern'],
+  'crochet-flower': ['ring', 'dc', 'finishing'],
+  'crochet-poppet-doll': ['sc', 'shaping', 'finishing'],
+  'koala-bottle-buddy': ['ring', 'shaping', 'finishing'],
+  'octopus-potpourri-pal': ['sc', 'shaping', 'finishing'],
+  'pumpkin-halloween-candy-bag': ['hdc', 'shaping', 'pattern'],
+  'sunflower-flower-pen': ['ring', 'shaping', 'pattern'],
+  'rose-flower-pen': ['ring', 'shaping', 'pattern'],
+  'crocus-flower-pen': ['ring', 'shaping', 'pattern'],
+  'hibiscus-flower-pen': ['ring', 'shaping', 'pattern'],
+};
+const selected = (byPattern[patternId] ?? []).map((key) => lessons[key]).filter(Boolean);
+---
+{selected.length > 0 && (
+  <aside class="stitch-help" aria-labelledby="stitch-help-heading">
+    <div class="stitch-help-header">
+      <span class="stitch-help-flower" aria-hidden="true">✿</span>
+      <div>
+        <span class="stitch-help-kicker">A LITTLE HELP ALONG THE WAY</span>
+        <h2 id="stitch-help-heading">Stuck on a stitch?</h2>
+        <p>Open a quick lesson for the tricky bit, then come right back to your pattern.</p>
+      </div>
+    </div>
+    <ul class="stitch-help-list">
+      {selected.map((lesson) => (
+        <li><a href={lesson.href}><strong>{lesson.label}</strong><span>{lesson.hint} <span aria-hidden="true">↗</span></span></a></li>
+      ))}
+    </ul>
+    <a class="stitch-help-all" href="/learn/">See the complete Learn Crochet course <span aria-hidden="true">→</span></a>
+  </aside>
+)}
+<style>
+  .stitch-help { margin: 0 0 40px; padding: 27px 28px 25px; background: #f4f1e9; border: 1px solid #e5e5d9; border-radius: 19px; }
+  .stitch-help-header { display: flex; align-items: flex-start; gap: 15px; }
+  .stitch-help-flower { font-size: 34px; color: #a97787; line-height: 1.2; }
+  .stitch-help-kicker { display: block; font-size: 10px; color: #927383; letter-spacing: .13em; font-weight: 800; }
+  .stitch-help h2 { margin: 5px 0 7px; font: 500 28px/1.2 Georgia, serif; letter-spacing: -.04em; color: #493b3d; }
+  .stitch-help-header p { margin: 0; font-size: 13px; line-height: 1.7; color: #786b68; }
+  .stitch-help-list { padding: 0; margin: 21px 0 16px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 185px), 1fr)); gap: 10px; list-style: none; }
+  .stitch-help-list li { margin: 0; min-width: 0; }
+  .stitch-help-list a { display: flex; flex-direction: column; gap: 5px; min-height: 81px; padding: 14px 15px; border: 1px solid #e9dcd4; border-radius: 11px; background: #fffdfa; text-decoration: none; }
+  .stitch-help-list a:hover { background: #fff6ef; border-color: #c598a6; }
+  .stitch-help-list strong { font-size: 13px; line-height: 1.3; color: #815467; }
+  .stitch-help-list li span { font-size: 11px; line-height: 1.4; color: #7d7470; }
+  .stitch-help-all { display: inline-flex; align-items: center; gap: 8px; color: #875369; font-size: 12px; font-weight: 750; text-underline-offset: 3px; }
+  .stitch-help-all:hover { text-decoration: underline; }
+  @media(max-width: 550px) { .stitch-help { padding: 22px 17px; } .stitch-help-list { grid-template-columns: 1fr; } }
+  @media print { .stitch-help { display: none; } }
+</style>

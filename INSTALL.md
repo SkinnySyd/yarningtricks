@@ -1,57 +1,33 @@
-# Thread & Petal — Learn Crochet Hub
+# Thread & Petal — Beginner patterns + two-way learning links
 
-A drop-in Astro 5/MDX patch prepared against the `main` branch of `SkinnySyd/yarningtricks`, commit `eb17e36e461f7f35f89120ae32d3d03d37805d1c` (last checked October 30, 2026).
+**Prepared against:** `SkinnySyd/yarningtricks`, `main`, commit `a2ef99bb67fe1fc72d8597e0460c9ca664f3be6c` (2026-10-30).
 
-## What it adds
+## What changes
 
-- **Redesigned `/learn/` hub**: a welcoming photo/illustration hero, 10-step sequence, US/UK terms reference, three existing practice projects and FAQ.
-- **Nine complete new lesson pages** at `/learn/<lesson-slug>/`; the existing `/patterns/first-crochet-chain/` is lesson 2 of the sequence, to avoid creating a duplicate post.
-- **Original loop-count diagrams** for US single, half double, and double crochet. These are explicitly *schematic*, not substitute photographs of hand positions.
-- **Reusable MDX lesson collection**, one dynamic lesson layout, responsive styles, table of contents, next/previous navigation, and LearningResource JSON-LD.
+- `src/content/patterns/first-crochet-chain.mdx` — fuller slip-knot, chaining, V-count and troubleshooting instructions; direct link from course step 2 to **single crochet (step 3)**.
+- `src/content/patterns/simple-yarn-bookmark.mdx` — explicitly explains 26 foundations chains → 25 single crochets, which turning chain doesn't count, and consistent five-row count.
+- `src/content/patterns/granny-square-coaster.mdx` — clarifies joining the rounds, traveling to the next corner with slip stitches, the chain-3 convention, and cluster/corner counts.
+- `src/content/patterns/crochet-flower.mdx` — clarifies five complete petal repeats, magic-ring finishing, and troubleshooting.
+- `src/components/StitchHelp.astro` — NEW reusable contextual links for all 12 existing patterns (the other 8 patterns' instructions are unchanged).
+- `src/pages/patterns/[...slug].astro` — imports StitchHelp, places a lesson-help panel after supplies, and removes the outdated sample-template message.
 
-## Install: copy these paths into your project root
+All URLs, category metadata, image paths and original publication dates are retained. The four updated patterns have `updatedDate: 2026-10-30`.
 
-```
-src/content.config.ts                          (REPLACE current version)
-src/pages/learn.astro                          (REPLACE current version)
-src/pages/learn/[slug].astro                   (NEW)
-src/content/lessons/*.mdx                      (NINE NEW)
-public/images/learn/*.svg                      (THREE NEW)
-```
+## Install
 
-The patch does **not** overwrite `src/pages/index.astro` or your homepage redesign, About/Privacy pages, or existing crochet patterns.
+1. Copy the included `src/` folder into the root of your local Astro project, keeping its folders. Replace the existing pattern/tutorial files and create the new `StitchHelp.astro` component.
+2. Verify that your current repo already contains the Learn Crochet Hub at `/learn/` and nine lessons (it did at the commit checked).
+3. Run `npm ci`, `npm run check`, and `npm run build`.
+4. Preview the chain tutorial `/patterns/first-crochet-chain/`, the bookmark, granny-square coaster, tiny flower, and one advanced pattern such as `/patterns/koala-bottle-buddy/`.
+5. Confirm a pattern's **Stuck on a stitch?** links open real lessons, and that the chain tutorial's **Continue to Lesson 03** link works.
+6. Commit/push the files and check Cloudflare Pages' build status.
 
-### Local test and deploy
+## Editorial and publishing notes
 
-1. Save/backup any local edits to the two replaced files.
-2. Extract the ZIP at the **root** of your Astro project, keeping its directory structure. Do not copy `INSTALL.md` or the generator into `src/`.
-3. Run `npm ci`, then `npm run build`. If the build succeeds, optionally run `npm run preview` and open `/learn/` and three new lessons.
-4. Check `/learn/` on desktop and mobile. Test the links from lessons back to `/patterns/` and the pattern filters.
-5. Commit and push to GitHub; Cloudflare Pages should deploy from your connected branch as normal.
+This is an **editorial/code review** of the four provided sample patterns, with their original stitch construction retained except for clarity and ordering of joined-round actions. I checked stitch terms, counts and link destinations against the source and standard crochet terminology, but **I have not physically crocheted/tested** the projects. Have a crocheter make each project exactly as written before calling any pattern 'tested'. The four original artwork files are still illustrations, not new photos.
 
-## Important editorial review before publication
+The new help panel is intentionally **contextual**, not a redirect. Readers can click to the lesson when needed and return to the pattern using their browser's Back button. The site already has links from many lessons back to practice patterns.
 
-- Crochet directions are original educational prose checked against Craft Yarn Council terminology; they are **not physically test-crocheted**. Review or test step counts, yarn/material suggestions, and wording before treating as fully verified patterns.
-- The existing `/patterns/first-crochet-chain/` still comes from the site's initial short starter tutorials and currently carries a **sample tutorial warning** shared with three other starter pages. Revise/test these four original patterns and then remove the warning when appropriate. This patch intentionally does not hide it.
-- Source diagrams illustrate loop counts only, **not physical stitch anatomy or hook placement**. Add your own technique photos if available later.
-- We don't create a fake newsletter, login system, course progress tracker, or third-party embeds. The hub contains static educational content and does not introduce analytics or advertising scripts.
+## Rollback
 
-## Useful reference links
-
-- Craft Yarn Council standard crochet abbreviations / US–UK equivalents: https://craftyarncouncil.com/node/31
-- Crochet hook conversion (millimeters): https://craftyarncouncil.com/standards/hooks-and-needles
-- Craft Yarn Council single crochet technique: https://www.craftyarncouncil.com/node/461
-
-## Updated pages/URL listing
-
-- `/learn/`
-- `/learn/crochet-supplies-for-beginners/`
-- `/patterns/first-crochet-chain/` (existing, lesson 2)
-- `/learn/single-crochet-stitch/`
-- `/learn/half-double-crochet-stitch/`
-- `/learn/double-crochet-stitch/`
-- `/learn/crochet-straight-edges/`
-- `/learn/magic-ring-crochet-in-the-round/`
-- `/learn/crochet-increases-and-decreases/`
-- `/learn/how-to-read-crochet-patterns/`
-- `/learn/fix-crochet-mistakes-and-finish/`
+Restore the original four MDX files and `src/pages/patterns/[...slug].astro` from GitHub, and delete `src/components/StitchHelp.astro`.
