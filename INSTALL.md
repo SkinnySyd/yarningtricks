@@ -1,22 +1,27 @@
-# Thread & Petal Privacy Policy — Morocco-based version
+# Thread & Petal — Editorial Homepage Redesign
 
-This update was tailored for an individual operating the independent crochet blog Thread & Petal from Morocco. It uses the site-config email (`contact@threadnpetal.com`) and does not ask you to publish a residential address.
+## Install
 
-## Installation
+1. Extract this ZIP into the root of your Astro repository (`SkinnySyd/yarningtricks`).
+2. Replace **only** `src/pages/index.astro` with the included file.
+3. No changes to `global.css`, content schemas, other pages, or images are needed.
+4. Run `npm ci` then `npm run build` in your project.
+5. Visit the homepage on desktop and mobile; click the category filters and all featured pattern links.
+6. Commit and push to `main` after reviewing.
 
-1. Back up your current `src/pages/privacy.astro`.
-2. Copy the included `src/pages/privacy.astro` from this ZIP to that same path in your Astro project.
-3. Check that `src/site-config.ts` still has `contactEmail: 'contact@threadnpetal.com'`.
-4. Run `npm run build`, inspect `/privacy/`, then commit and push to `main`.
+## What's new
 
-## Important legal review before publishing
+- Editorial home hero showing **existing finished-project photos**, not stock art.
+- Featured six patterns selected from actual published MDX entries.
+- Four clickable category tiles, including Amigurumi; counts reflect published content.
+- Four-flower pen showcase with dedicated tutorial links.
+- Three-step beginner welcome and a clear link to `/learn/` (no unbuilt lesson routes).
+- Global, brand-centered welcome that doesn't invent a team or founder biography.
+- Responsive layouts, descriptive image alt text, lazy loading below the fold, and reduced-motion support.
+- Self-contained page styling scoped in `src/pages/index.astro`.
 
-This is a draft and is NOT certified compliant with Moroccan law. Moroccan Law 09-08, Article 5 calls for identification of the data controller. This page currently identifies the blog and indicates an individual in Morocco but does not publish their legal name, as requested. Confirm with the CNDP or a Moroccan legal professional whether further identity details must be published or another compliant disclosure route is available. Do not claim that a blog brand substitutes for the legally required identification.
+## Notes
 
-The CNDP's website-compliance guidance also describes notification of website personal-data processing and possible international-transfer formalities. Confirm whether these apply to your exact practices (incoming emails forwarded abroad, Cloudflare hosting, analytics, etc.) before asserting compliance. Do not invent a CNDP receipt number.
-
-Verify the actual Cloudflare Web Analytics service is the only analytics tool, Google AdSense remains inactive, and the description of email handling and retention reflects practice. Update if you enable additional services.
-
-Moroccan CNDP website guidance: https://www.cndp.ma/ar/ملاءمة-مواقع-الانترنت/
-Law 09-08: https://bdj.mmsp.gov.ma/Fr/Document/8974-Loi-n-09-08-promulguée-par-le-dahir-n-1-09-15-du.aspx
-Cloudflare Web Analytics: https://developers.cloudflare.com/web-analytics/about/
+- This patch does **not** change content, pattern correctness, photos, site analytics, legal disclosures, or ad settings.
+- Photos are sourced from existing `public/images/...` repository files. Some source project imagery is edited or stylized; no photos are presented as independently verified original craft photography.
+- No live deployment was changed.
