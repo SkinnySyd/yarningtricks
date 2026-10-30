@@ -1,11 +1,166 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PatternCard from '../components/PatternCard.astro';
-import { getCollection } from 'astro:content';
-const posts = (await getCollection('patterns', ({data}) => !data.draft)).filter((p)=>p.data.category === 'Stitch guides' || p.data.difficulty === 'Beginner');
+
+const lessons = (await getCollection('lessons', ({ data }) => !data.draft))
+  .sort((a, b) => a.data.order - b.data.order);
+const patterns = await getCollection('patterns', ({ data }) => !data.draft);
+
+// Use the existing chain tutorial as step 2: don't publish a duplicate competing article.
+const chain = patterns.find((p) => p.id === 'first-crochet-chain');
+const steps = [
+  ...lessons.map((lesson) => ({
+    order: lesson.data.order,
+    title: lesson.data.title,
+    description: lesson.data.description,
+    duration: lesson.data.duration,
+    focus: lesson.data.focus,
+    level: lesson.data.level,
+    href: `/learn/${lesson.id}/`,
+  })),
+  ...(chain ? [{
+    order: 2,
+    title: chain.data.title,
+    description: 'Make your first slip knot and foundation chain with clear, step-by-step instructions.',
+    duration: chain.data.duration,
+    focus: 'Slip knot & chain',
+    level: 'Absolute beginner',
+    href: `/patterns/${chain.id}/`,
+  }] : []),
+].sort((a, b) => a.order - b.order);
+
+const firstProjects = ['simple-yarn-bookmark', 'crochet-flower', 'granny-square-coaster']
+  .flatMap((id) => {
+    const post = patterns.find((entry) => entry.id === id);
+    return post ? [post] : [];
+  });
 ---
-<BaseLayout title="Learn crochet from scratch" description="New to crochet? Learn the basics one stitch at a time with friendly step-by-step lessons and free beginner patterns.">
-<section class="page-heading page-heading-sage"><div class="site-container"><span class="eyebrow">WELCOME TO YOUR CROCHET ERA</span><h1>You can learn <em>this. We promise.</em></h1><p>Learn the language of yarn, get comfortable with a hook, and enjoy those first proud stitches.</p></div></section>
-<section class="site-container section lesson-steps"><div class="section-heading"><div><span class="eyebrow">YOUR GENTLE STARTER GUIDE</span><h2>Three little steps <em>to begin.</em></h2></div></div><div class="step-grid"><div class="step-card"><span class="step-number">01</span><div class="step-emoji">♧</div><h3>Gather the basics</h3><p>Find a 5 mm hook, light-colored medium-weight yarn, scissors, and a yarn needle.</p></div><div class="step-card"><span class="step-number">02</span><div class="step-emoji">⌁</div><h3>Learn your first stitches</h3><p>Begin with a slip knot and chain stitch, then try single and double crochet.</p></div><div class="step-card"><span class="step-number">03</span><div class="step-emoji">♡</div><h3>Make something real</h3><p>Start with a tiny flower or coaster. Small projects build confidence quickly.</p></div></div></section>
-<section class="site-container section"><div class="section-heading"><div><span class="eyebrow">LESSONS & FIRST PROJECTS</span><h2>A happy place <em>to start.</em></h2></div></div><div class="cards-grid">{posts.map((post)=><PatternCard post={post}/>)}</div></section>
+
+<BaseLayout
+  title="Learn Crochet from Scratch — Free Beginner Lessons"
+  description="Learn to crochet step by step with free lessons on hooks, chains, single crochet, double crochet, magic rings, shaping, US/UK terms and beginner projects."
+  image="/images/chain.png"
+>
+  <section class="learn-hero" aria-labelledby="learn-title">
+    <div class="site-container learn-hero-grid">
+      <div class="learn-hero-copy">
+        <span class="learn-eyebrow">✿ A KINDER WAY TO LEARN CROCHET</span>
+        <h1 id="learn-title">Your crochet journey <em>starts with a loop.</em></h1>
+        <p>Never held a hook before? You're in the right place. Follow a gentle, free learning path from your very first chain to the little projects you've been dreaming of.</p>
+        <div class="learn-hero-actions">
+          <a class="btn btn-primary" href="#learning-path">Explore the lessons <span aria-hidden="true">↘</span></a>
+          <a href="#first-projects" class="learn-text-link">Or choose a first project <span aria-hidden="true">→</span></a>
+        </div>
+        <p class="learn-hero-footnote">No signup required · US crochet terms with UK equivalents · At your own pace</p>
+      </div>
+      <div class="learn-hero-art" aria-label="Illustration of a crochet chain and a hook">
+        <div class="learn-art-spark learn-art-spark-one" aria-hidden="true">✳</div>
+        <div class="learn-art-spark learn-art-spark-two" aria-hidden="true">✿</div>
+        <div class="learn-art-image"><img src="/images/chain.png" alt="Pastel illustration of a lavender crochet chain with a hook" width="600" height="680" fetchpriority="high" /></div>
+        <div class="learn-art-label"><span>made of</span><strong>little beginnings</strong><span aria-hidden="true">♡</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="learn-strip"><div class="site-container learn-strip-inner"><span>✳ Practice at your pace</span><span>♡ Small steps, real skills</span><span>✿ Learn by making</span></div></div>
+
+  <section id="learning-path" class="site-container learn-section" aria-labelledby="learning-title">
+    <div class="learn-section-heading">
+      <div><span class="learn-eyebrow">YOUR FREE MINI-COURSE</span><h2 id="learning-title">One stitch at a <em>time.</em></h2><p>Start with lesson one or jump to the skill you need today. Each lesson explains what to do, how to check your work, and what to try next.</p></div>
+      <span class="learn-section-count">{steps.length} simple steps</span>
+    </div>
+    <div class="learn-path-grid">
+      {steps.map((step) => (
+        <a class="learn-path-card" href={step.href} aria-label={`Lesson ${step.order}: ${step.title}`}>
+          <span class="learn-path-number">{String(step.order).padStart(2, '0')}</span>
+          <div class="learn-path-content">
+            <span class="learn-path-kicker">{step.focus} <span aria-hidden="true">·</span> {step.duration}</span>
+            <h3>{step.title}</h3>
+            <p>{step.description}</p>
+            <span class="learn-path-footer"><span>{step.level}</span><strong>Open lesson <span aria-hidden="true">↗</span></strong></span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="learn-reference" aria-labelledby="learn-reference-title">
+    <div class="site-container learn-reference-grid">
+      <div class="learn-reference-copy">
+        <span class="learn-eyebrow">A LITTLE NOTE FOR MAKERS EVERYWHERE</span>
+        <h2 id="learn-reference-title">One stitch, <em>two names.</em></h2>
+        <p>Crochet travels the world, and so do its patterns. US and UK terms don't always mean the same stitch. We use <strong>US terms</strong> throughout our lessons and explain the UK name when it changes.</p>
+        <a class="learn-text-link" href="/learn/how-to-read-crochet-patterns/">Learn to read patterns <span aria-hidden="true">↗</span></a>
+      </div>
+      <div class="learn-terms-card">
+        <div class="learn-terms-header"><span>US terminology</span><span>UK terminology</span></div>
+        <div class="learn-term-row"><strong>Single crochet (sc)</strong><span>Double crochet (dc)</span></div>
+        <div class="learn-term-row"><strong>Half double (hdc)</strong><span>Half treble (htr)</span></div>
+        <div class="learn-term-row"><strong>Double crochet (dc)</strong><span>Treble (tr)</span></div>
+        <p>Same movements, different stitch names. Check which terminology a pattern uses before you begin.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="first-projects" class="site-container learn-section learn-projects" aria-labelledby="learn-projects-title">
+    <div class="learn-section-heading">
+      <div><span class="learn-eyebrow">PUT YOUR NEW SKILLS TO WORK</span><h2 id="learn-projects-title">Make something <em>small and lovely.</em></h2><p>Turn a few familiar stitches into a first handmade project. The patterns below are already part of Thread & Petal.</p></div>
+      <a class="learn-text-link" href="/patterns/?category=Stitch%20guides">Browse stitch guides <span aria-hidden="true">↗</span></a>
+    </div>
+    <div class="cards-grid learn-project-grid">{firstProjects.map((post) => <PatternCard post={post} />)}</div>
+  </section>
+
+  <section class="site-container learn-faq" aria-labelledby="learn-faq-title">
+    <span class="learn-eyebrow">A FEW THINGS YOU MAY BE WONDERING</span>
+    <h2 id="learn-faq-title">Questions from the <em>first row.</em></h2>
+    <div class="learn-faq-list">
+      <details><summary>What should I buy to start crocheting?</summary><p>Try smooth, light-colored medium-weight yarn and a 5 mm hook (US H/8) as a common beginner starting point. A pair of scissors and a yarn needle are useful extras. Follow your yarn label if it recommends another hook size.</p></details>
+      <details><summary>Do I have to learn every stitch before starting a project?</summary><p>No. Once you can chain and single crochet, our <a href="/patterns/simple-yarn-bookmark/">Little Loop Yarn Bookmark</a> is a manageable first practice piece. Learn taller stitches or magic rings when a project calls for them.</p></details>
+      <details><summary>Why does a pattern say UK double crochet when I learned US single crochet?</summary><p>Those are two names for the same stitch. The terminology differs between pattern conventions. See our <a href="/learn/how-to-read-crochet-patterns/">US/UK conversion guide</a> before following an unfamiliar pattern.</p></details>
+      <details><summary>What if I keep making mistakes?</summary><p>Unraveling and trying again is normal. Count the V-shaped stitches at the end of each row and mark the first and last stitches if you lose your place. Our <a href="/learn/fix-crochet-mistakes-and-finish/">troubleshooting lesson</a> walks through common fixes.</p></details>
+    </div>
+  </section>
+
+  <section class="learn-last-note"><div class="site-container learn-last-inner"><div class="learn-last-ornament" aria-hidden="true">✿</div><div><span class="learn-eyebrow">YOU BELONG HERE</span><h2>There's no rush to get <em>every stitch perfect.</em></h2><p>Take your time, try the next loop, and enjoy the little triumphs. Makers everywhere began with a first stitch.</p></div><a class="btn btn-primary" href="/patterns/">Explore free patterns <span aria-hidden="true">↗</span></a></div></section>
 </BaseLayout>
+
+<style>
+  .learn-hero{overflow:hidden;background:radial-gradient(circle at 73% 35%,#f7e8df 0,transparent 31%),linear-gradient(125deg,#eef1e5,#fdf8ee 65%,#f8e8e4)}
+  .learn-hero-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);align-items:center;gap:clamp(24px,5vw,72px);padding-block:74px 92px}
+  .learn-eyebrow{font-size:11px;letter-spacing:.15em;font-weight:800;text-transform:uppercase;color:#9d637a;display:inline-block}
+  .learn-hero h1,.learn-section h2,.learn-reference h2,.learn-faq h2,.learn-last-note h2{font-size:clamp(38px,5vw,68px);line-height:1.12;letter-spacing:-.055em;margin:19px 0 24px}
+  .learn-hero h1 em,.learn-section h2 em,.learn-reference h2 em,.learn-faq h2 em,.learn-last-note h2 em{color:var(--berry)}
+  .learn-hero-copy>p:not(.learn-hero-footnote){font-size:16px;line-height:1.85;color:var(--muted);max-width:530px}
+  .learn-hero-actions{display:flex;align-items:center;flex-wrap:wrap;gap:22px;margin-top:30px}
+  .learn-text-link{font-size:13px;font-weight:750;color:var(--berry);display:inline-flex;gap:8px;align-items:center}
+  .learn-text-link:hover{text-decoration:underline;text-underline-offset:5px}
+  .learn-hero-footnote{font-size:12px;color:#887477;margin:35px 0 0}
+  .learn-hero-art{position:relative;width:min(100%,510px);justify-self:center;padding:10px 20px 22px}
+  .learn-art-image{background:#f6ddd9;border-radius:46% 46% 20px 20px/30% 30% 20px 20px;box-shadow:20px 20px 0 #f4e8df;overflow:hidden}
+  .learn-art-image img{width:100%;height:auto;aspect-ratio:1/1.04;object-fit:contain}
+  .learn-art-label{position:absolute;bottom:0;left:-7px;width:160px;height:160px;border-radius:50%;border:9px solid #fff8f1;background:#dfe9d7;color:#59725e;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px;text-align:center;transform:rotate(-10deg);font-family:Georgia,serif;font-style:italic;font-size:14px}
+  .learn-art-label strong{font-size:19px;font-weight:500;max-width:125px;line-height:1.15}
+  .learn-art-label span:last-child{font-size:26px;font-style:normal}
+  .learn-art-spark{position:absolute;font-size:43px;color:#b68196;z-index:2}.learn-art-spark-one{right:8px;top:8px}.learn-art-spark-two{right:-14px;bottom:20%;font-size:30px}
+  .learn-strip{background:#f4e4dc;border-block:1px solid #ead8d0}.learn-strip-inner{padding-block:22px;display:flex;gap:15px;justify-content:space-between;color:#916b78;letter-spacing:.08em;font-weight:750;font-size:11px;text-transform:uppercase}
+  .learn-section{padding-block:95px}.learn-section-heading{display:flex;justify-content:space-between;gap:24px;align-items:end;margin-bottom:33px}.learn-section h2{font-size:clamp(35px,4.2vw,53px);margin:14px 0 13px}.learn-section-heading p{font-size:14px;line-height:1.8;color:var(--muted);max-width:700px;margin:0}.learn-section-count{white-space:nowrap;border:1px solid #dbc9c2;padding:10px 16px;border-radius:999px;font-size:12px;font-weight:700;color:var(--berry);margin-bottom:4px}
+  .learn-path-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+  .learn-path-card{display:flex;gap:22px;border:1px solid #ebdbd2;border-radius:19px;padding:29px;background:#fffdf9;transition:transform .2s,box-shadow .2s;min-width:0}
+  .learn-path-card:nth-child(4n+2){background:#f7f0e9}.learn-path-card:nth-child(4n+3){background:#f0f2e8}
+  .learn-path-card:hover{transform:translateY(-3px);box-shadow:0 13px 28px #59403c10}
+  .learn-path-number{flex:0 0 43px;font-family:Georgia,serif;font-size:31px;color:#b98699;line-height:1.2}
+  .learn-path-content{min-width:0;display:flex;flex-direction:column;flex:1}
+  .learn-path-kicker{color:#a16e7a;font-size:10px;text-transform:uppercase;letter-spacing:.09em;font-weight:800}
+  .learn-path-content h3{font:500 clamp(21px,2.2vw,27px)/1.2 Georgia,serif;letter-spacing:-.04em;margin:13px 0 11px}
+  .learn-path-content p{font-size:13px;line-height:1.75;color:var(--muted);margin:0 0 25px;flex:1}
+  .learn-path-footer{display:flex;justify-content:space-between;gap:13px;align-items:center;padding-top:15px;border-top:1px solid #e9dcd5;color:#917a7c;font-size:11px}.learn-path-footer strong{font-size:12px;color:var(--berry)}
+  .learn-reference{background:#ecf0e8;padding-block:74px}.learn-reference-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,.84fr);gap:clamp(28px,6vw,90px);align-items:center}
+  .learn-reference h2{font-size:clamp(36px,4vw,49px)}.learn-reference-copy p{line-height:1.9;font-size:15px;color:#617067;max-width:570px}.learn-reference-copy .learn-text-link{margin-top:12px}
+  .learn-terms-card{background:#fffdf8;border-radius:18px;border:1px solid #e3e2d7;padding:26px 28px;box-shadow:12px 12px 0 #e1e8db}.learn-terms-header,.learn-term-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}.learn-terms-header{color:#a06e80;font-weight:800;text-transform:uppercase;letter-spacing:.1em;font-size:10px;padding-bottom:15px}.learn-term-row{font-size:13px;padding:16px 0;border-top:1px solid #ecdfdc}.learn-term-row strong{font-weight:700;color:var(--ink)}.learn-term-row>span{color:#77716e}.learn-terms-card>p{font-size:11px;line-height:1.7;color:#847576;margin:12px 0 0}
+  .learn-projects{padding-bottom:72px}.learn-faq{padding:35px 0 100px;max-width:920px}.learn-faq h2{font-size:clamp(33px,4vw,49px)}.learn-faq-list{border-top:1px solid #e2d5cc}.learn-faq-list details{border-bottom:1px solid #e2d5cc;padding:20px 5px}.learn-faq-list summary{cursor:pointer;font-weight:700;font-size:16px;line-height:1.5;position:relative;padding-right:30px}.learn-faq-list summary:hover{color:var(--berry)}.learn-faq-list details p{font-size:14px;line-height:1.85;color:var(--muted);max-width:780px;margin:15px 0 5px}.learn-faq-list a{color:var(--berry);text-decoration:underline}
+  .learn-last-note{background:#f9e8e3;padding-block:60px}.learn-last-inner{display:flex;gap:24px;align-items:center}.learn-last-ornament{font-size:65px;color:#c4889a}.learn-last-note h2{font-size:clamp(29px,3vw,40px);margin:12px 0}.learn-last-note p{font-size:13px;line-height:1.8;color:var(--muted);margin:0}.learn-last-note .btn{white-space:nowrap;margin-left:auto}
+  @media(max-width:900px){.learn-hero-grid{grid-template-columns:1fr;gap:35px;padding-block:50px 75px}.learn-hero-art{width:min(100%,440px)}.learn-hero h1{max-width:770px}.learn-reference-grid{grid-template-columns:1fr}.learn-terms-card{max-width:670px}.learn-last-inner{flex-wrap:wrap}.learn-last-note .btn{margin-left:0}}
+  @media(max-width:650px){.learn-hero-grid{padding-block:42px 64px}.learn-hero h1{font-size:clamp(42px,10vw,60px)}.learn-hero-copy>p:not(.learn-hero-footnote){font-size:14px}.learn-hero-actions{align-items:flex-start;flex-direction:column}.learn-hero-footnote{line-height:1.8}.learn-art-label{width:115px;height:115px;font-size:11px;left:0;border-width:6px}.learn-art-label strong{font-size:14px}.learn-art-label span:last-child{font-size:18px}.learn-strip-inner{flex-wrap:wrap;justify-content:center;gap:8px 18px}.learn-strip-inner span{font-size:9px}.learn-section{padding-block:64px}.learn-section-heading{flex-direction:column;align-items:flex-start}.learn-path-grid{grid-template-columns:1fr}.learn-path-card{padding:24px 19px;gap:15px}.learn-path-number{flex-basis:32px;font-size:25px}.learn-reference{padding-block:60px}.learn-terms-card{padding:17px;box-shadow:7px 7px 0 #e1e8db}.learn-faq{padding-block:26px 75px}.learn-last-ornament{font-size:43px}.learn-last-inner{gap:15px}.learn-project-grid{grid-template-columns:1fr}.learn-last-note{padding-block:50px}}
+  @media(prefers-reduced-motion:reduce){.learn-path-card{transition:none}}
+</style>

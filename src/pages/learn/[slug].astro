@@ -1,0 +1,94 @@
+---
+import { getCollection, render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const lessons = (await getCollection('lessons', ({ data }) => !data.draft))
+    .sort((a, b) => a.data.order - b.data.order);
+  return lessons.map((lesson) => ({ params: { slug: lesson.id }, props: { lesson } }));
+}
+interface Props { lesson: CollectionEntry<'lessons'> }
+const { lesson } = Astro.props;
+const { Content, headings } = await render(lesson);
+const lessons = (await getCollection('lessons', ({ data }) => !data.draft))
+  .sort((a, b) => a.data.order - b.data.order);
+const position = lessons.findIndex((entry) => entry.id === lesson.id);
+const prev = position > 0 ? lessons[position - 1] : undefined;
+const next = position < lessons.length - 1 ? lessons[position + 1] : undefined;
+const isAfterTools = lesson.data.order === 3;
+const isFirst = lesson.data.order === 1;
+const navigation = headings.filter((heading) => heading.depth === 2);
+const pageURL = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).toString();
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'LearningResource',
+  name: lesson.data.title,
+  description: lesson.data.description,
+  url: pageURL,
+  learningResourceType: 'Tutorial',
+  educationalLevel: lesson.data.level,
+  inLanguage: 'en',
+  isAccessibleForFree: true,
+  provider: { '@type': 'Organization', name: 'Thread & Petal', url: 'https://threadnpetal.com/' },
+};
+---
+
+<BaseLayout title={lesson.data.title} description={lesson.data.description} image="/images/chain.png" type="article">
+  <script type="application/ld+json" set:html={JSON.stringify(schema).replace(/</g, '\\u003c')} />
+  <div class="site-container lesson-crumbs"><a href="/">Home</a><span aria-hidden="true">/</span><a href="/learn/">Learn crochet</a><span aria-hidden="true">/</span><span>{lesson.data.title}</span></div>
+  <header class="lesson-hero">
+    <div class="site-container lesson-header-inner">
+      <div><span class="lesson-kicker">✳ THE CROCHET SCHOOL · LESSON {String(lesson.data.order).padStart(2, '0')}</span><h1>{lesson.data.title}</h1><p>{lesson.data.description}</p><div class="lesson-chips"><span>{lesson.data.level}</span><span>{lesson.data.duration}</span><span>{lesson.data.focus}</span></div></div>
+      <span class="lesson-hero-decor" aria-hidden="true">✿</span>
+    </div>
+  </header>
+  <div class="site-container lesson-layout">
+    <article class="lesson-main">
+      <div class="lesson-intro"><span aria-hidden="true">♡</span><p><strong>Before you begin:</strong> This lesson uses US crochet terms. If you're following a UK pattern, check our <a href="/learn/how-to-read-crochet-patterns/">US/UK stitch-name guide</a>.</p></div>
+      <div class="prose lesson-body"><Content /></div>
+      <section class="lesson-practice" aria-label="Practice this lesson"><span class="lesson-kicker">TRY IT WITH A REAL PROJECT</span><h2>Practice makes <em>lovely.</em></h2><p>Ready to put this skill to work? You can try one of our free patterns or continue along the lesson path.</p><a href={lesson.data.practicePath ?? '/patterns/'} class="btn btn-primary">{lesson.data.practiceLabel ?? 'Explore the free patterns'} <span aria-hidden="true">↗</span></a></section>
+      <nav class="lesson-next" aria-label="Learning path navigation">
+        {isFirst ? (
+          <a class="lesson-next-item" href="/patterns/first-crochet-chain/"><small>UP NEXT · LESSON 02</small><strong>Your First Crochet Chain <span aria-hidden="true">→</span></strong></a>
+        ) : (
+          <>
+            {isAfterTools ? (
+              <a class="lesson-next-item" href="/patterns/first-crochet-chain/"><small><span aria-hidden="true">←</span> PREVIOUS · LESSON 02</small><strong>Your First Crochet Chain</strong></a>
+            ) : prev ? (
+              <a class="lesson-next-item" href={`/learn/${prev.id}/`}><small><span aria-hidden="true">←</span> PREVIOUS · LESSON {String(prev.data.order).padStart(2,'0')}</small><strong>{prev.data.title}</strong></a>
+            ) : null}
+            {next ? (
+              <a class="lesson-next-item" href={`/learn/${next.id}/`}><small>UP NEXT · LESSON {String(next.data.order).padStart(2,'0')}</small><strong>{next.data.title} <span aria-hidden="true">→</span></strong></a>
+            ) : (
+              <a class="lesson-next-item" href="/patterns/"><small>YOU DID IT!</small><strong>Explore free crochet patterns <span aria-hidden="true">→</span></strong></a>
+            )}
+          </>
+        )}
+      </nav>
+    </article>
+    <aside class="lesson-aside" aria-label="Lesson navigation">
+      <div class="lesson-aside-card"><span aria-hidden="true" class="lesson-aside-heart">♡</span><strong>At your own pace</strong><p>Try the stitches, count your loops, and revisit any step when you need to.</p><a href="/learn/">See every lesson <span aria-hidden="true">↗</span></a></div>
+      {navigation.length > 0 && <nav class="lesson-toc" aria-label="On this page"><strong>IN THIS LESSON</strong>{navigation.map((heading) => <a href={`#${heading.slug}`}>{heading.text}</a>)}</nav>}
+    </aside>
+  </div>
+</BaseLayout>
+
+<style>
+  .lesson-crumbs{display:flex;gap:10px;align-items:center;padding-block:24px;flex-wrap:wrap;font-size:11px;color:#927b7c}.lesson-crumbs a:hover{color:var(--berry)}
+  .lesson-hero{background:radial-gradient(circle at 85% 20%,#f4ddd9 0,transparent 34%),linear-gradient(125deg,#eaf0e3,#faf2e8);overflow:hidden}
+  .lesson-header-inner{position:relative;padding-block:66px 72px}.lesson-header-inner>div{position:relative;max-width:850px;z-index:1}
+  .lesson-kicker{font-size:11px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:#94596f}
+  .lesson-hero h1{font-size:clamp(38px,5.5vw,66px);line-height:1.11;letter-spacing:-.055em;margin:19px 0 20px;max-width:860px}
+  .lesson-hero p{max-width:650px;font-size:16px;color:#6d6660;line-height:1.8}.lesson-chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:25px}.lesson-chips span{background:#fffaf3c4;border:1px solid #dfd8cd;color:#77666a;border-radius:999px;font-size:11px;padding:9px 15px;font-weight:700}
+  .lesson-hero-decor{position:absolute;right:30px;top:11%;font-size:clamp(190px,24vw,340px);line-height:1;color:#bd8598;opacity:.10}
+  .lesson-layout{display:grid;grid-template-columns:minmax(0,730px) minmax(220px,280px);gap:clamp(30px,5vw,90px);align-items:start;padding-block:55px 95px}
+  .lesson-main{min-width:0}.lesson-intro{display:flex;align-items:start;gap:16px;background:#f4f0e7;border:1px solid #e7dfd0;border-radius:16px;padding:20px 23px;margin-bottom:30px}.lesson-intro>span{font-size:31px;line-height:1;color:#ae7185}.lesson-intro p{font-size:13px;line-height:1.8;color:#766a67;margin:0}.lesson-intro a,.lesson-body a{color:var(--berry);text-decoration:underline;text-underline-offset:3px}
+  .lesson-body{font-size:15px;line-height:1.95}.lesson-body :global(h2){font-family:Georgia,serif;font-size:clamp(26px,3vw,35px);font-weight:500;letter-spacing:-.045em;scroll-margin-top:25px;margin-top:40px}.lesson-body :global(h3){scroll-margin-top:25px}.lesson-body :global(li){line-height:1.8}.lesson-body :global(strong){color:#4c4040}.lesson-body :global(table){display:block;overflow-x:auto;border-collapse:collapse;width:100%;font-size:13px;margin:27px 0}.lesson-body :global(th),.lesson-body :global(td){border-bottom:1px solid #e8d9d1;text-align:left;padding:12px 13px;min-width:100px}.lesson-body :global(th){background:#f1ede5;color:#65565b}.lesson-body :global(blockquote){border-left:3px solid #ac8290;background:#f9eee8;border-radius:0 12px 12px 0;padding:14px 24px}
+  .lesson-aside{position:sticky;top:28px}.lesson-aside-card{background:#f8e9e4;border-radius:18px;padding:26px;text-align:center}.lesson-aside-heart{font:52px Georgia,serif;color:#ba8191;display:block;line-height:1}.lesson-aside-card strong{font:500 25px Georgia,serif;display:block;margin:10px 0}.lesson-aside-card p{font-size:13px;line-height:1.75;color:#7c6c69}.lesson-aside-card a{font-size:12px;font-weight:750;color:var(--berry)}
+  .lesson-toc{border-top:1px solid #e8ddd5;margin-top:32px;padding-top:23px;display:flex;flex-direction:column;gap:13px}.lesson-toc>strong{font-size:11px;color:#9a7380;letter-spacing:.13em}.lesson-toc a{font-size:12px;line-height:1.6;color:#6a5e5f}.lesson-toc a:hover{text-decoration:underline;color:var(--berry)}
+  .lesson-practice{margin:53px 0 30px;background:#edf1e8;border-radius:20px;padding:30px}.lesson-practice h2{font:500 clamp(27px,3vw,36px)/1.2 Georgia,serif;letter-spacing:-.04em;margin:14px 0}.lesson-practice h2 em{color:var(--berry)}.lesson-practice p{font-size:13px;line-height:1.8;color:#697069;max-width:510px}.lesson-practice .btn{margin-top:9px}
+  .lesson-next{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin-top:33px}.lesson-next-item{display:flex;flex-direction:column;gap:11px;padding:20px;border:1px solid #e9d9d0;border-radius:13px;background:#fffcf8}.lesson-next-item:only-child{grid-column:1/-1}.lesson-next-item:hover{border-color:#c18a97;background:#fff7f2}.lesson-next-item small{font-size:10px;font-weight:800;letter-spacing:.13em;color:#9a7082}.lesson-next-item strong{font:500 19px/1.35 Georgia,serif}
+  @media(max-width:850px){.lesson-layout{grid-template-columns:1fr;padding-block:40px 72px}.lesson-aside{position:static;display:none}.lesson-header-inner{padding-block:45px 53px}}
+  @media(max-width:550px){.lesson-hero h1{font-size:clamp(34px,9vw,49px)}.lesson-hero p{font-size:14px}.lesson-chips{gap:7px}.lesson-chips span{padding:8px 10px}.lesson-intro{padding:16px}.lesson-body{font-size:14px}.lesson-practice{padding:24px 20px}.lesson-next{grid-template-columns:1fr}}
+</style>

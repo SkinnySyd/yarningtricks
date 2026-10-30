@@ -25,4 +25,20 @@ const patterns = defineCollection({
     draft: z.boolean().default(false),
   }),
 });
-export const collections = { patterns };
+
+const lessons = defineCollection({
+  loader: glob({ base: './src/content/lessons', pattern: '**/*.{md,mdx}' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    order: z.number().int().positive(),
+    duration: z.string(),
+    focus: z.string(),
+    level: z.enum(['Absolute beginner', 'Beginner', 'Growing confidence']),
+    practicePath: z.string().startsWith('/').optional(),
+    practiceLabel: z.string().optional(),
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { patterns, lessons };
