@@ -1,17 +1,26 @@
-# Thread & Petal: Giraffe + Seahorse patterns
+# Thread & Petal: Panda + Toucan patterns
 
-Install by extracting into your existing Astro project root, preserving paths.
+These two MDX articles follow the current project schema and are designed to be added on top of the current `main` repository.
 
-- Adds two `src/content/patterns/*.mdx` articles and their hero/close-up images.
-- Updates only `src/components/StitchHelp.astro` to include lesson suggestions for the two new pattern slugs.
-- Does **not** edit your seagull or reindeer articles, home page, or content schema.
+## Files included
 
-Routes:
-- `/patterns/meadow-giraffe-amigurumi/`
-- `/patterns/coastal-seahorse-amigurumi/`
+- `src/content/patterns/woodland-panda-amigurumi.mdx`
+- `src/content/patterns/tropical-toucan-amigurumi.mdx`
+- `src/components/StitchHelp.astro` (adds the panda and toucan while retaining all previous entries)
+- 2 finished-project hero images + 2 detail crops under `public/images/`
 
-Run `npm ci && npm run check && npm run build`, then commit/push.
+## Install
 
-**Editorial review before publishing:** The book's giraffe snout round 7 appears to omit a printed repetition; the intended `[34]` count is preserved by repeating the shaping group twice. The book's seahorse head round 8 has its own asymmetric shaping; keep the given counts. Both articles were prepared from the source but not physically test crocheted. The new illustrations depict styling concepts and may differ in details from the finished project.
+1. Unzip at the root of the Astro project (or copy `src` and `public` contents to the matching directories).
+2. Replace `src/components/StitchHelp.astro` with the included version if your current file still matches the scanned version. If you have changed it in the meantime, merge just the two new entries.
+3. Run `npm ci`, then `npm run build`.
+4. Check the site at `/patterns/woodland-panda-amigurumi/` and `/patterns/tropical-toucan-amigurumi/` before publishing.
+5. Commit and push.
 
-Original designers are credited inside each article. Keep your permission documentation.
+## Source verification note (not site copy)
+
+The source is Zoomigurumi 9 by Amigurumipatterns.net. Toco the Toucan was designed by Airali Design (Ilaria Caliri), pp. 24–28; Bobo the Panda by DIY Fluffies, pp. 34–37.
+
+The panda hind-leg section *skips Round 23* in the source PDF (Round 22 ends at 18 stitches, while Round 24 performs six decreases to reach 12). The page flags this omission; ask the designer or test-crochet to verify before treating it as complete.
+
+Visuals are newly generated editorial images. Their proportions and stitch placement are not evidence of completed physical test samples. Actual project output requires a hands-on check.
