@@ -5,5 +5,5 @@ export const siteConfig = {
   description: 'Free, beginner-friendly crochet patterns, stitch guides, and cozy little projects.',
   author: 'Thread & Petal',
   pinterestUrl: '', // TODO (Optional) 
-  contactEmail: 'contact@threadnpetal.com',
+  contactEmail: 'contact@threadnpetal.blog',
 };
