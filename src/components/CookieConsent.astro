@@ -179,7 +179,7 @@ const measurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-JBSY3YJZ0M'
 
     // Footer link remains available after both consent and rejection.
     document.addEventListener('click', (event) => {
-      if (event.target.closest('#tp-cookie-settings')) {
+      if (event.target.closest('#tp-cookie-settings, #tp-privacy-cookie-settings')) {
         showPreferences();
       }
     });
