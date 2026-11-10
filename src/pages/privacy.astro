@@ -2,12 +2,12 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { siteConfig } from '../site-config';
 
-const updatedOn = 'November 9, 2026';
+const updatedOn = 'November 10, 2026';
 ---
 
 <BaseLayout
   title="Privacy Policy"
-  description="Learn how Thread & Petal handles website visits, Cloudflare analytics, email enquiries and privacy requests."
+  description="How Thread & Petal handles website visits, optional Google Analytics, cookies, email enquiries and privacy requests."
 >
   <section class="page-heading page-heading-sage">
     <div class="site-container">
@@ -22,11 +22,11 @@ const updatedOn = 'November 9, 2026';
       <span aria-hidden="true" class="policy-summary-icon">♡</span>
       <div>
         <strong>Privacy at a glance</strong>
-        <p>You can enjoy our crochet tutorials without creating an account. We use Cloudflare to host and protect the site, Cloudflare Web Analytics to understand overall site performance, and email to respond when you write to us. We do not currently run third-party advertising.</p>
+        <p>You can enjoy our crochet tutorials without creating an account. We use Cloudflare to host and protect the site, Cloudflare Web Analytics to understand overall site performance, and email to respond when you write to us. Google Analytics is optional and loads only after you agree to analytics cookies. We do not currently run third-party advertising.</p>
       </div>
     </div>
 
-    <p class="policy-updated">Last updated: <time datetime="2026-11-09">{updatedOn}</time></p>
+    <p class="policy-updated">Last updated: <time datetime="2026-11-10">{updatedOn}</time></p>
 
     <nav class="policy-nav" aria-label="Privacy policy sections">
       <strong>Jump to a section</strong>
@@ -65,10 +65,13 @@ const updatedOn = 'November 9, 2026';
       </section>
 
       <section id="analytics">
-        <h2>4. Cloudflare Web Analytics</h2>
+        <h2>4. Website analytics</h2>
         <p>We use <strong>Cloudflare Web Analytics</strong> to understand overall site usage and performance, such as page views and page-loading measurements. These insights help us identify popular crochet tutorials and improve how the website works.</p>
         <p>Cloudflare states that its Web Analytics service is privacy-focused, does not collect or use visitors’ personal data, and does not track individual visitors across websites. This analytics service does not rely on cookies to follow individual visitors.</p>
         <p>Cloudflare’s website-delivery and security processing is separate from these Web Analytics measurements and may involve the technical information described above.</p>
+        <h3>Optional Google Analytics</h3>
+        <p>With your consent, we use <strong>Google Analytics 4</strong> (Google LLC; measurement ID <code>G-JBSY3YJZ0M</code>) to understand visits, popular pages and interactions with our crochet guides. Google may receive device and browser information, page URLs, interaction events and online identifiers, and may process information internationally. Google Analytics can set cookies such as <code>_ga</code> and <code>_ga_*</code>, typically lasting up to two years unless cleared or changed by Google or your browser settings.</p>
+        <p>We do not load Google Analytics until you accept optional analytics. Rejecting does not block any patterns or lessons. You may change or withdraw your choice at any time using the <strong>Cookie preferences</strong> control in the footer. Learn more in <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google's Privacy Policy</a>.</p>
       </section>
 
       <section id="email">
@@ -81,7 +84,9 @@ const updatedOn = 'November 9, 2026';
       <section id="cookies">
         <h2>6. Cookies and similar technologies</h2>
         <p>Cloudflare Web Analytics does not need cookies to track individual visitors. Some features of Cloudflare’s website security or delivery services may use strictly necessary cookies or similar signals, depending on the protections enabled.</p>
-        <p>We do not currently use advertising cookies, and our website source does not enable Google AdSense. If we add non-essential cookies or tracking technologies later, we will update this policy and implement the necessary consent choices before using them where required by law.</p>
+        <p>We store an essential preference named <code>thread-petal-consent-v1</code> in your browser's local storage to remember whether you accept optional Google Analytics. This choice expires after about six months, after which we ask again. It remains on your device and is not sent to our server as part of a visitor account.</p>
+        <p>When you consent to Google Analytics, Google may set <code>_ga</code> and related analytics cookies. We do not load Google Analytics before consent. You can reject tracking, or withdraw consent later through the <button type="button" id="tp-privacy-cookie-settings" class="policy-consent-button">Cookie preferences</button> control. On withdrawal, the site prevents further analytics tracking and attempts to remove Google Analytics cookies set on our domain; it cannot retract data already sent.</p>
+        <p>We do not currently use advertising cookies, and our website source does not enable Google AdSense. If we add advertising in the future, we will update this policy and add the appropriate advertising consent solution.</p>
       </section>
 
       <section id="advertising">
@@ -97,13 +102,13 @@ const updatedOn = 'November 9, 2026';
 
       <section id="why-process">
         <h2>9. Why we process information</h2>
-        <p>We process relevant technical information to operate and secure the website, and correspondence to respond to visitors who contact us. Under applicable laws, processing may rely on legitimate interests where permitted, consent where required, or the need to comply with a legal obligation. We will not introduce optional tracking or advertising without reviewing the relevant requirements.</p>
+        <p>We process relevant technical information to operate and secure the website, and correspondence to respond to visitors who contact us. Under applicable laws, processing may rely on legitimate interests where permitted, consent where required, or the need to comply with a legal obligation. Our optional Google Analytics use relies on your consent, which you may withdraw using the footer preferences control. Advertising remains disabled.</p>
         <p>Cloudflare Web Analytics uses aggregated performance insights as described above, rather than a visitor account or an individual browsing profile created by Thread & Petal.</p>
       </section>
 
       <section id="sharing-retention">
         <h2>10. Sharing and retention</h2>
-        <p>We do not sell visitor information to advertisers or data brokers. Information can be processed by the services needed to operate this site, including Cloudflare and our destination email inbox provider. We may also disclose information where legally required.</p>
+        <p>We do not sell visitor information to advertisers or data brokers. Information can be processed by the services needed to operate this site, including Cloudflare, Google Analytics when you consent, and our destination email inbox provider. We may also disclose information where legally required.</p>
         <p>We keep email correspondence only for as long as reasonably needed to address the enquiry, maintain appropriate records or comply with legal duties, after which it is deleted or otherwise handled according to applicable retention practices. Technical records managed by our service providers are subject to their service-specific retention periods and arrangements.</p>
       </section>
 
@@ -139,6 +144,8 @@ const updatedOn = 'November 9, 2026';
 </BaseLayout>
 
 <style>
+  .policy-consent-button { background: transparent; border: 0; padding: 0; color: #805764; font: inherit; text-decoration: underline; cursor: pointer; }
+  .policy-consent-button:focus-visible { outline: 2px solid #805764; outline-offset: 3px; }
   .policy-wrap{padding-top:48px;padding-bottom:100px;max-width:860px}
   .policy-summary{background:#f4e9e3;border:1px solid #ead9d1;border-radius:18px;padding:23px 26px;display:flex;gap:18px;align-items:flex-start}
   .policy-summary-icon{font-family:Georgia,serif;font-size:33px;color:#b66c83;line-height:1}

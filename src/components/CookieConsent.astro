@@ -1,0 +1,228 @@
+---
+/**
+ * Simple opt-in Google Analytics consent for Thread & Petal.
+ * This is NOT a certified ad-tech CMP and must not be used as the sole
+ * consent solution for AdSense serving in regulated markets.
+ */
+const measurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-JBSY3YJZ0M';
+---
+
+<aside
+  id="tp-cookie-consent"
+  class="tp-cookie-consent"
+  aria-label="Cookie choices"
+  data-measurement-id={measurementId}
+  hidden
+>
+  <div class="tp-consent-panel">
+    <div class="tp-consent-copy">
+      <p class="tp-consent-eyebrow">A LITTLE NOTE ABOUT PRIVACY</p>
+      <h2>Cookies, with care.</h2>
+      <p>
+        Essential site features work without optional tracking. With your permission,
+        Google Analytics helps us understand which crochet guides are useful.
+        You can say no and still enjoy every free pattern.
+        <a href="/privacy/">Read our privacy policy</a>.
+      </p>
+    </div>
+
+    <div class="tp-consent-actions" id="tp-consent-actions">
+      <button type="button" class="tp-button tp-button-subtle" data-tp-choice="reject">
+        Reject optional
+      </button>
+      <button type="button" class="tp-button tp-button-outline" data-tp-choice="preferences"
+        aria-controls="tp-consent-preferences" aria-expanded="false">
+        Preferences
+      </button>
+      <button type="button" class="tp-button tp-button-primary" data-tp-choice="accept">
+        Accept analytics
+      </button>
+    </div>
+
+    <div class="tp-consent-preferences" id="tp-consent-preferences" hidden>
+      <div class="tp-consent-setting">
+        <div>
+          <strong>Necessary storage</strong>
+          <span>Remember your cookie choice and support site security.</span>
+        </div>
+        <span class="tp-always-on">Always on</span>
+      </div>
+      <label class="tp-consent-setting" for="tp-allow-analytics">
+        <span>
+          <strong>Google Analytics</strong>
+          <span>Optional page-view and interaction statistics. Google may set analytics cookies if you agree.</span>
+        </span>
+        <input type="checkbox" id="tp-allow-analytics" />
+      </label>
+      <button type="button" class="tp-button tp-button-primary tp-save" data-tp-choice="save">
+        Save preferences
+      </button>
+    </div>
+  </div>
+</aside>
+
+<script is:inline>
+  (() => {
+    const banner = document.getElementById('tp-cookie-consent');
+    if (!banner) return;
+
+    const id = banner.dataset.measurementId;
+    const storageKey = 'thread-petal-consent-v1';
+    const maxAgeMs = 180 * 24 * 60 * 60 * 1000; // Ask again after six months.
+    const preferences = document.getElementById('tp-consent-preferences');
+    const toggleButton = banner.querySelector('[data-tp-choice="preferences"]');
+    const analyticsToggle = document.getElementById('tp-allow-analytics');
+    let analyticsLoaded = false;
+    let currentChoice = null;
+
+    // No Google request is sent before analytics consent.
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = window.gtag || function () {
+      window.dataLayer.push(arguments);
+    };
+    window.gtag('consent', 'default', {
+      analytics_storage: 'denied',
+      ad_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied'
+    });
+
+    function savedChoice() {
+      try {
+        const value = JSON.parse(localStorage.getItem(storageKey) || 'null');
+        if (!value || typeof value.analytics !== 'boolean' || !Number.isFinite(value.savedAt)) return null;
+        if (value.savedAt > Date.now() || Date.now() - value.savedAt > maxAgeMs) return null;
+        return value.analytics;
+      } catch (_) {
+        return null; // Storage unavailable: default to no tracking.
+      }
+    }
+
+    function storeChoice(allowed) {
+      try {
+        localStorage.setItem(storageKey, JSON.stringify({
+          analytics: allowed,
+          savedAt: Date.now()
+        }));
+      } catch (_) {
+        // If storage is disabled, this choice applies only until the next page load.
+      }
+    }
+
+    function startAnalytics() {
+      if (analyticsLoaded || !/^G-[A-Z0-9]+$/i.test(id || '')) return;
+      analyticsLoaded = true;
+      window['ga-disable-' + id] = false;
+      window.gtag('consent', 'update', { analytics_storage: 'granted' });
+      window.gtag('js', new Date());
+      window.gtag('config', id);
+
+      const script = document.createElement('script');
+      script.async = true;
+      script.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(id);
+      document.head.appendChild(script);
+    }
+
+    function clearAnalyticsCookies() {
+      const hostname = location.hostname.replace(/^www\./, '');
+      const domains = ['', hostname, '.' + hostname];
+      const cookieNames = document.cookie.split(';').map((cookie) => cookie.split('=')[0].trim());
+      for (const name of cookieNames) {
+        if (!/^(_ga($|_)|_gid$|_gat($|_))/.test(name)) continue;
+        for (const domain of domains) {
+          document.cookie = name + '=; Max-Age=0; path=/; SameSite=Lax' +
+            (domain ? '; domain=' + domain : '');
+        }
+      }
+    }
+
+    function setDetailsVisible(visible) {
+      preferences.hidden = !visible;
+      toggleButton.setAttribute('aria-expanded', String(visible));
+      if (visible) analyticsToggle.checked = currentChoice === true;
+    }
+
+    function showPreferences() {
+      banner.hidden = false;
+      setDetailsVisible(true);
+      analyticsToggle.focus();
+    }
+
+    function choose(allowed) {
+      const wasLoaded = analyticsLoaded;
+      currentChoice = allowed;
+      storeChoice(allowed);
+      banner.hidden = true;
+      setDetailsVisible(false);
+
+      if (allowed) {
+        startAnalytics();
+      } else {
+        window.gtag('consent', 'update', { analytics_storage: 'denied' });
+        window['ga-disable-' + id] = true;
+        clearAnalyticsCookies();
+        // If GA ran earlier on this page, unload it completely immediately.
+        if (wasLoaded) location.reload();
+      }
+    }
+
+    banner.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-tp-choice]');
+      if (!button) return;
+      switch (button.dataset.tpChoice) {
+        case 'accept': choose(true); break;
+        case 'reject': choose(false); break;
+        case 'preferences': setDetailsVisible(preferences.hidden); break;
+        case 'save': choose(analyticsToggle.checked); break;
+      }
+    });
+
+    // Footer link remains available after both consent and rejection.
+    document.addEventListener('click', (event) => {
+      if (event.target.closest('#tp-cookie-settings, #tp-privacy-cookie-settings')) {
+        showPreferences();
+      }
+    });
+
+    currentChoice = savedChoice();
+    if (currentChoice === null) {
+      banner.hidden = false;
+    } else if (currentChoice) {
+      startAnalytics();
+    }
+  })();
+</script>
+
+<style>
+  .tp-cookie-consent[hidden], .tp-consent-preferences[hidden] { display: none !important; }
+  .tp-cookie-consent { position: fixed; z-index: 1000; bottom: 18px; left: 18px; right: 18px; max-width: 940px; margin: 0 auto; }
+  .tp-consent-panel { background: #fffaf4; color: #493e3c; border: 1px solid #e6d8cf; border-radius: 18px; box-shadow: 0 12px 40px rgba(52, 38, 32, .19); padding: 23px 27px; }
+  .tp-consent-eyebrow { font-size: 10px; letter-spacing: .15em; font-weight: 700; color: #9a6673; margin: 0 0 5px; }
+  .tp-consent-copy h2 { margin: 0 0 7px; font-family: Georgia, serif; font-weight: 500; font-size: 24px; }
+  .tp-consent-copy p:not(.tp-consent-eyebrow) { font-size: 14px; line-height: 1.6; margin: 0; max-width: 780px; }
+  .tp-consent-copy a { color: #7f4c60; text-decoration: underline; text-underline-offset: 2px; }
+  .tp-consent-actions { display: flex; gap: 9px; justify-content: flex-end; flex-wrap: wrap; margin-top: 16px; }
+  .tp-button { appearance: none; border-radius: 9px; font: inherit; font-size: 13px; font-weight: 650; min-height: 40px; padding: 9px 16px; cursor: pointer; border: 1px solid transparent; }
+  .tp-button:focus-visible { outline: 3px solid #6c8264; outline-offset: 2px; }
+  .tp-button-subtle { color: #554d4b; background: #f1eae4; }
+  .tp-button-outline { color: #695355; background: transparent; border-color: #ccb6ad; }
+  .tp-button-primary { color: white; background: #805764; }
+  .tp-button-primary:hover { background: #68404e; }
+  .tp-consent-preferences { border-top: 1px solid #e6d8cf; padding-top: 15px; margin-top: 17px; }
+  .tp-consent-setting { display: flex; gap: 15px; justify-content: space-between; align-items: center; border-radius: 8px; padding: 11px 4px; }
+  .tp-consent-setting strong { display: block; font-size: 14px; margin-bottom: 3px; }
+  .tp-consent-setting span span, .tp-consent-setting div span { display: block; font-size: 12px; color: #6c625f; line-height: 1.5; }
+  .tp-always-on { color: #52684e; font-weight: 700; font-size: 12px; white-space: nowrap; }
+  .tp-consent-setting input { width: 20px; height: 20px; accent-color: #805764; flex-shrink: 0; }
+  .tp-save { margin-top: 9px; }
+  @media (max-width: 600px) {
+    .tp-cookie-consent { left: 8px; right: 8px; bottom: 8px; }
+    .tp-consent-panel { padding: 18px; max-height: 85vh; overflow-y: auto; }
+    .tp-consent-actions { justify-content: stretch; }
+    .tp-consent-actions .tp-button { flex: 1 1 130px; }
+    .tp-consent-copy h2 { font-size: 21px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tp-cookie-consent, .tp-button { scroll-behavior: auto; }
+  }
+</style>
