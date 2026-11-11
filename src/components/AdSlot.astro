@@ -10,7 +10,7 @@ const slot = import.meta.env.PUBLIC_ADSENSE_SLOT;
 // Never output ads until the publisher has configured a certified CMP.
 const enabled = import.meta.env.PUBLIC_ENABLE_ADS === 'true' &&
   import.meta.env.PUBLIC_ADSENSE_CMP_READY === 'true' &&
-  /^ca-pub-\\d{16}$/.test(client || '') && Boolean(slot);
+  /^ca-pub-[0-9]{16}$/.test(client || '') && Boolean(slot);
 ---
 {enabled && <div class:list={['ad-container', placement === 'sidebar' && 'ad-sidebar']} aria-label="Advertisement">
   <span class="ad-label">Advertisement</span>
