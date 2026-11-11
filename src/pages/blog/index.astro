@@ -6,7 +6,14 @@ const articles = (await getCollection('journal', ({ data }) => !data.draft))
   .sort((a, b) => a.data.order - b.data.order || b.data.publishedDate.valueOf() - a.data.publishedDate.valueOf());
 const patterns = await getCollection('patterns', ({ data }) => !data.draft);
 const lead = articles.find((article) => article.data.featured) ?? articles[0];
-const more = articles.filter((article) => article.id !== lead?.id);
+const more = articles.filter((article) => article.id !== lead?.id)
+  .sort((a, b) => b.data.publishedDate.valueOf() - a.data.publishedDate.valueOf() || b.data.order - a.data.order);
+const topics = [
+  { name: 'Starting stitches', detail: 'Make the basics feel easier' },
+  { name: 'The little details', detail: 'Finishing, shaping & fixing' },
+  { name: 'Flowers & gifts', detail: 'Lovely decorative ideas' },
+  { name: 'Making moments', detail: 'Thoughtful handmade inspiration' },
+];
 const selectedPatterns = ['sunflower-flower-pen', 'woodland-panda-amigurumi', 'seaside-seagull-amigurumi']
   .flatMap((id) => patterns.filter((pattern) => pattern.id === id));
 const dateLabel = (value: Date) => value.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
@@ -46,9 +53,33 @@ const dateLabel = (value: Date) => value.toLocaleDateString('en-US', { month: 's
   <section class="site-container journal-latest" id="latest-notes" aria-labelledby="journal-latest-title">
     <div class="journal-heading-row"><div><span class="eyebrow">FRESHLY TUCKED INTO THE BASKET</span><h2 id="journal-latest-title">More little <em>notes to love.</em></h2><p>Ideas for the making, the mending, and those finishing touches.</p></div><span class="journal-heading-flower" aria-hidden="true">✻</span></div>
     {more.length > 0 ? (
-      <div class="journal-story-grid">
+      <>
+        <div class="journal-discovery" aria-label="Find a Journal story">
+          <div class="journal-discovery-intro">
+            <div><span class="eyebrow">FIND YOUR KIND OF LOVELY</span><h3>Little secrets, <em>just for you.</em></h3></div>
+            <p>Looking for a quick fix, a new stitch, or a thoughtful idea? Choose a topic or search the making table.</p>
+          </div>
+          <div class="journal-filter-controls">
+            <div class="journal-topic-filters" role="group" aria-label="Filter Journal stories by topic">
+              <button type="button" class="journal-topic-button is-active" data-journal-filter="" aria-pressed="true">All notes <span>{more.length}</span></button>
+              {topics.map((topic) => (
+                <button type="button" class="journal-topic-button" data-journal-filter={topic.name} aria-pressed="false" title={topic.detail}>
+                  {topic.name} <span>{more.filter((article) => article.data.category === topic.name).length}</span>
+                </button>
+              ))}
+            </div>
+            <div class="journal-search-wrap">
+              <label class="visually-hidden" for="journal-search">Search Journal notes</label>
+              <span aria-hidden="true">⌕</span>
+              <input type="search" id="journal-search" placeholder="Search tips, yarn, stitches…" autocomplete="off" />
+            </div>
+          </div>
+          <p class="journal-filter-count" role="status" aria-live="polite"><span id="journal-visible-count">{more.length}</span> notes in the basket <span aria-hidden="true">✳</span></p>
+        </div>
+        <div class="journal-story-grid" id="journal-story-list">
+
         {more.map((article) => (
-          <article class="journal-story-card">
+          <article class="journal-story-card" data-journal-story data-topic={article.data.category} data-search={[article.data.title, article.data.description, article.data.category].join(' ').toLowerCase()}>
             <a class="journal-story-image" href={'/blog/' + article.id + '/'} aria-label={'Read ' + article.data.title}>
               <img src={article.data.image} alt={article.data.imageAlt} width="640" height="700" loading="lazy" decoding="async" />
               <span class="journal-card-arrow" aria-hidden="true">↗</span>
@@ -60,6 +91,8 @@ const dateLabel = (value: Date) => value.toLocaleDateString('en-US', { month: 's
           </article>
         ))}
       </div>
+      <p class="journal-empty" id="journal-no-results" hidden>No notes matched that search. Try another word or choose “All notes” to explore everything. ♡</p>
+      </>
     ) : <p class="journal-empty">More notes are finding their way to the making table. Until then, enjoy our favorite patterns below.</p>}
   </section>
 
@@ -85,6 +118,39 @@ const dateLabel = (value: Date) => value.toLocaleDateString('en-US', { month: 's
     <a class="btn btn-outline" href="/learn/">Visit the crochet school <span aria-hidden="true">↗</span></a>
   </section>
 </BaseLayout>
+<script>
+  const search = document.querySelector<HTMLInputElement>('#journal-search');
+  const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-journal-filter]'));
+  const stories = Array.from(document.querySelectorAll<HTMLElement>('[data-journal-story]'));
+  const count = document.querySelector<HTMLElement>('#journal-visible-count');
+  const empty = document.querySelector<HTMLElement>('#journal-no-results');
+  const params = new URLSearchParams(window.location.search);
+  let topic = params.get('topic') || '';
+  if (topic && !buttons.some((button) => button.dataset.journalFilter === topic)) topic = '';
+  function applyFilters() {
+    const term = (search?.value || '').toLowerCase().trim();
+    let visible = 0;
+    stories.forEach((story) => {
+      const match = (!topic || story.dataset.topic === topic)
+        && (!term || (story.dataset.search || '').includes(term));
+      story.hidden = !match;
+      if (match) visible += 1;
+    });
+    for (const button of buttons) {
+      const active = (button.dataset.journalFilter || '') === topic;
+      button.classList.toggle('is-active', active);
+      button.setAttribute('aria-pressed', String(active));
+    }
+    if (count) count.textContent = String(visible);
+    if (empty) empty.hidden = visible !== 0;
+  }
+  buttons.forEach((button) => button.addEventListener('click', () => {
+    topic = button.dataset.journalFilter || '';
+    applyFilters();
+  }));
+  search?.addEventListener('input', applyFilters);
+  applyFilters();
+</script>
 
 <style>
   .journal-hero{overflow:hidden;background:radial-gradient(circle at 87% 20%,#f8d7d6 0,transparent 34%),linear-gradient(120deg,#fff1e7 0%,#f9ebe6 56%,#f5e3e8 100%)}
@@ -132,4 +198,23 @@ const dateLabel = (value: Date) => value.toLocaleDateString('en-US', { month: 's
   @media(max-width:650px){.journal-hero-inner{display:block;padding-block:65px 59px}.journal-hero-art{display:none}.journal-hero h1{font-size:clamp(44px,12vw,65px)}.journal-hero p{font-size:15px}.journal-feature{padding-block:62px}.journal-feature-grid{grid-template-columns:1fr;gap:27px}.journal-feature-copy h2{font-size:36px}.journal-latest{padding-bottom:70px}.journal-story-grid{grid-template-columns:1fr;gap:44px}.journal-story-image{aspect-ratio:1.24/1}.journal-story-card h3{font-size:26px}.journal-heading-flower{display:none}.journal-heading-row{align-items:start;flex-direction:column}.journal-inspiration{padding-block:65px}.journal-pattern-grid{grid-template-columns:1fr;gap:18px}.journal-pattern-tile{display:grid;grid-template-columns:125px 1fr;min-height:140px}.journal-pattern-tile img{height:100%;min-height:145px}.journal-pattern-tile>span{align-content:center;padding:15px;gap:6px}.journal-pattern-tile strong{font-size:19px}.journal-last-note{padding-block:78px 90px}}
   @media(max-width:385px){.journal-pattern-tile{grid-template-columns:100px 1fr}.journal-pattern-tile strong{font-size:17px}}
   @media(prefers-reduced-motion:reduce){.journal-feature-image img,.journal-story-image img,.journal-pattern-tile img{transition:none}}
+  .journal-discovery{background:linear-gradient(140deg,#fff9f3,#f9eeed);border:1px solid #eaddd5;padding:27px 30px;border-radius:22px;margin-bottom:38px}
+  .journal-discovery-intro{display:flex;justify-content:space-between;align-items:center;gap:24px;margin-bottom:20px}
+  .journal-discovery-intro h3{font:500 29px/1.25 Georgia,serif;letter-spacing:-.035em;margin:8px 0 0}
+  .journal-discovery-intro h3 em{color:var(--berry)}
+  .journal-discovery-intro p{font-size:13px;line-height:1.65;color:var(--muted);max-width:330px;margin:0}
+  .journal-filter-controls{display:flex;justify-content:space-between;align-items:start;gap:14px;flex-wrap:wrap}
+  .journal-topic-filters{display:flex;gap:8px;flex-wrap:wrap;flex:1}
+  .journal-topic-button{font:650 12px/1.3 ui-sans-serif,system-ui,sans-serif;cursor:pointer;color:#825e6c;background:#fffaf4;border:1px solid #e3ccd0;border-radius:100px;padding:11px 13px;display:flex;align-items:center;gap:8px}
+  .journal-topic-button span{font-size:10px;opacity:.78}
+  .journal-topic-button:hover{border-color:#ac7a8a}
+  .journal-topic-button.is-active{color:#fff;background:var(--berry);border-color:var(--berry)}
+  .journal-topic-button:focus-visible{outline:3px solid var(--berry);outline-offset:3px}
+  .journal-search-wrap{position:relative;min-width:min(100%,235px);flex:0 1 260px}
+  .journal-search-wrap>span{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:#967887;font-size:25px;pointer-events:none}
+  .journal-search-wrap input{width:100%;height:44px;border-radius:100px;border:1px solid #e3ccd0;background:#fffaf4;color:var(--ink);font:400 12px system-ui,sans-serif;padding:0 13px 0 39px}
+  .journal-filter-count{color:#977a83;font-size:12px;margin:18px 0 0}
+  .journal-story-card[hidden]{display:none}
+  .journal-empty{background:#fff6f1;padding:25px;border-radius:14px;text-align:center}
+  @media(max-width:650px){.journal-discovery{padding:21px 18px;margin-bottom:30px}.journal-discovery-intro{display:block}.journal-discovery-intro h3{font-size:24px}.journal-discovery-intro p{max-width:none;margin-top:11px}.journal-search-wrap{flex-basis:100%}.journal-topic-button{padding:9px 11px;font-size:11px}}
 </style>
