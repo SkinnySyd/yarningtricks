@@ -25,10 +25,10 @@ const absoluteImage = new URL(image, Astro.site ?? Astro.url.origin).toString();
 // advertising CMP must be configured before advertisements can be enabled.
 const adClient = import.meta.env.PUBLIC_ADSENSE_CLIENT || '';
 const requestedVerificationId = import.meta.env.PUBLIC_ADSENSE_VERIFICATION_ID || adClient;
-const adsenseVerificationId = /^ca-pub-\\d{16}$/.test(requestedVerificationId) ? requestedVerificationId : '';
+const adsenseVerificationId = /^ca-pub-[0-9]{16}$/.test(requestedVerificationId) ? requestedVerificationId : '';
 const adsOn = import.meta.env.PUBLIC_ENABLE_ADS === 'true' &&
   import.meta.env.PUBLIC_ADSENSE_CMP_READY === 'true' &&
-  /^ca-pub-\\d{16}$/.test(adClient);
+  /^ca-pub-[0-9]{16}$/.test(adClient);
 ---
 <!doctype html>
 <html lang="en">
