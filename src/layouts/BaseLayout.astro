@@ -21,9 +21,14 @@ const {
 const fullTitle = title === siteConfig.name ? `${siteConfig.name} — ${siteConfig.tagline}` : `${title} | ${siteConfig.name}`;
 const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).toString();
 const absoluteImage = new URL(image, Astro.site ?? Astro.url.origin).toString();
-const adsOn = import.meta.env.PUBLIC_ENABLE_ADS === 'true' && Boolean(import.meta.env.PUBLIC_ADSENSE_CLIENT);
-const adClient = import.meta.env.PUBLIC_ADSENSE_CLIENT;
-const adsenseVerificationId = import.meta.env.PUBLIC_ADSENSE_VERIFICATION_ID || '';
+// Site ownership verification is independent of ad serving. A certified
+// advertising CMP must be configured before advertisements can be enabled.
+const adClient = import.meta.env.PUBLIC_ADSENSE_CLIENT || '';
+const requestedVerificationId = import.meta.env.PUBLIC_ADSENSE_VERIFICATION_ID || adClient;
+const adsenseVerificationId = /^ca-pub-[0-9]{16}$/.test(requestedVerificationId) ? requestedVerificationId : '';
+const adsOn = import.meta.env.PUBLIC_ENABLE_ADS === 'true' &&
+  import.meta.env.PUBLIC_ADSENSE_CMP_READY === 'true' &&
+  /^ca-pub-[0-9]{16}$/.test(adClient);
 ---
 <!doctype html>
 <html lang="en">
