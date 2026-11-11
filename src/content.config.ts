@@ -50,8 +50,7 @@ const journal = defineCollection({
     updatedDate: z.coerce.date().optional(),
     category: z.enum(['Starting stitches', 'The little details', 'Flowers & gifts', 'Making moments']),
     readTime: z.string(),
-    image: z.string(),
-    imageAlt: z.string(),
+    // Journal notes are intentionally text-led; their visuals must never reuse pattern photos.
     featured: z.boolean().default(false),
     order: z.number().int().positive().default(100),
     relatedPatterns: z.array(z.string()).default([]),
