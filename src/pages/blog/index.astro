@@ -3,148 +3,180 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
 const articles = (await getCollection('journal', ({ data }) => !data.draft))
-  .sort((a, b) => a.data.order - b.data.order || b.data.publishedDate.valueOf() - a.data.publishedDate.valueOf());
-const patterns = await getCollection('patterns', ({ data }) => !data.draft);
-const lead = articles.find((article) => article.data.featured) ?? articles[0];
-const more = articles.filter((article) => article.id !== lead?.id)
-  .sort((a, b) => b.data.publishedDate.valueOf() - a.data.publishedDate.valueOf() || b.data.order - a.data.order);
+  .sort((a, b) =>
+    Number(b.data.featured) - Number(a.data.featured)
+    || b.data.publishedDate.valueOf() - a.data.publishedDate.valueOf()
+    || b.data.order - a.data.order
+  );
+
 const topics = [
-  { name: 'Starting stitches', detail: 'Make the basics feel easier' },
-  { name: 'The little details', detail: 'Finishing, shaping & fixing' },
-  { name: 'Flowers & gifts', detail: 'Lovely decorative ideas' },
-  { name: 'Making moments', detail: 'Thoughtful handmade inspiration' },
+  { name: 'Starting stitches', caption: 'Learn the little how-tos' },
+  { name: 'The little details', caption: 'Shape, finish & troubleshoot' },
+  { name: 'Flowers & gifts', caption: 'Pretty, practical touches' },
+  { name: 'Making moments', caption: 'Ideas worth sharing' },
 ];
-const selectedPatterns = ['sunflower-flower-pen', 'woodland-panda-amigurumi', 'seaside-seagull-amigurumi']
-  .flatMap((id) => patterns.filter((pattern) => pattern.id === id));
-const dateLabel = (value: Date) => value.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+
+const dateLabel = (date: Date) =>
+  date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
 ---
-<BaseLayout title="The Journal — Crochet Stories, Tips & Little Joys" description="Pull up a chair at the Thread & Petal making table for original crochet tips, amigurumi finishing advice, flower inspiration, and thoughtful handmade gift ideas.">
+<BaseLayout
+  title="The Journal — Little Crochet Secrets & Making Notes"
+  description="A cozy crochet notebook from Thread & Petal. Explore original stitch tips, amigurumi fixes, finishing advice, flower ideas and thoughtful making notes."
+>
   <header class="journal-hero">
     <div class="site-container journal-hero-inner">
-      <div>
+      <div class="journal-hero-copy">
         <span class="eyebrow">✿ NOTES FROM THE MAKING TABLE</span>
-        <h1>Welcome to <em>the journal.</em></h1>
-        <p>A soft place for crochet stories, clever little tricks, and the lovely things that happen between the first loop and the last.</p>
-        <a class="journal-hero-link" href="#latest-notes">Come on in <span aria-hidden="true">↘</span></a>
+        <h1>The little secrets <em>behind the lovely.</em></h1>
+        <p>A crochet notebook for the curious maker: clever stitches, small discoveries, gentle fixes, and everything that makes handmade feel like magic.</p>
+        <a href="#journal-notes" class="journal-jump-link">Open the notebook <span aria-hidden="true">↘</span></a>
       </div>
-      <div class="journal-hero-art" aria-hidden="true"><div class="journal-flower">✿</div><span>made slowly<br /><em>with love</em></span></div>
+      <div class="journal-paper-note" aria-hidden="true">
+        <span class="journal-paper-mark">✳</span>
+        <span class="journal-paper-label">THREAD & PETAL / THE JOURNAL</span>
+        <span class="journal-paper-rule"></span>
+        <span class="journal-paper-words">a place for all the<br /><em>little hows & whys</em></span>
+        <span class="journal-paper-trail">♡ &nbsp; ✿ &nbsp; ♡</span>
+      </div>
     </div>
   </header>
 
-  {lead && (
-    <section class="site-container journal-feature" aria-labelledby="journal-feature-title">
-      <span class="eyebrow">A NOTE TO START WITH ✳</span>
-      <article class="journal-feature-grid">
-        <a class="journal-feature-image" href={'/blog/' + lead.id + '/'} aria-label={'Read ' + lead.data.title}>
-          <img src={lead.data.image} alt={lead.data.imageAlt} width="780" height="900" fetchpriority="high" decoding="async" />
-          <span aria-hidden="true">✿</span>
-        </a>
-        <div class="journal-feature-copy">
-          <div class="journal-meta"><span>{lead.data.category}</span><span aria-hidden="true">·</span><span>{lead.data.readTime}</span></div>
-          <h2 id="journal-feature-title"><a href={'/blog/' + lead.id + '/'}>{lead.data.title}</a></h2>
-          <p>{lead.data.description}</p>
-          <span class="journal-date">{dateLabel(lead.data.publishedDate)}</span>
-          <a class="btn btn-primary" href={'/blog/' + lead.id + '/'}>Read the story <span aria-hidden="true">↗</span></a>
-        </div>
-      </article>
-    </section>
-  )}
+  <section class="site-container journal-notes-section" id="journal-notes" aria-labelledby="journal-notes-title">
+    <div class="journal-section-heading">
+      <div>
+        <span class="eyebrow">STITCH SECRETS, GENTLY UNRAVELED</span>
+        <h2 id="journal-notes-title">Pull up a chair. <em>Stay curious.</em></h2>
+        <p>Looking for a quick fix, a new technique, or a little creative inspiration? Every note has something useful to take back to your hook.</p>
+      </div>
+      <div class="journal-count-seal" aria-label={articles.length + ' Journal notes'}>
+        <strong>{String(articles.length).padStart(2, '0')}</strong>
+        <span>little notes</span>
+      </div>
+    </div>
 
-  <section class="site-container journal-latest" id="latest-notes" aria-labelledby="journal-latest-title">
-    <div class="journal-heading-row"><div><span class="eyebrow">FRESHLY TUCKED INTO THE BASKET</span><h2 id="journal-latest-title">More little <em>notes to love.</em></h2><p>Ideas for the making, the mending, and those finishing touches.</p></div><span class="journal-heading-flower" aria-hidden="true">✻</span></div>
-    {more.length > 0 ? (
-      <>
-        <div class="journal-discovery" aria-label="Find a Journal story">
-          <div class="journal-discovery-intro">
-            <div><span class="eyebrow">FIND YOUR KIND OF LOVELY</span><h3>Little secrets, <em>just for you.</em></h3></div>
-            <p>Looking for a quick fix, a new stitch, or a thoughtful idea? Choose a topic or search the making table.</p>
-          </div>
-          <div class="journal-filter-controls">
-            <div class="journal-topic-filters" role="group" aria-label="Filter Journal stories by topic">
-              <button type="button" class="journal-topic-button is-active" data-journal-filter="" aria-pressed="true">All notes <span>{more.length}</span></button>
-              {topics.map((topic) => (
-                <button type="button" class="journal-topic-button" data-journal-filter={topic.name} aria-pressed="false" title={topic.detail}>
-                  {topic.name} <span>{more.filter((article) => article.data.category === topic.name).length}</span>
-                </button>
-              ))}
-            </div>
-            <div class="journal-search-wrap">
-              <label class="visually-hidden" for="journal-search">Search Journal notes</label>
-              <span aria-hidden="true">⌕</span>
-              <input type="search" id="journal-search" placeholder="Search tips, yarn, stitches…" autocomplete="off" />
-            </div>
-          </div>
-          <p class="journal-filter-count" role="status" aria-live="polite"><span id="journal-visible-count">{more.length}</span> notes in the basket <span aria-hidden="true">✳</span></p>
-        </div>
-        <div class="journal-story-grid" id="journal-story-list">
-
-        {more.map((article) => (
-          <article class="journal-story-card" data-journal-story data-topic={article.data.category} data-search={[article.data.title, article.data.description, article.data.category].join(' ').toLowerCase()}>
-            <a class="journal-story-image" href={'/blog/' + article.id + '/'} aria-label={'Read ' + article.data.title}>
-              <img src={article.data.image} alt={article.data.imageAlt} width="640" height="700" loading="lazy" decoding="async" />
-              <span class="journal-card-arrow" aria-hidden="true">↗</span>
-            </a>
-            <div class="journal-meta"><span>{article.data.category}</span><span aria-hidden="true">·</span><span>{article.data.readTime}</span></div>
-            <h3><a href={'/blog/' + article.id + '/'}>{article.data.title}</a></h3>
-            <p>{article.data.description}</p>
-            <a class="journal-read-link" href={'/blog/' + article.id + '/'}>Read the note <span aria-hidden="true">→</span></a>
-          </article>
+    <div class="journal-discovery">
+      <div class="journal-discovery-heading">
+        <span class="eyebrow">FIND YOUR NEXT LITTLE DISCOVERY</span>
+        <p>Browse by topic, or search the notebook.</p>
+      </div>
+      <div class="journal-topic-filters" role="group" aria-label="Filter Journal notes by topic">
+        <button type="button" class="journal-topic-button is-active" data-journal-filter="" aria-pressed="true">Everything <span>{articles.length}</span></button>
+        {topics.map((topic) => (
+          <button
+            type="button"
+            class="journal-topic-button"
+            data-journal-filter={topic.name}
+            aria-pressed="false"
+            title={topic.caption}
+          >{topic.name} <span>{articles.filter((article) => article.data.category === topic.name).length}</span></button>
         ))}
       </div>
-      <p class="journal-empty" id="journal-no-results" hidden>No notes matched that search. Try another word or choose “All notes” to explore everything. ♡</p>
-      </>
-    ) : <p class="journal-empty">More notes are finding their way to the making table. Until then, enjoy our favorite patterns below.</p>}
+      <div class="journal-search-row">
+        <div class="journal-search-wrap">
+          <label class="visually-hidden" for="journal-search">Search Journal notes</label>
+          <span aria-hidden="true">⌕</span>
+          <input type="search" id="journal-search" placeholder="Try ‘stuffing’, ‘yarn’ or ‘flowers’…" autocomplete="off" />
+        </div>
+        <p class="journal-filter-count" role="status" aria-live="polite"><span id="journal-visible-count">{articles.length}</span> notes to explore <span aria-hidden="true">✳</span></p>
+      </div>
+    </div>
+
+    <div class="journal-card-grid" id="journal-story-list">
+      {articles.map((article, index) => (
+        <article
+          class:list={['journal-note-card', { 'is-featured': article.data.featured }]}
+          data-journal-story
+          data-topic={article.data.category}
+          data-search={[article.data.title, article.data.description, article.data.category].join(' ').toLowerCase()}
+        >
+          <a class="journal-note-link" href={'/blog/' + article.id + '/'} aria-label={'Read ' + article.data.title}>
+            <span class="journal-note-rail" aria-hidden="true">
+              <span class="journal-folio">{String(index + 1).padStart(2, '0')}</span>
+              <span class="journal-rail-line"></span>
+              <span class="journal-rail-flower">✳</span>
+            </span>
+            <span class="journal-note-content">
+              <span class="journal-note-kicker">
+                <span>{article.data.category}</span>
+                <span aria-hidden="true">·</span>
+                <span>{article.data.readTime}</span>
+              </span>
+              {article.data.featured && <span class="journal-feature-label">A GOOD PLACE TO BEGIN</span>}
+              <h3>{article.data.title}</h3>
+              <span class="journal-note-excerpt">{article.data.description}</span>
+              <span class="journal-note-footer">
+                <span>{dateLabel(article.data.publishedDate)}</span>
+                <strong>Read the note <span aria-hidden="true">↗</span></strong>
+              </span>
+            </span>
+          </a>
+        </article>
+      ))}
+    </div>
+    {articles.length === 0 && <p class="journal-empty">Our notebook is just getting started. Take a peek at the crochet school while the next notes find their way here.</p>}
+    <p class="journal-empty" id="journal-no-results" hidden>Nothing tucked under that search just yet. Try a different word or choose “Everything” above. ♡</p>
   </section>
 
-  <section class="journal-inspiration" aria-labelledby="journal-patterns-title">
-    <div class="site-container">
-      <div class="journal-heading-row"><div><span class="eyebrow">FROM THE PATTERN BASKET</span><h2 id="journal-patterns-title">In the mood to <em>make something?</em></h2><p>Pick up a hook and follow one of our free, step-by-step projects.</p></div><a class="journal-heading-action" href="/patterns/">All free patterns <span aria-hidden="true">↗</span></a></div>
-      <div class="journal-pattern-grid">
-        {selectedPatterns.map((pattern) => (
-          <a class="journal-pattern-tile" href={'/patterns/' + pattern.id + '/'}>
-            <img src={pattern.data.heroImage ?? pattern.data.image} alt={pattern.data.heroImageAlt ?? pattern.data.imageAlt} loading="lazy" decoding="async" width="440" height="470" />
-            <span><small>{pattern.data.category} · {pattern.data.difficulty}</small><strong>{pattern.data.title}</strong><span aria-hidden="true">↗</span></span>
-          </a>
-        ))}
+  <section class="journal-make-invitation" aria-labelledby="journal-make-title">
+    <div class="site-container journal-make-inner">
+      <div class="journal-make-ornament" aria-hidden="true"><span>✿</span><span>✳</span></div>
+      <div class="journal-make-copy">
+        <span class="eyebrow">FROM NOTEBOOK TO MAKING TABLE</span>
+        <h2 id="journal-make-title">Know the little trick? <em>Now make the lovely thing.</em></h2>
+        <p>The Journal holds the ideas and small secrets. Our Free Patterns basket has the complete step-by-step projects, ready for your hook.</p>
       </div>
+      <a class="btn btn-primary" href="/patterns/">Explore free patterns <span aria-hidden="true">↗</span></a>
     </div>
   </section>
 
-  <section class="site-container journal-last-note" aria-labelledby="journal-learn-title">
-    <span class="journal-last-deco" aria-hidden="true">♡</span>
-    <span class="eyebrow">A LITTLE HELP ALONG THE WAY</span>
+  <section class="site-container journal-learn-invitation" aria-labelledby="journal-learn-title">
+    <span class="eyebrow">NEW TO THE HOOK?</span>
     <h2 id="journal-learn-title">Every maker starts <em>somewhere.</em></h2>
-    <p>Whether you are holding a hook for the very first time or looking up a stitch you haven't used in ages, the crochet school is always open.</p>
-    <a class="btn btn-outline" href="/learn/">Visit the crochet school <span aria-hidden="true">↗</span></a>
+    <p>If the stitches themselves feel new, the crochet school offers a gentle learning path, one loop at a time.</p>
+    <a class="journal-text-link" href="/learn/">Visit the crochet school <span aria-hidden="true">↗</span></a>
   </section>
 </BaseLayout>
+
 <script>
   const search = document.querySelector<HTMLInputElement>('#journal-search');
-  const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-journal-filter]'));
+  const filters = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-journal-filter]'));
   const stories = Array.from(document.querySelectorAll<HTMLElement>('[data-journal-story]'));
   const count = document.querySelector<HTMLElement>('#journal-visible-count');
   const empty = document.querySelector<HTMLElement>('#journal-no-results');
+
   const params = new URLSearchParams(window.location.search);
   let topic = params.get('topic') || '';
-  if (topic && !buttons.some((button) => button.dataset.journalFilter === topic)) topic = '';
+  if (!filters.some((button) => (button.dataset.journalFilter || '') === topic)) topic = '';
+  if (search) search.value = params.get('q') || '';
+
   function applyFilters() {
-    const term = (search?.value || '').toLowerCase().trim();
+    const term = (search?.value || '').toLocaleLowerCase().trim();
     let visible = 0;
-    stories.forEach((story) => {
-      const match = (!topic || story.dataset.topic === topic)
+
+    for (const story of stories) {
+      const matches = (!topic || story.dataset.topic === topic)
         && (!term || (story.dataset.search || '').includes(term));
-      story.hidden = !match;
-      if (match) visible += 1;
-    });
-    for (const button of buttons) {
+      story.hidden = !matches;
+      if (matches) visible += 1;
+    }
+    for (const button of filters) {
       const active = (button.dataset.journalFilter || '') === topic;
       button.classList.toggle('is-active', active);
       button.setAttribute('aria-pressed', String(active));
     }
+
     if (count) count.textContent = String(visible);
     if (empty) empty.hidden = visible !== 0;
+
+    const url = new URL(window.location.href);
+    if (topic) url.searchParams.set('topic', topic);
+    else url.searchParams.delete('topic');
+    if (term) url.searchParams.set('q', term);
+    else url.searchParams.delete('q');
+    if (url.search !== window.location.search) window.history.replaceState(null, '', url.pathname + url.search + url.hash);
   }
-  buttons.forEach((button) => button.addEventListener('click', () => {
+
+  filters.forEach((button) => button.addEventListener('click', () => {
     topic = button.dataset.journalFilter || '';
     applyFilters();
   }));
@@ -153,68 +185,82 @@ const dateLabel = (value: Date) => value.toLocaleDateString('en-US', { month: 's
 </script>
 
 <style>
-  .journal-hero{overflow:hidden;background:radial-gradient(circle at 87% 20%,#f8d7d6 0,transparent 34%),linear-gradient(120deg,#fff1e7 0%,#f9ebe6 56%,#f5e3e8 100%)}
-  .journal-hero-inner{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(240px,.9fr);gap:45px;align-items:center;padding-block:84px 82px}
-  .journal-hero h1{font-size:clamp(49px,6vw,80px);line-height:1.09;letter-spacing:-.065em;margin:20px 0 22px}.journal-hero h1 em{color:var(--berry)}
-  .journal-hero p{color:#735f60;font-size:17px;line-height:1.85;max-width:520px;margin:0 0 28px}
-  .journal-hero-link{display:inline-flex;gap:13px;font-size:13px;color:var(--berry);font-weight:750;border-bottom:1px solid #b98a96;padding-bottom:8px}
-  .journal-hero-art{height:305px;position:relative;display:grid;place-items:center}.journal-flower{font:300 305px/1 Georgia,serif;color:#d6a0ae;transform:rotate(-20deg);opacity:.67}
-  .journal-hero-art>span{position:absolute;right:5%;bottom:8%;background:#fff9f2dc;border:1px solid #edd9d7;border-radius:100%;width:130px;height:130px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;font-size:12px;line-height:1.4;transform:rotate(12deg);color:#8b6270}.journal-hero-art>span em{font-size:22px}
-  .journal-feature{padding-top:86px;padding-bottom:84px}.journal-feature>.eyebrow{display:block;margin-bottom:23px}
-  .journal-feature-grid{display:grid;grid-template-columns:1.02fr .98fr;align-items:center;gap:clamp(35px,6vw,100px)}
-  .journal-feature-image{display:block;position:relative;border-radius:22px;overflow:hidden;background:#ecdcd4;aspect-ratio:1.05/1}
-  .journal-feature-image img{width:100%;height:100%;object-fit:cover;transition:transform .3s}.journal-feature-image:hover img,.journal-story-image:hover img,.journal-pattern-tile:hover img{transform:scale(1.035)}
-  .journal-feature-image>span{position:absolute;bottom:18px;left:22px;color:#fff9ed;font-size:48px;text-shadow:0 2px 8px #69434f5a}
-  .journal-meta{display:flex;gap:9px;flex-wrap:wrap;align-items:center;font-size:11px;letter-spacing:.085em;text-transform:uppercase;color:#956777;font-weight:750}
-  .journal-feature-copy h2{font:500 clamp(35px,4.25vw,59px)/1.14 Georgia,serif;letter-spacing:-.05em;margin:19px 0 22px}
-  .journal-feature-copy h2 a:hover,.journal-story-card h3 a:hover{color:var(--berry)}
-  .journal-feature-copy p{line-height:1.85;color:var(--muted);max-width:480px;margin-bottom:17px}.journal-date{display:block;font-size:12px;color:#998781;margin-bottom:25px}
-  .journal-latest{padding-block:20px 105px;scroll-margin-top:20px}
-  .journal-heading-row{display:flex;align-items:end;justify-content:space-between;gap:25px;margin-bottom:35px}
-  .journal-heading-row h2{font-size:clamp(34px,4vw,53px);line-height:1.18;margin:12px 0 10px}
-  .journal-heading-row h2 em,.journal-last-note h2 em{color:var(--berry)}
-  .journal-heading-row p{color:var(--muted);line-height:1.7;font-size:14px;margin:0}.journal-heading-flower{font-size:80px;color:#dba8ac;line-height:1}
-  .journal-story-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:30px}
-  .journal-story-card{display:flex;flex-direction:column;min-width:0}
-  .journal-story-image{display:block;position:relative;overflow:hidden;border-radius:15px;background:#f4e7e2;aspect-ratio:1.07/1;margin-bottom:20px}
-  .journal-story-image img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
-  .journal-card-arrow{position:absolute;top:15px;right:15px;display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#fffaf4e8;color:var(--berry)}
-  .journal-story-card h3{font:500 27px/1.24 Georgia,serif;letter-spacing:-.045em;margin:14px 0 12px}
-  .journal-story-card p{font-size:14px;line-height:1.72;color:var(--muted);margin-bottom:18px;flex:1}
-  .journal-read-link{display:inline-flex;gap:9px;align-items:center;align-self:start;color:var(--berry);font-size:13px;font-weight:750;padding-bottom:4px;border-bottom:1px solid #d8a8b6}
-  .journal-empty{color:var(--muted);line-height:1.7}
-  .journal-inspiration{background:#f4eee8;padding:80px 0 90px}.journal-heading-action{white-space:nowrap;font-size:13px;font-weight:750;color:var(--berry);border-bottom:1px solid #d3a7b0;padding-bottom:6px}
-  .journal-pattern-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:25px}
-  .journal-pattern-tile{position:relative;overflow:hidden;border-radius:16px;background:#fffaf4}
-  .journal-pattern-tile img{height:275px;width:100%;object-fit:cover;transition:transform .3s}
-  .journal-pattern-tile>span{display:grid;grid-template-columns:1fr auto;gap:9px;padding:18px 20px 21px}
-  .journal-pattern-tile small{grid-column:1/-1;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#9a7380;font-weight:750}
-  .journal-pattern-tile strong{font:500 22px/1.25 Georgia,serif;letter-spacing:-.025em}.journal-pattern-tile>span>span{color:var(--berry);font-size:19px}
-  .journal-last-note{text-align:center;position:relative;padding-block:100px 116px;max-width:780px}
-  .journal-last-note .eyebrow{position:relative;z-index:1}.journal-last-note h2{font-size:clamp(34px,4.4vw,57px);line-height:1.16;margin:18px 0}
-  .journal-last-note p{color:var(--muted);line-height:1.85;margin:0 auto 24px;max-width:530px}
-  .journal-last-deco{position:absolute;font-size:190px;color:#f2dfe2;line-height:1;right:1%;top:5%;z-index:0;pointer-events:none}
-  @media(max-width:850px){.journal-hero-inner{grid-template-columns:1fr .55fr;gap:12px}.journal-hero-art{height:270px}.journal-flower{font-size:230px}.journal-story-grid{gap:18px}.journal-story-card h3{font-size:23px}.journal-feature-grid{gap:35px}.journal-pattern-tile img{height:230px}}
-  @media(max-width:650px){.journal-hero-inner{display:block;padding-block:65px 59px}.journal-hero-art{display:none}.journal-hero h1{font-size:clamp(44px,12vw,65px)}.journal-hero p{font-size:15px}.journal-feature{padding-block:62px}.journal-feature-grid{grid-template-columns:1fr;gap:27px}.journal-feature-copy h2{font-size:36px}.journal-latest{padding-bottom:70px}.journal-story-grid{grid-template-columns:1fr;gap:44px}.journal-story-image{aspect-ratio:1.24/1}.journal-story-card h3{font-size:26px}.journal-heading-flower{display:none}.journal-heading-row{align-items:start;flex-direction:column}.journal-inspiration{padding-block:65px}.journal-pattern-grid{grid-template-columns:1fr;gap:18px}.journal-pattern-tile{display:grid;grid-template-columns:125px 1fr;min-height:140px}.journal-pattern-tile img{height:100%;min-height:145px}.journal-pattern-tile>span{align-content:center;padding:15px;gap:6px}.journal-pattern-tile strong{font-size:19px}.journal-last-note{padding-block:78px 90px}}
-  @media(max-width:385px){.journal-pattern-tile{grid-template-columns:100px 1fr}.journal-pattern-tile strong{font-size:17px}}
-  @media(prefers-reduced-motion:reduce){.journal-feature-image img,.journal-story-image img,.journal-pattern-tile img{transition:none}}
-  .journal-discovery{background:linear-gradient(140deg,#fff9f3,#f9eeed);border:1px solid #eaddd5;padding:27px 30px;border-radius:22px;margin-bottom:38px}
-  .journal-discovery-intro{display:flex;justify-content:space-between;align-items:center;gap:24px;margin-bottom:20px}
-  .journal-discovery-intro h3{font:500 29px/1.25 Georgia,serif;letter-spacing:-.035em;margin:8px 0 0}
-  .journal-discovery-intro h3 em{color:var(--berry)}
-  .journal-discovery-intro p{font-size:13px;line-height:1.65;color:var(--muted);max-width:330px;margin:0}
-  .journal-filter-controls{display:flex;justify-content:space-between;align-items:start;gap:14px;flex-wrap:wrap}
-  .journal-topic-filters{display:flex;gap:8px;flex-wrap:wrap;flex:1}
-  .journal-topic-button{font:650 12px/1.3 ui-sans-serif,system-ui,sans-serif;cursor:pointer;color:#825e6c;background:#fffaf4;border:1px solid #e3ccd0;border-radius:100px;padding:11px 13px;display:flex;align-items:center;gap:8px}
-  .journal-topic-button span{font-size:10px;opacity:.78}
-  .journal-topic-button:hover{border-color:#ac7a8a}
-  .journal-topic-button.is-active{color:#fff;background:var(--berry);border-color:var(--berry)}
+  .journal-hero{background:radial-gradient(circle at 84% 20%,#f4e2e5 0,transparent 37%),linear-gradient(115deg,#fff4eb 0%,#f9eee8 57%,#f5e8e8 100%);overflow:hidden}
+  .journal-hero-inner{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(250px,.7fr);gap:clamp(34px,7vw,100px);align-items:center;padding-block:84px 91px}
+  .journal-hero h1{font-size:clamp(48px,6.3vw,79px);line-height:1.08;letter-spacing:-.065em;max-width:730px;margin:22px 0 24px}
+  .journal-hero h1 em,.journal-section-heading h2 em,.journal-make-copy h2 em,.journal-learn-invitation h2 em{color:var(--berry)}
+  .journal-hero-copy>p{font-size:16px;line-height:1.85;color:#746563;max-width:555px;margin-bottom:26px}
+  .journal-jump-link,.journal-text-link{display:inline-flex;gap:12px;align-items:center;color:var(--berry);font-weight:750;font-size:13px;border-bottom:1px solid #d3adb5;padding-bottom:7px}
+  .journal-jump-link:hover,.journal-text-link:hover{border-color:var(--berry)}
+  .journal-paper-note{min-height:284px;background:#fffcf7;box-shadow:10px 12px 0 #efe0db;border:1px solid #eadbd3;border-radius:16px;padding:32px 30px 25px;transform:rotate(4deg);display:flex;flex-direction:column;align-items:flex-start;justify-content:center;position:relative}
+  .journal-paper-mark{font-size:52px;line-height:1;color:#b98293;margin:0 0 13px}
+  .journal-paper-label{font-size:10px;font-weight:800;letter-spacing:.15em;color:#a77c85}
+  .journal-paper-rule{height:1px;background:#e8dad4;width:100%;margin:17px 0}
+  .journal-paper-words{font:500 26px/1.28 Georgia,serif;color:#58484b;letter-spacing:-.025em}
+  .journal-paper-words em{color:var(--berry);font-size:29px}
+  .journal-paper-trail{align-self:flex-end;margin-top:20px;color:#c694a5;font-size:17px;letter-spacing:.11em}
+  .journal-notes-section{padding-block:85px 112px;scroll-margin-top:22px}
+  .journal-section-heading{display:flex;justify-content:space-between;align-items:center;gap:25px;margin-bottom:35px}
+  .journal-section-heading h2{font-size:clamp(35px,4.2vw,55px);line-height:1.15;margin:14px 0}
+  .journal-section-heading p{max-width:660px;color:var(--muted);font-size:14px;line-height:1.8;margin:0}
+  .journal-count-seal{width:104px;height:104px;border:1px solid #e5d1d0;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#925f74;flex:0 0 104px;transform:rotate(8deg)}
+  .journal-count-seal strong{font:500 33px/1 Georgia,serif}.journal-count-seal span{font:italic 14px Georgia,serif;margin-top:8px}
+  .journal-discovery{border:1px solid #e9dcd2;border-radius:20px;padding:27px 30px 25px;background:#fffcf8;margin-bottom:27px}
+  .journal-discovery-heading{display:flex;justify-content:space-between;gap:18px;align-items:end;margin-bottom:20px}
+  .journal-discovery-heading p{font-size:13px;color:var(--muted);margin:0}
+  .journal-topic-filters{display:flex;gap:9px;flex-wrap:wrap}
+  .journal-topic-button{appearance:none;display:inline-flex;gap:9px;align-items:center;background:#f8f0e9;border:1px solid #e6d4cf;border-radius:100px;padding:11px 16px;font:700 12px/1.3 system-ui,sans-serif;color:#82646a;cursor:pointer;transition:background .2s,border-color .2s}
+  .journal-topic-button span{font-size:10px;font-weight:750;opacity:.76}
+  .journal-topic-button:hover{border-color:#b88294}
+  .journal-topic-button.is-active{background:var(--berry);border-color:var(--berry);color:#fff}
   .journal-topic-button:focus-visible{outline:3px solid var(--berry);outline-offset:3px}
-  .journal-search-wrap{position:relative;min-width:min(100%,235px);flex:0 1 260px}
-  .journal-search-wrap>span{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:#967887;font-size:25px;pointer-events:none}
-  .journal-search-wrap input{width:100%;height:44px;border-radius:100px;border:1px solid #e3ccd0;background:#fffaf4;color:var(--ink);font:400 12px system-ui,sans-serif;padding:0 13px 0 39px}
-  .journal-filter-count{color:#977a83;font-size:12px;margin:18px 0 0}
-  .journal-story-card[hidden]{display:none}
-  .journal-empty{background:#fff6f1;padding:25px;border-radius:14px;text-align:center}
-  @media(max-width:650px){.journal-discovery{padding:21px 18px;margin-bottom:30px}.journal-discovery-intro{display:block}.journal-discovery-intro h3{font-size:24px}.journal-discovery-intro p{max-width:none;margin-top:11px}.journal-search-wrap{flex-basis:100%}.journal-topic-button{padding:9px 11px;font-size:11px}}
+  .journal-search-row{display:flex;gap:20px;justify-content:space-between;align-items:center;border-top:1px solid #ecdfd7;padding-top:19px;margin-top:21px}
+  .journal-search-wrap{max-width:470px;flex:1;position:relative}
+  .journal-search-wrap>span{position:absolute;top:50%;left:17px;transform:translateY(-51%);color:#aa8795;font-size:25px;pointer-events:none}
+  .journal-search-wrap input{width:100%;height:46px;border:1px solid #e5d3cf;background:#fff;padding:0 18px 0 45px;border-radius:999px;color:var(--ink);font:400 13px system-ui,sans-serif}
+  .journal-filter-count{white-space:nowrap;color:#9b7b87;font-size:12px;margin:0}
+  .journal-card-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+  .journal-note-card{min-width:0}
+  .journal-note-link{display:flex;gap:22px;min-height:294px;height:100%;padding:28px 29px;border-radius:20px;border:1px solid #e7dbd2;background:#fffdf9;transition:transform .22s,box-shadow .22s,border-color .22s}
+  .journal-note-card[data-topic="Starting stitches"] .journal-note-link{background:#f1f4ec;border-color:#e1e8d9}
+  .journal-note-card[data-topic="The little details"] .journal-note-link{background:#fff1ed;border-color:#efdfda}
+  .journal-note-card[data-topic="Flowers & gifts"] .journal-note-link{background:#fff6eb;border-color:#f0e3d3}
+  .journal-note-card[data-topic="Making moments"] .journal-note-link{background:#f5eff6;border-color:#e8dfe9}
+  .journal-note-link:hover{transform:translateY(-3px);box-shadow:0 14px 29px #55403b12;border-color:#cfb1b6}
+  .journal-note-link:focus-visible{outline:3px solid var(--berry);outline-offset:3px}
+  .journal-note-rail{display:flex;flex-direction:column;align-items:center;gap:12px;flex:0 0 51px;color:#a57787}
+  .journal-folio{font:500 30px/1.1 Georgia,serif;letter-spacing:-.05em}
+  .journal-rail-line{display:block;width:1px;height:58px;background:#ddc4c9}
+  .journal-rail-flower{font-size:22px}
+  .journal-note-content{display:flex;flex-direction:column;min-width:0;flex:1}
+  .journal-note-kicker{display:flex;gap:8px;flex-wrap:wrap;color:#916b7a;font-size:10px;line-height:1.5;font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+  .journal-feature-label{font-size:10px;letter-spacing:.13em;font-weight:850;color:#9d687b;margin-top:17px}
+  .journal-note-content h3{font:500 clamp(22px,2.4vw,29px)/1.23 Georgia,serif;letter-spacing:-.035em;color:var(--ink);margin:14px 0 12px}
+  .journal-note-link:hover h3{color:var(--berry)}
+  .journal-note-excerpt{font-size:13px;line-height:1.73;color:#786d69;margin-bottom:27px;flex:1}
+  .journal-note-footer{border-top:1px solid #ddcec8;padding-top:16px;display:flex;justify-content:space-between;align-items:center;gap:12px;color:#907d7a;font-size:11px}
+  .journal-note-footer strong{color:var(--berry);font-weight:800;font-size:12px;white-space:nowrap}
+  .journal-note-footer strong span{margin-left:4px}
+  .journal-note-card.is-featured{grid-column:1/-1}
+  .journal-note-card.is-featured .journal-note-link{min-height:230px;position:relative;overflow:hidden;max-width:100%;background:linear-gradient(120deg,#f8e8e6,#fff7ef 77%);padding:38px 41px;gap:34px}
+  .journal-note-card.is-featured .journal-note-link:after{content:"✿";position:absolute;right:4%;bottom:-80px;font:400 260px Georgia,serif;color:#e4c5cc;opacity:.25;pointer-events:none}
+  .journal-note-card.is-featured .journal-note-content{position:relative;z-index:1;max-width:800px}
+  .journal-note-card.is-featured .journal-note-content h3{font-size:clamp(28px,3.5vw,43px);line-height:1.19;margin-top:12px}
+  .journal-note-card.is-featured .journal-note-excerpt{font-size:15px;max-width:760px}
+  .journal-note-card.is-featured .journal-rail-line{height:85px}
+  .journal-empty{font-size:14px;line-height:1.75;color:#836a75;background:#fff7f3;border:1px solid #eadbd4;border-radius:17px;text-align:center;padding:30px;margin-top:20px}
+  .journal-make-invitation{background:#edf0e6;border-block:1px solid #e1e4d8}
+  .journal-make-inner{display:grid;grid-template-columns:95px minmax(0,1fr) auto;align-items:center;gap:37px;padding-block:70px}
+  .journal-make-ornament{width:87px;height:87px;border-radius:50%;background:#e1e9d8;color:#7e9874;display:grid;place-items:center;position:relative;font-size:48px}
+  .journal-make-ornament>span:last-child{font-size:19px;color:#af8291;position:absolute;top:10px;right:5px}
+  .journal-make-copy h2{font-size:clamp(29px,3vw,40px);line-height:1.19;max-width:700px;margin:11px 0}
+  .journal-make-copy p{font-size:14px;line-height:1.7;color:#6f7368;max-width:700px;margin:0}
+  .journal-make-inner>.btn{white-space:nowrap}
+  .journal-learn-invitation{text-align:center;padding-block:92px 101px}
+  .journal-learn-invitation h2{font-size:clamp(34px,4.5vw,53px);line-height:1.17;margin:14px 0}
+  .journal-learn-invitation p{font-size:14px;color:var(--muted);line-height:1.8;max-width:540px;margin:0 auto 20px}
+  @media(max-width:940px){.journal-make-inner{grid-template-columns:65px minmax(0,1fr);gap:25px}.journal-make-ornament{width:65px;height:65px;font-size:38px}.journal-make-inner>.btn{grid-column:2;justify-self:start}}
+  @media(max-width:780px){.journal-hero-inner{grid-template-columns:minmax(0,1fr);padding-block:69px 75px}.journal-paper-note{display:none}.journal-card-grid{grid-template-columns:1fr}.journal-note-link{min-height:0}.journal-note-card.is-featured{grid-column:auto}.journal-note-card.is-featured .journal-note-link{min-height:0}}
+  @media(max-width:570px){.journal-hero-inner{padding-block:63px}.journal-hero h1{font-size:clamp(41px,11vw,59px)}.journal-hero-copy>p{font-size:15px}.journal-notes-section{padding-block:63px 75px}.journal-section-heading{align-items:flex-start}.journal-count-seal{display:none}.journal-discovery{padding:20px 17px}.journal-discovery-heading{display:block}.journal-discovery-heading p{margin-top:9px}.journal-topic-button{font-size:11px;padding:9px 12px}.journal-search-row{display:block}.journal-search-wrap{max-width:none}.journal-filter-count{margin-top:15px}.journal-note-link,.journal-note-card.is-featured .journal-note-link{padding:22px 18px;gap:13px}.journal-note-rail{flex-basis:38px}.journal-folio{font-size:25px}.journal-note-content h3{font-size:24px}.journal-note-card.is-featured .journal-note-content h3{font-size:30px}.journal-note-card.is-featured .journal-note-excerpt{font-size:13px}.journal-note-footer{flex-wrap:wrap}.journal-make-inner{display:block;padding-block:57px}.journal-make-ornament{display:none}.journal-make-inner>.btn{margin-top:22px}.journal-learn-invitation{padding-block:68px}}
+  @media(prefers-reduced-motion:reduce){.journal-note-link{transition:none}.journal-note-link:hover{transform:none}}
 </style>
