@@ -24,7 +24,7 @@ const absoluteImage = new URL(image, Astro.site ?? Astro.url.origin).toString();
 // Site ownership verification is independent of ad serving. A certified
 // advertising CMP must be configured before advertisements can be enabled.
 const adClient = import.meta.env.PUBLIC_ADSENSE_CLIENT || '';
-const requestedVerificationId = import.meta.env.PUBLIC_ADSENSE_VERIFICATION_ID || adClient;
+const requestedVerificationId = import.meta.env.PUBLIC_ADSENSE_VERIFICATION_ID || 'ca-pub-8740522165725934';
 const adsenseVerificationId = /^ca-pub-[0-9]{16}$/.test(requestedVerificationId) ? requestedVerificationId : '';
 const adsOn = import.meta.env.PUBLIC_ENABLE_ADS === 'true' &&
   import.meta.env.PUBLIC_ADSENSE_CMP_READY === 'true' &&
