@@ -41,4 +41,22 @@ const lessons = defineCollection({
   }),
 });
 
-export const collections = { patterns, lessons };
+const journal = defineCollection({
+  loader: glob({ base: './src/content/journal', pattern: '**/*.{md,mdx}' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    publishedDate: z.coerce.date(),
+    updatedDate: z.coerce.date().optional(),
+    category: z.enum(['Starting stitches', 'The little details', 'Flowers & gifts', 'Making moments']),
+    readTime: z.string(),
+    image: z.string(),
+    imageAlt: z.string(),
+    featured: z.boolean().default(false),
+    order: z.number().int().positive().default(100),
+    relatedPatterns: z.array(z.string()).default([]),
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { patterns, lessons, journal };
