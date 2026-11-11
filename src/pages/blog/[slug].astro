@@ -1,0 +1,140 @@
+---
+import { getCollection, render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const articles = await getCollection('journal', ({ data }) => !data.draft);
+  return articles.map((article) => ({
+    params: { slug: article.id },
+    props: { article },
+  }));
+}
+
+interface Props { article: CollectionEntry<'journal'> }
+const { article } = Astro.props;
+const { Content, headings } = await render(article);
+const allArticles = (await getCollection('journal', ({ data }) => !data.draft))
+  .sort((a, b) => a.data.order - b.data.order);
+const relatedArticles = allArticles.filter((item) => item.id !== article.id).slice(0, 2);
+const availablePatterns = await getCollection('patterns', ({ data }) => !data.draft);
+const relatedPatterns = article.data.relatedPatterns
+  .flatMap((id) => availablePatterns.filter((pattern) => pattern.id === id));
+const navigation = headings.filter((heading) => heading.depth === 2);
+const pageURL = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).toString();
+const dateLabel = article.data.publishedDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: article.data.title,
+  description: article.data.description,
+  image: new URL(article.data.image, Astro.site ?? Astro.url.origin).toString(),
+  datePublished: article.data.publishedDate.toISOString(),
+  ...(article.data.updatedDate ? { dateModified: article.data.updatedDate.toISOString() } : {}),
+  mainEntityOfPage: pageURL,
+  author: { '@type': 'Organization', name: 'Thread & Petal' },
+  publisher: { '@type': 'Organization', name: 'Thread & Petal' },
+  inLanguage: 'en',
+  isAccessibleForFree: true,
+};
+---
+<BaseLayout title={article.data.title} description={article.data.description} image={article.data.image} type="article" publishedTime={article.data.publishedDate.toISOString()}>
+  <script type="application/ld+json" set:html={JSON.stringify(schema).replace(/</g, '\\u003c')} />
+  <nav class="site-container journal-crumbs" aria-label="Breadcrumb">
+    <a href="/">Home</a><span aria-hidden="true">/</span><a href="/blog/">The Journal</a><span aria-hidden="true">/</span><span aria-current="page">{article.data.title}</span>
+  </nav>
+  <header class="journal-article-hero">
+    <div class="site-container journal-article-heading">
+      <span class="eyebrow">✿ {article.data.category}</span>
+      <h1>{article.data.title}</h1>
+      <p>{article.data.description}</p>
+      <div class="journal-article-meta"><span>{dateLabel}</span><span aria-hidden="true">✳</span><span>{article.data.readTime}</span><span aria-hidden="true">✳</span><span>Thread & Petal</span></div>
+    </div>
+  </header>
+  <div class="site-container journal-article-shell">
+    <div class="journal-article-main">
+      <figure class="journal-article-cover">
+        <img src={article.data.image} alt={article.data.imageAlt} width="1100" height="800" decoding="async" fetchpriority="high" />
+      </figure>
+      <article class="prose journal-article-prose"><Content /></article>
+      <div class="journal-article-end"><span aria-hidden="true">✿</span><p>A little yarn, a lot of lovely.</p><a href="/blog/">Back to the journal <span aria-hidden="true">↗</span></a></div>
+    </div>
+    <aside class="journal-article-aside" aria-label="Related reading">
+      <div class="journal-aside-note"><span aria-hidden="true">♡</span><strong>Made for curious hands</strong><p>Keep a favorite cup nearby. There's no hurry here, just the joy of making things a little at a time.</p></div>
+      {navigation.length > 0 && <nav class="journal-article-toc" aria-label="On this page"><strong>IN THIS NOTE</strong>{navigation.map((heading) => <a href={'#' + heading.slug}>{heading.text}</a>)}</nav>}
+      {relatedPatterns.length > 0 && (
+        <div class="journal-related-patterns">
+          <h2>Keep making <em>lovely things.</em></h2>
+          {relatedPatterns.map((pattern) => (
+            <a href={'/patterns/' + pattern.id + '/'} class="journal-aside-pattern">
+              <img src={pattern.data.image} alt={pattern.data.imageAlt} loading="lazy" decoding="async" width="120" height="140" />
+              <span><small>{pattern.data.difficulty} · {pattern.data.category}</small><strong>{pattern.data.title}</strong></span>
+            </a>
+          ))}
+          <a class="journal-all-patterns" href="/patterns/">Browse all free patterns <span aria-hidden="true">↗</span></a>
+        </div>
+      )}
+    </aside>
+  </div>
+  {relatedArticles.length > 0 && (
+    <section class="journal-more-reading" aria-labelledby="journal-more-reading-title">
+      <div class="site-container">
+        <span class="eyebrow">STAY A LITTLE LONGER</span>
+        <h2 id="journal-more-reading-title">A few more <em>notes for you.</em></h2>
+        <div class="journal-next-grid">
+          {relatedArticles.map((item) => (
+            <a class="journal-next-card" href={'/blog/' + item.id + '/'}>
+              <img src={item.data.image} alt={item.data.imageAlt} loading="lazy" decoding="async" width="450" height="330" />
+              <span><small>{item.data.category} · {item.data.readTime}</small><strong>{item.data.title}</strong><span aria-hidden="true">↗</span></span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+</BaseLayout>
+
+<style>
+  .journal-crumbs{display:flex;gap:10px;align-items:center;padding-block:25px;flex-wrap:wrap;font-size:11px;color:#987b7e}
+  .journal-crumbs>a:hover{color:var(--berry)}.journal-crumbs>span:last-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:min(64ch,80vw)}
+  .journal-article-hero{background:radial-gradient(circle at 90% 15%,#f5dfe2 0,transparent 33%),linear-gradient(135deg,#fff1e9,#f8f1e9)}
+  .journal-article-heading{padding-block:69px 75px;text-align:center;max-width:880px}
+  .journal-article-heading h1{font:500 clamp(39px,5.3vw,71px)/1.14 Georgia,serif;letter-spacing:-.055em;margin:19px auto 21px;max-width:870px}
+  .journal-article-heading>p{color:#746664;font-size:17px;line-height:1.85;max-width:670px;margin:0 auto}
+  .journal-article-meta{display:flex;justify-content:center;flex-wrap:wrap;gap:12px;align-items:center;margin-top:26px;color:#9b7681;font-size:12px}
+  .journal-article-shell{display:grid;grid-template-columns:minmax(0,755px) minmax(230px,1fr);gap:clamp(36px,6vw,85px);padding-top:55px;padding-bottom:85px}
+  .journal-article-main{min-width:0}.journal-article-cover{margin:0 0 42px;overflow:hidden;border-radius:18px;background:#f6ece5}
+  .journal-article-cover img{width:100%;height:auto;max-height:540px;aspect-ratio:1.45/1;object-fit:cover}
+  .journal-article-prose{font-size:16px;line-height:1.95}
+  .journal-article-prose :global(h2){font-size:clamp(27px,3vw,36px);scroll-margin-top:24px}
+  .journal-article-prose :global(a){text-underline-offset:3px}
+  .journal-article-prose :global(li){padding-left:3px}
+  .journal-article-end{border-top:1px solid var(--line);padding-top:27px;margin-top:47px;text-align:center;color:#916f79}
+  .journal-article-end>span{font-size:40px}.journal-article-end p{font:italic 22px Georgia,serif;margin:6px 0 18px}
+  .journal-article-end a{font-size:12px;font-weight:750;color:var(--berry);border-bottom:1px solid #cda4ab;padding-bottom:4px}
+  .journal-article-aside{padding-top:5px}.journal-aside-note{background:#f8e9e7;border-radius:19px;padding:28px;text-align:center}
+  .journal-aside-note>span{font:normal 62px/1 Georgia,serif;color:#bd8094}.journal-aside-note strong{display:block;font:500 25px Georgia,serif;margin:12px 0}
+  .journal-aside-note p{font-size:13px;line-height:1.8;color:#796b68;margin:0}
+  .journal-article-toc{border-top:1px solid var(--line);margin-top:36px;padding-top:24px;display:grid;gap:12px}
+  .journal-article-toc>strong{font-size:10px;letter-spacing:.13em;color:#9a6e7f}
+  .journal-article-toc>a{font-size:13px;line-height:1.55;color:#665a59}.journal-article-toc>a:hover{color:var(--berry);text-decoration:underline}
+  .journal-related-patterns{border-top:1px solid var(--line);margin-top:35px;padding-top:28px}
+  .journal-related-patterns h2{font:500 27px/1.2 Georgia,serif;letter-spacing:-.035em;margin-bottom:20px}
+  .journal-related-patterns h2 em,.journal-more-reading h2 em{color:var(--berry)}
+  .journal-aside-pattern{display:grid;grid-template-columns:74px 1fr;gap:13px;align-items:center;margin-bottom:17px}
+  .journal-aside-pattern img{width:74px;height:79px;object-fit:cover;border-radius:9px}
+  .journal-aside-pattern small{display:block;font-size:10px;color:#9a7580;margin-bottom:5px}.journal-aside-pattern strong{font:500 16px/1.3 Georgia,serif}
+  .journal-aside-pattern:hover strong{color:var(--berry)}
+  .journal-all-patterns{display:inline-block;border-bottom:1px solid #d7a7b3;color:var(--berry);font-weight:750;font-size:12px;padding-bottom:5px;margin-top:10px}
+  .journal-more-reading{background:#f5eee8;padding-block:72px 83px}.journal-more-reading h2{font-size:clamp(33px,4vw,47px);margin:14px 0 28px}
+  .journal-next-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:25px}
+  .journal-next-card{display:grid;grid-template-columns:155px 1fr;background:#fffaf5;border-radius:15px;overflow:hidden;min-height:155px}
+  .journal-next-card img{width:100%;height:100%;object-fit:cover}
+  .journal-next-card>span{display:grid;align-content:center;gap:8px;padding:18px 21px}
+  .journal-next-card small{color:#986e7a;font-size:10px;text-transform:uppercase;letter-spacing:.05em}.journal-next-card strong{font:500 21px/1.3 Georgia,serif}
+  .journal-next-card>span>span{color:var(--berry);font-size:19px}.journal-next-card:hover strong{color:var(--berry)}
+  @media(max-width:900px){.journal-article-shell{grid-template-columns:minmax(0,1fr) 230px;gap:30px}.journal-next-card{grid-template-columns:115px 1fr}}
+  @media(max-width:680px){.journal-article-heading{padding-block:55px 63px}.journal-article-heading h1{font-size:clamp(34px,9vw,50px)}.journal-article-heading>p{font-size:15px}.journal-article-shell{display:block;padding-top:30px;padding-bottom:65px}.journal-article-cover{margin-bottom:32px}.journal-article-prose{font-size:15px}.journal-article-aside{margin-top:50px}.journal-article-toc{display:none}.journal-next-grid{grid-template-columns:1fr}.journal-more-reading{padding-block:55px 65px}}
+  @media(max-width:385px){.journal-next-card{grid-template-columns:100px 1fr}.journal-next-card strong{font-size:17px}}
+  @media print{.journal-article-aside,.journal-more-reading,.journal-article-end,.journal-crumbs{display:none}.journal-article-shell{display:block}.journal-article-cover img{max-height:260px}.journal-article-heading{padding-block:20px}}
+</style>
