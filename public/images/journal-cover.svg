@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="t d">
+<title id="t">Thread &amp; Petal — The Journal</title>
+<desc id="d">A quiet editorial cover with a notebook motif, lilac crochet loops, and a small floral accent.</desc>
+<defs><linearGradient id="paper" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff5ed"/><stop offset="1" stop-color="#f3e8e9"/></linearGradient></defs>
+<rect width="1200" height="630" fill="url(#paper)"/>
+<path d="M0 565Q265 495 490 565T1200 535V630H0Z" fill="#eee4db" opacity=".55"/>
+<g transform="translate(870 82) rotate(7 110 220)">
+<rect x="0" y="0" width="255" height="425" rx="23" fill="#eddcd8"/>
+<rect x="-14" y="-16" width="255" height="425" rx="23" fill="#fffdf7" stroke="#e5d4ce" stroke-width="3"/>
+<path d="M15 90H211M15 143H211M15 196H211M15 249H211M15 302H211" stroke="#eddfda" stroke-width="2"/>
+<g stroke="#ba869a" fill="none" stroke-width="5" stroke-linecap="round">
+<path d="M29 113q20-34 40 0t40 0t40 0t40 0"/>
+<path d="M29 166q20-34 40 0t40 0t40 0t40 0"/>
+</g>
+<g fill="#c18a9a"><circle cx="20" cy="24" r="6"/><circle cx="58" cy="24" r="6"/><circle cx="96" cy="24" r="6"/><circle cx="134" cy="24" r="6"/><circle cx="172" cy="24" r="6"/><circle cx="210" cy="24" r="6"/></g>
+<path d="M68 342q20-40 42 0q23-40 46 0q-34 49-46 63q-20-25-42-63" fill="#f6d2d7" stroke="#bf8798" stroke-width="3"/>
+</g>
+<g font-family="Georgia,'Times New Roman',serif" fill="#463638">
+<text x="92" y="145" font-size="26" letter-spacing="5" font-family="Arial,sans-serif" fill="#945367">THREAD &amp; PETAL</text>
+<text x="90" y="270" font-size="89" letter-spacing="-4">The Journal</text>
+<text x="95" y="341" font-style="italic" font-size="33" fill="#945367">the little secrets behind the lovely</text>
+</g>
+<path d="M94 388H690" stroke="#e4d3cd" stroke-width="3"/>
+<g transform="translate(130 465)" fill="none" stroke="#c48ca0" stroke-width="8" stroke-linecap="round">
+<path d="M0 0c28-48 60 48 89 0s60 48 89 0s60 48 89 0"/>
+</g>
+<g transform="translate(630 450)" fill="#d2b2be"><circle cx="0" cy="-28" r="18"/><circle cx="28" cy="0" r="18"/><circle cx="0" cy="28" r="18"/><circle cx="-28" cy="0" r="18"/><circle r="12" fill="#f8e5b6"/></g>
+</svg>
