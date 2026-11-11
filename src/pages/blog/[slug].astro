@@ -16,7 +16,14 @@ const { article } = Astro.props;
 const { Content, headings } = await render(article);
 const allArticles = (await getCollection('journal', ({ data }) => !data.draft))
   .sort((a, b) => a.data.order - b.data.order);
-const relatedArticles = allArticles.filter((item) => item.id !== article.id).slice(0, 2);
+const relatedArticles = allArticles
+  .filter((item) => item.id !== article.id)
+  .sort((a, b) => {
+    const aSame = a.data.category === article.data.category ? 1 : 0;
+    const bSame = b.data.category === article.data.category ? 1 : 0;
+    return bSame - aSame || Math.abs(a.data.order - article.data.order) - Math.abs(b.data.order - article.data.order);
+  })
+  .slice(0, 2);
 const availablePatterns = await getCollection('patterns', ({ data }) => !data.draft);
 const relatedPatterns = article.data.relatedPatterns
   .flatMap((id) => availablePatterns.filter((pattern) => pattern.id === id));
