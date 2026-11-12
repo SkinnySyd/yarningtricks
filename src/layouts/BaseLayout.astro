@@ -59,7 +59,6 @@ const publisherId = adsenseVerificationId || adClient;
   <meta name="twitter:description" content={description} />
   <meta name="twitter:image" content={absoluteImage} />
   {publishedTime && <meta property="article:published_time" content={publishedTime} />}
-  <script is:inline set:html={`window.dataLayer=window.dataLayer||[];window.gtag=window.gtag||function(){window.dataLayer.push(arguments)};window.gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});`} />
   {publisherScriptOn && /^ca-pub-[0-9]{16}$/.test(publisherId) && <script is:inline async crossorigin="anonymous" src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${publisherId}`}></script>}
 </head>
 <body>
