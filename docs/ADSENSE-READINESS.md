@@ -31,3 +31,18 @@ Ad serving is intentionally **off** while the site is being prepared. Do not tur
 ## Operational caution
 
 Environment variables live in the deployment provider, not the repository. The AdSense dashboard and Cloudflare Pages settings cannot be confirmed just from GitHub source code. The `ads.txt` file is deferred until the real publisher ID is available.
+
+## Google CMP coordination (staged, OFF by default)
+
+Code provides a separate deployment switch, `PUBLIC_ENABLE_GOOGLE_CMP=true`, to load the AdSense publisher tag necessary for Google Privacy & messaging delivery. It is **not enabled by this commit**. Keep `PUBLIC_ENABLE_ADS` and `PUBLIC_ADSENSE_CMP_READY` unset/false.
+
+Before enabling the switch:
+- Publish the tested three-button European message in AdSense. An unpublished draft cannot render.
+- Confirm **Auto ads are disabled** in AdSense (the publisher tag can also be used to deliver ads; the repository's ad-slot switch alone does not control Auto ads).
+- Verify the deployed page and privacy policy in the final target markets.
+- Test that the IAB TCF API is present and returns the correct `gdprApplies` signal, that European visitors see only Google's GDPR message, and that non-European visitors see the existing optional Analytics banner.
+- The Analytics banner remains disabled in GDPR regions, even after an advertising consent choice. Google Analytics is **not** loaded there until a separate, explicit analytics consent mapping is implemented and legally reviewed. The existing banner still governs Google Analytics elsewhere.
+- If CMP scripts are blocked or do not respond, the Analytics banner stays hidden and Analytics stays disabled (privacy-preserving fail-closed). This intentionally prioritizes not sending data without consent over analytics completeness.
+- Keep footer privacy controls functional; in a confirmed GDPR region they call `googlefc.showRevocationMessage()` instead of reopening the site's separate Analytics banner.
+- `PUBLIC_ENABLE_GOOGLE_CMP` is a build-time environment variable on Cloudflare Pages. A redeploy is required after changing it.
+- Confirm the AdSense dashboard and Google Funding Choices developer API behavior with a real browser before treating this as a production consent integration.
