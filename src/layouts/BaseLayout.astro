@@ -26,9 +26,15 @@ const absoluteImage = new URL(image, Astro.site ?? Astro.url.origin).toString();
 const adClient = import.meta.env.PUBLIC_ADSENSE_CLIENT || '';
 const requestedVerificationId = import.meta.env.PUBLIC_ADSENSE_VERIFICATION_ID || 'ca-pub-8740522165725934';
 const adsenseVerificationId = /^ca-pub-[0-9]{16}$/.test(requestedVerificationId) ? requestedVerificationId : '';
+// Consent-message delivery uses the AdSense publisher tag, but should not
+// automatically turn on when the message is still a draft.
+// Check that Auto ads are OFF in AdSense before enabling this flag.
+const cmpOn = import.meta.env.PUBLIC_ENABLE_GOOGLE_CMP === 'true';
 const adsOn = import.meta.env.PUBLIC_ENABLE_ADS === 'true' &&
   import.meta.env.PUBLIC_ADSENSE_CMP_READY === 'true' &&
   /^ca-pub-[0-9]{16}$/.test(adClient);
+const publisherScriptOn = cmpOn || adsOn;
+const publisherId = adsenseVerificationId || adClient;
 ---
 <!doctype html>
 <html lang="en">
@@ -53,7 +59,18 @@ const adsOn = import.meta.env.PUBLIC_ENABLE_ADS === 'true' &&
   <meta name="twitter:description" content={description} />
   <meta name="twitter:image" content={absoluteImage} />
   {publishedTime && <meta property="article:published_time" content={publishedTime} />}
-  {adsOn && <script is:inline async crossorigin="anonymous" src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adClient}`}></script>}
+  <script is:inline>
+    // Denied-by-default signals must be established before publisher tags.
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
+    window.gtag('consent', 'default', {
+      analytics_storage: 'denied',
+      ad_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied'
+    });
+  </script>
+  {publisherScriptOn && /^ca-pub-[0-9]{16}$/.test(publisherId) && <script is:inline async crossorigin="anonymous" src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${publisherId}`}></script>}
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to content</a>
