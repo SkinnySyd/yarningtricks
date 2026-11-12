@@ -5,6 +5,7 @@
  * consent solution for AdSense serving in regulated markets.
  */
 const measurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-JBSY3YJZ0M';
+const googleCmpEnabled = import.meta.env.PUBLIC_ENABLE_GOOGLE_CMP === 'true';
 ---
 
 <aside
@@ -12,6 +13,7 @@ const measurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-JBSY3YJZ0M'
   class="tp-cookie-consent"
   aria-label="Cookie choices"
   data-measurement-id={measurementId}
+  data-google-cmp-enabled={String(googleCmpEnabled)}
   hidden
 >
   <div class="tp-consent-panel">
@@ -74,18 +76,11 @@ const measurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-JBSY3YJZ0M'
     const analyticsToggle = document.getElementById('tp-allow-analytics');
     let analyticsLoaded = false;
     let currentChoice = null;
+    const googleCmpEnabled = banner.dataset.googleCmpEnabled === 'true';
+    let gdprApplies = null;
+    let regionalDecisionReady = !googleCmpEnabled;
 
-    // No Google request is sent before analytics consent.
-    window.dataLayer = window.dataLayer || [];
-    window.gtag = window.gtag || function () {
-      window.dataLayer.push(arguments);
-    };
-    window.gtag('consent', 'default', {
-      analytics_storage: 'denied',
-      ad_storage: 'denied',
-      ad_user_data: 'denied',
-      ad_personalization: 'denied'
-    });
+    // BaseLayout defines denied-by-default consent before any publisher script.
 
     function savedChoice() {
       try {
@@ -110,7 +105,8 @@ const measurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-JBSY3YJZ0M'
     }
 
     function startAnalytics() {
-      if (analyticsLoaded || !/^G-[A-Z0-9]+$/i.test(id || '')) return;
+      // This banner is not a GDPR-certified CMP. Do not load GA in GDPR regions.
+      if (!regionalDecisionReady || gdprApplies === true || analyticsLoaded || !/^G-[A-Z0-9]+$/i.test(id || '')) return;
       analyticsLoaded = true;
       window['ga-disable-' + id] = false;
       window.gtag('consent', 'update', { analytics_storage: 'granted' });
@@ -143,12 +139,20 @@ const measurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-JBSY3YJZ0M'
     }
 
     function showPreferences() {
+      if (googleCmpEnabled && gdprApplies === true) {
+        if (window.googlefc && typeof window.googlefc.showRevocationMessage === 'function') {
+          window.googlefc.showRevocationMessage();
+        }
+        return;
+      }
+      if (!regionalDecisionReady) return;
       banner.hidden = false;
       setDetailsVisible(true);
       analyticsToggle.focus();
     }
 
     function choose(allowed) {
+      if (!regionalDecisionReady || gdprApplies === true) return;
       const wasLoaded = analyticsLoaded;
       currentChoice = allowed;
       storeChoice(allowed);
@@ -185,11 +189,50 @@ const measurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-JBSY3YJZ0M'
     });
 
     currentChoice = savedChoice();
-    if (currentChoice === null) {
-      banner.hidden = false;
-    } else if (currentChoice) {
-      startAnalytics();
+
+    function renderAnalyticsPreferences() {
+      if (!regionalDecisionReady || gdprApplies === true) {
+        banner.hidden = true;
+        return;
+      }
+      if (currentChoice === null) {
+        banner.hidden = false;
+      } else if (currentChoice) {
+        startAnalytics();
+      }
     }
+
+    if (!googleCmpEnabled) {
+      renderAnalyticsPreferences();
+      return;
+    }
+
+    // Only a certified CMP decides applicability. Never infer GDPR status
+    // from language, timezone, IP guesses or a manually-maintained country list.
+    // Fail closed if the provider is blocked or hasn't loaded.
+    banner.hidden = true;
+    window.googlefc = window.googlefc || {};
+    window.googlefc.callbackQueue = window.googlefc.callbackQueue || [];
+    window.googlefc.callbackQueue.push({
+      CONSENT_API_READY: () => {
+        if (typeof window.__tcfapi !== 'function') return;
+        window.__tcfapi('addEventListener', 2, (tcData, success) => {
+          if (!success || !tcData || typeof tcData.gdprApplies !== 'boolean') return;
+          gdprApplies = tcData.gdprApplies;
+          regionalDecisionReady = true;
+          if (gdprApplies) {
+            banner.hidden = true;
+            // Keep GA disabled in GDPR regions until a unified, validated
+            // analytics consent mapping is implemented.
+            window.gtag('consent', 'update', { analytics_storage: 'denied' });
+            window['ga-disable-' + id] = true;
+            clearAnalyticsCookies();
+          } else {
+            renderAnalyticsPreferences();
+          }
+        });
+      }
+    });
   })();
 </script>
 
