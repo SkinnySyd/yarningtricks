@@ -150,17 +150,42 @@ const googleCmpEnabled = import.meta.env.PUBLIC_ENABLE_GOOGLE_CMP === 'true';
       if (googleCmpEnabled && gdprApplies === true) {
         if (window.googlefc && typeof window.googlefc.showRevocationMessage === 'function') {
           window.googlefc.showRevocationMessage();
+        } else {
+          // Never leave the footer privacy control silently unresponsive.
+          banner.hidden = false;
+          setDetailsVisible(false);
+          showStatus('Google privacy options are temporarily unavailable. Optional analytics remains disabled. Please try again later.');
         }
         return;
       }
-      if (!regionalDecisionReady) return;
+      // If Google CMP has not reported a region (including when blocked), let
+      // visitors manage their local Analytics preference. Do not start tracking
+      // until the CMP confirms that GDPR does not apply.
       banner.hidden = false;
       setDetailsVisible(true);
+      showStatus(!regionalDecisionReady
+        ? 'Your choice is saved, but optional analytics stays off until the regional privacy check is complete.'
+        : '');
       analyticsToggle.focus();
     }
 
+    function showStatus(message) {
+      let status = document.getElementById('tp-consent-status');
+      if (!status) {
+        status = document.createElement('p');
+        status.id = 'tp-consent-status';
+        status.setAttribute('role', 'status');
+        status.style.cssText = 'font-size:12px;line-height:1.5;margin:12px 0 0;color:#695355';
+        banner.querySelector('.tp-consent-panel').appendChild(status);
+      }
+      status.textContent = message;
+      status.hidden = !message;
+    }
+
     function choose(allowed) {
-      if (!regionalDecisionReady || gdprApplies === true) return;
+      if (gdprApplies === true) return;
+      // Even without a regional signal, a visitor can revoke consent or save
+      // an opt-in preference. Never load Analytics without confirmation.
       const wasLoaded = analyticsLoaded;
       currentChoice = allowed;
       storeChoice(allowed);
@@ -191,7 +216,9 @@ const googleCmpEnabled = import.meta.env.PUBLIC_ENABLE_GOOGLE_CMP === 'true';
 
     // Footer link remains available after both consent and rejection.
     document.addEventListener('click', (event) => {
-      if (event.target.closest('#tp-cookie-settings, #tp-privacy-cookie-settings')) {
+      const target = event.target;
+      if (target instanceof Element && target.closest('#tp-cookie-settings, #tp-privacy-cookie-settings')) {
+        event.preventDefault();
         showPreferences();
       }
     });
