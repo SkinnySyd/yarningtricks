@@ -33,8 +33,8 @@ const cmpOn = import.meta.env.PUBLIC_ENABLE_GOOGLE_CMP === 'true';
 const adsOn = import.meta.env.PUBLIC_ENABLE_ADS === 'true' &&
   import.meta.env.PUBLIC_ADSENSE_CMP_READY === 'true' &&
   /^ca-pub-[0-9]{16}$/.test(adClient);
-const publisherScriptOn = cmpOn || adsOn;
 const publisherId = adsenseVerificationId || adClient;
+const publisherScriptOn = (cmpOn || adsOn) && /^ca-pub-[0-9]{16}$/.test(publisherId);
 ---
 <!doctype html>
 <html lang="en">
@@ -59,7 +59,7 @@ const publisherId = adsenseVerificationId || adClient;
   <meta name="twitter:description" content={description} />
   <meta name="twitter:image" content={absoluteImage} />
   {publishedTime && <meta property="article:published_time" content={publishedTime} />}
-  {publisherScriptOn && /^ca-pub-[0-9]{16}$/.test(publisherId) && <script is:inline async crossorigin="anonymous" src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${publisherId}`}></script>}
+  {publisherScriptOn && <script is:inline async crossorigin="anonymous" src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${publisherId}`}></script>}
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to content</a>
