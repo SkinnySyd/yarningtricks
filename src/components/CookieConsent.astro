@@ -80,7 +80,15 @@ const googleCmpEnabled = import.meta.env.PUBLIC_ENABLE_GOOGLE_CMP === 'true';
     let gdprApplies = null;
     let regionalDecisionReady = !googleCmpEnabled;
 
-    // BaseLayout defines denied-by-default consent before any publisher script.
+    // Analytics is opt-in. Deny all Google storage before any analytics event.
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
+    window.gtag('consent', 'default', {
+      analytics_storage: 'denied',
+      ad_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied'
+    });
 
     function savedChoice() {
       try {
