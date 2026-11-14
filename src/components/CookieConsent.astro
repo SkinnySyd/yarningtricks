@@ -319,6 +319,9 @@ const googleCmpEnabled = import.meta.env.PUBLIC_ENABLE_GOOGLE_CMP === 'true';
       if (configured.length > 0 && configured.every((status) => status === 3)) {
         showLocalConsent();
       }
+      // If another supported API has already established that GDPR applies,
+      // never let an unknown or conflicting consent-mode result leave GA on.
+      if (gdprApplies === true) disableAnalytics();
       // UNKNOWN (0) or all NOT_CONFIGURED (4): remain denied, pending
       // an explicit Google TCF non-GDPR response if one is provided.
     }
