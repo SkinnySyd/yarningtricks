@@ -79,6 +79,7 @@ const googleCmpEnabled = import.meta.env.PUBLIC_ENABLE_GOOGLE_CMP === 'true';
     const googleCmpEnabled = banner.dataset.googleCmpEnabled === 'true';
     let gdprApplies = null;
     let regionalDecisionReady = !googleCmpEnabled;
+    let consentModeReady = false;
 
     // Analytics is opt-in. Deny all Google storage before any analytics event.
     window.dataLayer = window.dataLayer || [];
@@ -112,9 +113,9 @@ const googleCmpEnabled = import.meta.env.PUBLIC_ENABLE_GOOGLE_CMP === 'true';
       }
     }
 
-    function startAnalytics() {
-      // This banner is not a GDPR-certified CMP. Do not load GA in GDPR regions.
-      if (!regionalDecisionReady || gdprApplies === true || analyticsLoaded || !/^G-[A-Z0-9]+$/i.test(id || '')) return;
+    function startAnalytics(approvedByGoogleCmp = false) {
+      // Require a regional decision AND actual consent from the correct interface.
+      if (!regionalDecisionReady || (gdprApplies === true && !approvedByGoogleCmp) || analyticsLoaded || !/^G-[A-Z0-9]+$/i.test(id || '')) return;
       analyticsLoaded = true;
       window['ga-disable-' + id] = false;
       window.gtag('consent', 'update', { analytics_storage: 'granted' });
@@ -242,28 +243,112 @@ const googleCmpEnabled = import.meta.env.PUBLIC_ENABLE_GOOGLE_CMP === 'true';
       return;
     }
 
-    // Only a certified CMP decides applicability. Never infer GDPR status
-    // from language, timezone, IP guesses or a manually-maintained country list.
-    // Fail closed if the provider is blocked or hasn't loaded.
+    // Google documents CONSENT_MODE_DATA_READY for this purpose:
+    // https://developers.google.com/funding-choices/fc-api-docs
+    // Do not treat missing TCF APIs or NOT_CONFIGURED (4) as a location signal.
     banner.hidden = true;
     window.googlefc = window.googlefc || {};
     window.googlefc.callbackQueue = window.googlefc.callbackQueue || [];
+
+    function disableAnalytics() {
+      window.gtag('consent', 'update', { analytics_storage: 'denied' });
+      window['ga-disable-' + id] = true;
+      clearAnalyticsCookies();
+      if (analyticsLoaded) {
+        analyticsLoaded = false;
+        // A loaded analytics library can still be present in this page.
+        // Reload so no more Analytics events can fire after withdrawal.
+        location.reload();
+      }
+    }
+
+    function showLocalConsent() {
+      if (gdprApplies === true) return;
+      gdprApplies = false;
+      regionalDecisionReady = true;
+      showStatus('');
+      renderAnalyticsPreferences();
+    }
+
+    function useEuropeanConsent(analyticsStatus) {
+      gdprApplies = true;
+      regionalDecisionReady = true;
+      banner.hidden = true;
+      showStatus('');
+      // A configured Google analytics_storage purpose must be explicitly granted.
+      // NOT_CONFIGURED is not permission to collect EU analytics.
+      if (analyticsStatus === 1) {
+        startAnalytics(true);
+      } else {
+        disableAnalytics();
+      }
+    }
+
+    function applyGoogleConsentMode() {
+      if (!consentModeReady || typeof window.googlefc.getGoogleConsentModeValues !== 'function') return;
+      let values;
+      try {
+        values = window.googlefc.getGoogleConsentModeValues();
+      } catch (_) {
+        return; // Unknown state: leave optional tracking disabled.
+      }
+      if (!values) return;
+      const analyticsStatus = values.analyticsStoragePurposeConsentStatus;
+      const advertisingStatuses = [
+        values.adStoragePurposeConsentStatus,
+        values.adUserDataPurposeConsentStatus,
+        values.adPersonalizationPurposeConsentStatus
+      ];
+      const statuses = [...advertisingStatuses, analyticsStatus];
+
+      // Explicit GDPR/European consent decisions have precedence.
+      if (analyticsStatus === 1 || analyticsStatus === 2) {
+        useEuropeanConsent(analyticsStatus);
+        return;
+      }
+      // Other configured advertising purposes can also indicate a European
+      // consent decision when analytics consent has not been configured.
+      if (advertisingStatuses.some((status) => status === 1 || status === 2)) {
+        useEuropeanConsent(analyticsStatus);
+        return;
+      }
+      // Google's NOT_APPLICABLE (3) is evidence that the relevant configured
+      // purpose does not apply to this request. Every configured purpose must
+      // be NOT_APPLICABLE; all NOT_CONFIGURED values are ambiguous.
+      const configured = statuses.filter((status) => status !== 4);
+      if (configured.length > 0 && configured.every((status) => status === 3)) {
+        showLocalConsent();
+      }
+      // If another supported API has already established that GDPR applies,
+      // never let an unknown or conflicting consent-mode result leave GA on.
+      if (gdprApplies === true) disableAnalytics();
+      // UNKNOWN (0) or all NOT_CONFIGURED (4): remain denied, pending
+      // an explicit Google TCF non-GDPR response if one is provided.
+    }
+
+    window.googlefc.callbackQueue.push({
+      CONSENT_MODE_DATA_READY: () => {
+        consentModeReady = true;
+        applyGoogleConsentMode();
+      }
+    });
+
+    // Supplement consent mode with the documented IAB API when available.
+    // Outside the EU the TCF API may not be exposed at all.
     window.googlefc.callbackQueue.push({
       CONSENT_API_READY: () => {
         if (typeof window.__tcfapi !== 'function') return;
-        window.__tcfapi('addEventListener', 2, (tcData, success) => {
+        window.__tcfapi('addEventListener', 0, (tcData, success) => {
           if (!success || !tcData || typeof tcData.gdprApplies !== 'boolean') return;
-          gdprApplies = tcData.gdprApplies;
-          regionalDecisionReady = true;
-          if (gdprApplies) {
-            banner.hidden = true;
-            // Keep GA disabled in GDPR regions until a unified, validated
-            // analytics consent mapping is implemented.
-            window.gtag('consent', 'update', { analytics_storage: 'denied' });
-            window['ga-disable-' + id] = true;
-            clearAnalyticsCookies();
+          if (tcData.gdprApplies === false) {
+            showLocalConsent();
           } else {
-            renderAnalyticsPreferences();
+            gdprApplies = true;
+            regionalDecisionReady = true;
+            banner.hidden = true;
+            // A TCF 'applies' result alone does not grant analytics consent.
+            if (consentModeReady) applyGoogleConsentMode();
+            else disableAnalytics();
           }
         });
       }
