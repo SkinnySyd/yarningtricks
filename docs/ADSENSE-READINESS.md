@@ -46,3 +46,18 @@ Before enabling the switch:
 - Keep footer privacy controls functional; in a confirmed GDPR region they call `googlefc.showRevocationMessage()` instead of reopening the site's separate Analytics banner.
 - `PUBLIC_ENABLE_GOOGLE_CMP` is a build-time environment variable on Cloudflare Pages. A redeploy is required after changing it.
 - Confirm the AdSense dashboard and Google Funding Choices developer API behavior with a real browser before treating this as a production consent integration.
+
+## Analytics recovery with Google CMP consent mode (November 2026)
+
+The site now listens for Google's documented `googlefc.callbackQueue` event `CONSENT_MODE_DATA_READY` and reads `getGoogleConsentModeValues()`. The earlier implementation relied on `__tcfapi` alone; it can be undefined for a visitor outside the European consent region.
+
+**Important Google account prerequisites:** In AdSense **Privacy & messaging → European regulations → Settings → Consent mode**, check whether **Enable consent mode for advertising purposes** is enabled. To make GA4 function for European visitors who explicitly agree to Analytics, the site also needs the separate **Analytics storage consent** purpose configured. If the purposes have **NOT_CONFIGURED (4)** or **UNKNOWN (0)** statuses and no other reliable regional status exists, the script will intentionally keep Analytics blocked. These settings are in Google's account, **not** changed by this repository PR.
+
+- EU consent-mode `GRANTED (1)` for `analytics_storage`: permits the optional GA4 tag; `DENIED (2)` keeps it off. An EU advertising grant does **not** imply Analytics consent.
+- A confirmed non-applicability signal `NOT_APPLICABLE (3)` for configured consent purposes (or an explicit IAB `gdprApplies === false` answer) returns the visitor to the existing local opt-in Analytics banner. Analytics then starts **only after** the visitor explicitly accepts that banner or has an unexpired, previously accepted choice.
+- `UNKNOWN (0)`, only `NOT_CONFIGURED (4)`, absent API, or blocked scripts are not permission. Tracking stays denied. No IP lookup, language guess, proxy, or ad-serving toggle is used.
+- Keep `PUBLIC_ENABLE_ADS=false` and Auto ads off while approval is pending; `PUBLIC_ENABLE_GOOGLE_CMP=true` only loads the Google publisher tag for consent delivery.
+
+**Validation:** From an ordinary non-EEA browsing session after a production redeploy, use an incognito window and confirm the local banner appears when Google's consent callback reports non-applicability; accepting should request `gtag/js?id=G-JBSY3YJZ0M` and a `google-analytics.com/g/collect` event. Rejecting must not load `gtag/js`. Use Google's published `?fc=alwaysshow&fctype=gdpr` **preview-only** parameter to inspect the European message, then verify regional production behavior in an actual eligible session. A server build cannot prove ad-tech API behavior for all visitor regions.
+
+Docs: https://developers.google.com/funding-choices/fc-api-docs
