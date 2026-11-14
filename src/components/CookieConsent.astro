@@ -333,6 +333,20 @@ const googleCmpEnabled = import.meta.env.PUBLIC_ENABLE_GOOGLE_CMP === 'true';
       }
     });
 
+    // First-visit recovery: the Google publisher tag loads asynchronously,
+    // and an unconfigured or blocked consent-mode purpose may never provide
+    // a usable region decision. Let first-time visitors SEE the local
+    // preferences after a brief grace period; do not load Analytics while
+    // regional status remains unknown. If the European CMP is available
+    // (__tcfapi) or has identified GDPR applicability, leave it in charge.
+    window.setTimeout(() => {
+      if (regionalDecisionReady || gdprApplies === true ||
+          currentChoice !== null || typeof window.__tcfapi === 'function') return;
+      banner.hidden = false;
+      setDetailsVisible(false);
+      showStatus('Privacy options are available. Analytics will remain off until the regional consent check is complete.');
+    }, 4000);
+
     // Supplement consent mode with the documented IAB API when available.
     // Outside the EU the TCF API may not be exposed at all.
     window.googlefc.callbackQueue.push({
