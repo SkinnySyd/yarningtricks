@@ -10,6 +10,7 @@ const paths = [
   {
     id: 'beginner',
     ordinal: '01',
+    levelLabel: 'Beginner',
     name: 'First Little Stitches',
     description: 'The happiest place to begin.',
     invitation: 'A little chain, a little confidence, a whole lot of possibility.',
@@ -20,6 +21,7 @@ const paths = [
   {
     id: 'easy',
     ordinal: '02',
+    levelLabel: 'Easy',
     name: 'Little Joys',
     description: 'Small adventures, lovely rewards.',
     invitation: 'Friendly makes for when your stitches feel like old friends.',
@@ -30,6 +32,7 @@ const paths = [
   {
     id: 'intermediate',
     ordinal: '03',
+    levelLabel: 'Intermediate',
     name: 'Growing Confidence',
     description: 'A few more petals to unfold.',
     invitation: 'Interesting shapes and little details to enjoy at your pace.',
@@ -40,6 +43,7 @@ const paths = [
   {
     id: 'advanced',
     ordinal: '04',
+    levelLabel: 'Advanced + Hard',
     name: 'Wildflower Adventures',
     description: 'Something wonderful to master.',
     invitation: 'For makers who love a rewarding challenge, stitch by stitch.',
@@ -82,7 +86,7 @@ const paths = [
       <div>
         <span class="eyebrow">A LITTLE WAY TO FIND YOUR WAY</span>
         <h2 id="garden-title">Choose your <em>crochet adventure.</em></h2>
-        <p>Some days call for a simple square. Other days, a wonderfully woolly challenge. Choose what feels right today.</p>
+        <p>Start with Beginner, explore Easy or Intermediate, or stretch your skills with Advanced and Hard patterns. Choose your level and we’ll take you straight to its projects.</p>
       </div>
       <span class="garden-intro-note"><span aria-hidden="true">✳</span> There's no wrong path here.</span>
     </div>
@@ -92,7 +96,7 @@ const paths = [
         <path d="M0 90C150 10 215 118 338 52S574 105 683 48S906 110 1100 42" fill="none" stroke="#D7B0AF" stroke-width="3" stroke-dasharray="5 12" stroke-linecap="round"/>
       </svg>
       {paths.map((path) => (
-        <button type="button" class:list={['garden-path', `garden-path--${path.id}`]} data-garden-path={path.id} aria-pressed="false" aria-controls="pattern-list" aria-label={`${path.name}: ${path.count} patterns`}>
+        <button type="button" class:list={['garden-path', `garden-path--${path.id}`]} data-garden-path={path.id} aria-pressed="false" aria-controls="pattern-list" aria-label={`${path.levelLabel} difficulty, ${path.name}: show ${path.count} matching patterns below`}>
           <span class="garden-path-top"><span>{path.ordinal} <span aria-hidden="true">/ 04</span></span><span class="garden-path-flower" aria-hidden="true">{path.icon}</span></span>
           <span class="garden-path-images" aria-hidden="true">
             {path.photos.map((post, index) => (
@@ -100,9 +104,10 @@ const paths = [
             ))}
           </span>
           <span class="garden-path-content">
+            <span class="garden-path-level">{path.levelLabel} <span aria-hidden="true">✦</span></span>
             <span class="garden-path-name">{path.name}</span>
             <span class="garden-path-description">{path.description}</span>
-            <span class="garden-path-footer"><span>{path.count} {path.count === 1 ? 'pattern' : 'patterns'}</span><span aria-hidden="true">Explore ↗</span></span>
+            <span class="garden-path-footer"><span>{path.count} {path.count === 1 ? 'pattern' : 'patterns'}</span><span aria-hidden="true">See patterns ↓</span></span>
           </span>
         </button>
       ))}
@@ -110,7 +115,7 @@ const paths = [
 
     <div class="garden-afterpaths">
       <div class="garden-current"><span aria-hidden="true">❧</span> <strong id="garden-selection-label">All paths are open</strong><span id="garden-selection-detail"> — wander through the whole collection below.</span></div>
-      <button class="garden-all-button" id="garden-show-all" type="button" aria-pressed="true" aria-controls="pattern-list">View every pattern <span aria-hidden="true">↗</span></button>
+      <button class="garden-all-button" id="garden-show-all" type="button" aria-pressed="true" aria-controls="pattern-list">Browse all levels <span aria-hidden="true">↓</span></button>
     </div>
   </section>
 
@@ -163,6 +168,25 @@ const paths = [
       <button type="button" id="garden-reveal-close" class="garden-reveal-close" aria-label="Close surprise">×</button>
     </div>
 
+    <div id="garden-results-start" class="garden-results-navigator" tabindex="-1">
+      <div class="garden-results-navigator-heading">
+        <div class="garden-results-navigator-copy">
+          <span class="eyebrow">YOUR CHOSEN DIFFICULTY</span>
+          <strong id="garden-basket-selection">All difficulty levels</strong>
+          <span id="garden-basket-note">A little something lovely for every maker.</span>
+        </div>
+        <a class="garden-return-link" href="#garden-title"><span aria-hidden="true">↑</span> Choose another garden path</a>
+      </div>
+      <div class="garden-level-switches" role="group" aria-label="Switch crochet difficulty without returning to the top">
+        <button type="button" class="garden-level-switch" data-quick-level="all" aria-pressed="true" aria-controls="pattern-list">All levels <span>{posts.length}</span></button>
+        {paths.map((path) => (
+          <button type="button" class="garden-level-switch" data-quick-level={path.id} aria-pressed="false" aria-controls="pattern-list">
+            {path.levelLabel} <span>{path.count}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+
     <div class="garden-result-summary">
       <p aria-live="polite" aria-atomic="true"><span id="visible-count">{posts.length}</span> lovely {posts.length === 1 ? 'project' : 'projects'} to explore <span aria-hidden="true">✳</span></p>
       <button id="garden-reset" type="button">Clear filters <span aria-hidden="true">×</span></button>
@@ -189,6 +213,10 @@ const paths = [
     const noResults = document.querySelector<HTMLElement>('#no-results');
     const reset = document.querySelector<HTMLButtonElement>('#garden-reset');
     const pathButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-garden-path]'));
+    const quickButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-quick-level]'));
+    const resultsStart = document.querySelector<HTMLElement>('#garden-results-start');
+    const basketSelection = document.querySelector<HTMLElement>('#garden-basket-selection');
+    const basketNote = document.querySelector<HTMLElement>('#garden-basket-note');
     const showAll = document.querySelector<HTMLButtonElement>('#garden-show-all');
     const selectionLabel = document.querySelector<HTMLElement>('#garden-selection-label');
     const selectionDetail = document.querySelector<HTMLElement>('#garden-selection-detail');
@@ -203,10 +231,24 @@ const paths = [
     const rank: Record<string, number> = { beginner: 0, easy: 1, intermediate: 2, advanced: 3, hard: 4 };
     const labels: Record<Level, [string, string]> = {
       all: ['All paths are open', ' — wander through the whole collection below.'],
-      beginner: ['First Little Stitches', ' — slow, gentle, lovely beginnings.'],
-      easy: ['Little Joys', ' — cheerful makes without the fuss.'],
-      intermediate: ['Growing Confidence', ' — a few extra details to try.'],
-      advanced: ['Wildflower Adventures', ' — a challenge worth taking your time over.'],
+      beginner: ['Beginner · First Little Stitches', ' — slow, gentle, lovely beginnings.'],
+      easy: ['Easy · Little Joys', ' — cheerful makes without the fuss.'],
+      intermediate: ['Intermediate · Growing Confidence', ' — a few extra details to try.'],
+      advanced: ['Advanced + Hard · Wildflower Adventures', ' — a challenge worth taking your time over.'],
+    };
+    const basketLabels: Record<Level, string> = {
+      all: 'All difficulty levels',
+      beginner: 'Beginner · First Little Stitches',
+      easy: 'Easy · Little Joys',
+      intermediate: 'Intermediate · Growing Confidence',
+      advanced: 'Advanced + Hard · Wildflower Adventures',
+    };
+    const basketNotes: Record<Level, string> = {
+      all: 'A little something lovely for every maker.',
+      beginner: 'Gentle projects for the very first stitches.',
+      easy: 'Relaxed makes that build your skills.',
+      intermediate: 'More shaping, texture and details to discover.',
+      advanced: 'Explore our Advanced and Hard projects together.',
     };
     const query = new URLSearchParams(window.location.search);
     const requestedLevel = (query.get('level') || 'all').toLowerCase() as Level;
@@ -247,6 +289,9 @@ const paths = [
       if (noResults) noResults.hidden = shown !== 0;
       if (surpriseButton) surpriseButton.disabled = shown === 0;
       for (const button of pathButtons) button.setAttribute('aria-pressed', String(button.dataset.gardenPath === level));
+      for (const button of quickButtons) button.setAttribute('aria-pressed', String(button.dataset.quickLevel === level));
+      if (basketSelection) basketSelection.textContent = basketLabels[level];
+      if (basketNote) basketNote.textContent = basketNotes[level];
       showAll?.setAttribute('aria-pressed', String(level === 'all'));
       if (selectionLabel) selectionLabel.textContent = labels[level][0];
       if (selectionDetail) selectionDetail.textContent = labels[level][1];
@@ -267,12 +312,28 @@ const paths = [
       if (sort) sort.value = 'newest';
       applyFilters();
     }
+    function jumpToProjects() {
+      if (!resultsStart) return;
+      // Move keyboard focus with the visual scroll, so the filtered results
+      // are immediately usable for keyboard and screen-reader visitors.
+      resultsStart.focus({ preventScroll: true });
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      resultsStart.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
+    }
+    function chooseLevel(nextLevel: Level, scrollToResults = false) {
+      level = nextLevel;
+      applyFilters();
+      if (scrollToResults) jumpToProjects();
+    }
     for (const button of pathButtons) button.addEventListener('click', () => {
       const selection = button.dataset.gardenPath as Level;
-      level = level === selection ? 'all' : selection;
-      applyFilters();
+      chooseLevel(level === selection ? 'all' : selection, true);
     });
-    showAll?.addEventListener('click', () => { level = 'all'; applyFilters(); });
+    for (const button of quickButtons) button.addEventListener('click', () => {
+      const selection = button.dataset.quickLevel as Level;
+      if (levelValues.includes(selection)) chooseLevel(selection);
+    });
+    showAll?.addEventListener('click', () => chooseLevel('all', true));
     search?.addEventListener('input', applyFilters);
     category?.addEventListener('change', applyFilters);
     sort?.addEventListener('change', applyFilters);
@@ -384,4 +445,45 @@ const paths = [
   @media(max-width:760px){.garden-hero{padding-block:51px 61px}.garden-hero-doodle{display:none}.stitch-garden{padding-top:63px;padding-bottom:35px}.garden-intro,.garden-basket-heading{align-items:start;flex-direction:column;gap:10px}.garden-intro-note{align-self:flex-end}.garden-paths{grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.garden-connecting-thread{display:none}.garden-path{min-height:330px}.garden-path-name{min-height:46px}.garden-path-images{height:149px}.garden-toolbar{grid-template-columns:repeat(2,minmax(0,1fr))}.garden-search-field{grid-column:1 / -1}.garden-surprise-button{grid-column:1 / -1}.garden-afterpaths{flex-wrap:wrap;gap:8px}.garden-reveal h3{font-size:21px}}
   @media(max-width:480px){.garden-paths{gap:9px}.garden-path{min-height:297px;padding:12px}.garden-path-images{height:122px;margin:0 -4px}.garden-path-photo{width:85px;height:106px;left:calc(50% - 60px)}.garden-path-photo.second-photo{width:70px;height:88px;left:calc(50% - 1px);top:17px}.garden-path-name{font-size:19px;min-height:44px}.garden-path-description{font-size:11px;min-height:33px}.garden-path-footer{font-size:10px}.garden-intro-note{font-size:12px}.garden-toolbar{padding:14px;gap:12px}.garden-reveal{gap:11px;padding:13px 33px 13px 13px}.garden-reveal img{width:78px;height:94px}.garden-reveal .eyebrow{font-size:9px}.garden-reveal p{display:none}.garden-result-summary{padding-top:23px}}
   @media(prefers-reduced-motion:reduce){.garden-path,.garden-path-photo,.garden-path-flower,.garden-hero-link span,.garden-surprise-button{transition:none}.garden-path:hover,.garden-surprise-button:hover{transform:none}}
+
+  /* A clear difficulty badge makes the garden names intuitive to new readers. */
+  .garden-path{min-height:377px}
+  .garden-path-level{display:inline-flex;align-items:center;gap:7px;align-self:flex-start;border:1px solid #d7c2bd;background:#fffcf7d9;color:#754c60;font-size:10px;line-height:1.1;font-weight:800;letter-spacing:.075em;text-transform:uppercase;border-radius:100px;padding:7px 10px;margin-bottom:4px}
+  .garden-path-level span{font-size:10px;color:#b27c83}
+  .garden-path[aria-pressed="true"] .garden-path-level{background:#84485d;color:white;border-color:#84485d}
+  .garden-path[aria-pressed="true"] .garden-path-level span{color:#f6d7da}
+  .garden-results-navigator{scroll-margin-top:18px;background:#f8f0e9;border:1px solid #e7d6cb;border-radius:19px;padding:20px 22px 17px;margin-top:26px}
+  .garden-results-navigator:focus{outline:0}
+  .garden-results-navigator:focus-visible{outline:3px solid var(--berry);outline-offset:3px}
+  .garden-results-navigator-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:15px}
+  .garden-results-navigator-copy{display:flex;flex-direction:column;gap:3px;min-width:0}
+  .garden-results-navigator-copy .eyebrow{font-size:10px}
+  .garden-results-navigator-copy strong{font-family:Georgia,serif;font-size:clamp(19px,2.3vw,25px);line-height:1.25;letter-spacing:-.025em;font-weight:500;color:#5c394b}
+  .garden-results-navigator-copy>span:last-child{font-size:12px;line-height:1.5;color:#806e6e}
+  .garden-return-link{flex-shrink:0;color:var(--berry);font-size:12px;font-weight:750;text-decoration:underline;text-underline-offset:4px;padding:5px 0}
+  .garden-return-link:hover{color:var(--berry-dark)}
+  .garden-return-link span{font-size:16px;margin-right:4px}
+  .garden-level-switches{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .garden-level-switch{display:inline-flex;align-items:center;gap:9px;justify-content:space-between;min-height:39px;padding:8px 11px;border:1px solid #d9c7c2;border-radius:100px;background:#fffdf9;color:#6e5b5c;font:inherit;font-size:12px;font-weight:650;cursor:pointer;transition:background-color .18s,border-color .18s,transform .18s}
+  .garden-level-switch:hover{border-color:#a96c80;transform:translateY(-1px)}
+  .garden-level-switch:focus-visible{outline:3px solid var(--berry);outline-offset:2px}
+  .garden-level-switch>span{display:inline-grid;place-items:center;min-width:22px;height:22px;border-radius:50%;background:#f4e5e3;color:#925c6d;font-size:10px;font-weight:800;padding-inline:4px}
+  .garden-level-switch[aria-pressed="true"]{border-color:#884e63;background:#884e63;color:white;box-shadow:0 5px 12px #834c5f21}
+  .garden-level-switch[aria-pressed="true"]>span{background:#fff6f1;color:#884e63}
+  .garden-level-switches::-webkit-scrollbar{height:4px}
+  .garden-level-switches::-webkit-scrollbar-thumb{background:#d7b9b6;border-radius:4px}
+  @media(max-width:760px){
+    .garden-path{min-height:365px}
+    .garden-results-navigator{padding:16px;margin-top:23px}
+    .garden-level-switches{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:thin;overscroll-behavior-x:contain;padding-bottom:6px}
+    .garden-level-switch{flex:0 0 auto;white-space:nowrap}
+    .garden-results-navigator-heading{align-items:flex-start}
+  }
+  @media(max-width:480px){
+    .garden-path{min-height:341px}
+    .garden-path-level{font-size:9px;padding:6px 8px}
+    .garden-results-navigator-heading{flex-direction:column;gap:7px}
+    .garden-return-link{padding:2px 0}
+  }
+  @media(prefers-reduced-motion:reduce){.garden-level-switch{transition:none}.garden-level-switch:hover{transform:none}}
 </style>
