@@ -9,7 +9,7 @@ const patterns = defineCollection({
     publishedDate: z.coerce.date(),
     updatedDate: z.coerce.date().optional(),
     category: z.enum(['Stitch guides', 'Home & decor', 'Accessories', 'Amigurumi']),
-    difficulty: z.enum(['Beginner', 'Easy', 'Intermediate', 'Advanced', 'Hard']),
+    difficulty: z.enum(['Beginner', 'Easy', 'Intermediate', 'Advanced']),
     duration: z.string(),
     image: z.string(),
     imageAlt: z.string(),

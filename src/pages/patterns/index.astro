@@ -43,11 +43,11 @@ const paths = [
   {
     id: 'advanced',
     ordinal: '04',
-    levelLabel: 'Advanced + Hard',
+    levelLabel: 'Advanced',
     name: 'Wildflower Adventures',
     description: 'Something wonderful to master.',
     invitation: 'For makers who love a rewarding challenge, stitch by stitch.',
-    difficulty: ['Advanced', 'Hard'],
+    difficulty: ['Advanced'],
     covers: ['mallow-woolly-mammoth-amigurumi', 'heather-highland-cow-amigurumi'],
     icon: '✾',
   },
@@ -86,7 +86,7 @@ const paths = [
       <div>
         <span class="eyebrow">A LITTLE WAY TO FIND YOUR WAY</span>
         <h2 id="garden-title">Choose your <em>crochet adventure.</em></h2>
-        <p>Start with Beginner, explore Easy or Intermediate, or stretch your skills with Advanced and Hard patterns. Choose your level and we’ll take you straight to its projects.</p>
+        <p>Start with Beginner, explore Easy or Intermediate, or stretch your skills with Advanced patterns. Choose your level and we’ll take you straight to its projects.</p>
       </div>
       <span class="garden-intro-note"><span aria-hidden="true">✳</span> There's no wrong path here.</span>
     </div>
@@ -228,27 +228,27 @@ const paths = [
     const surpriseButton = document.querySelector<HTMLButtonElement>('#garden-surprise');
     const levelValues: Level[] = ['all', 'beginner', 'easy', 'intermediate', 'advanced'];
     const orderValues: Order[] = ['newest', 'easiest', 'hardest', 'az'];
-    const rank: Record<string, number> = { beginner: 0, easy: 1, intermediate: 2, advanced: 3, hard: 4 };
+    const rank: Record<string, number> = { beginner: 0, easy: 1, intermediate: 2, advanced: 3 };
     const labels: Record<Level, [string, string]> = {
       all: ['All paths are open', ' — wander through the whole collection below.'],
       beginner: ['Beginner · First Little Stitches', ' — slow, gentle, lovely beginnings.'],
       easy: ['Easy · Little Joys', ' — cheerful makes without the fuss.'],
       intermediate: ['Intermediate · Growing Confidence', ' — a few extra details to try.'],
-      advanced: ['Advanced + Hard · Wildflower Adventures', ' — a challenge worth taking your time over.'],
+      advanced: ['Advanced · Wildflower Adventures', ' — a challenge worth taking your time over.'],
     };
     const basketLabels: Record<Level, string> = {
       all: 'All difficulty levels',
       beginner: 'Beginner · First Little Stitches',
       easy: 'Easy · Little Joys',
       intermediate: 'Intermediate · Growing Confidence',
-      advanced: 'Advanced + Hard · Wildflower Adventures',
+      advanced: 'Advanced · Wildflower Adventures',
     };
     const basketNotes: Record<Level, string> = {
       all: 'A little something lovely for every maker.',
       beginner: 'Gentle projects for the very first stitches.',
       easy: 'Relaxed makes that build your skills.',
       intermediate: 'More shaping, texture and details to discover.',
-      advanced: 'Explore our Advanced and Hard projects together.',
+      advanced: 'Explore our most detailed patterns at your own pace.',
     };
     const query = new URLSearchParams(window.location.search);
     const requestedLevel = (query.get('level') || 'all').toLowerCase() as Level;
@@ -261,7 +261,7 @@ const paths = [
     if (search && query.has('q')) search.value = query.get('q') || '';
 
     const matchesLevel = (difficulty: string) => level === 'all' ||
-      (level === 'advanced' ? difficulty === 'advanced' || difficulty === 'hard' : difficulty === level);
+      difficulty === level;
     const sortedCards = (order: Order) => [...cards].sort((left, right) => {
       if (order === 'az') return (left.dataset.sortTitle || '').localeCompare(right.dataset.sortTitle || '');
       if (order === 'easiest' || order === 'hardest') {
