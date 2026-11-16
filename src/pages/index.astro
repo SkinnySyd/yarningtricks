@@ -69,9 +69,9 @@ const journal = (await getCollection('journal', ({ data }) => !data.draft)).sort
   Number(b.data.featured) - Number(a.data.featured)
   || b.data.publishedDate.valueOf() - a.data.publishedDate.valueOf()
 );
-const starterLessons = ['crochet-supplies-for-beginners', 'magic-ring-crochet-in-the-round', 'how-to-read-crochet-patterns']
+const starterLessons = ['crochet-supplies-for-beginners', 'controlling-crochet-tension', 'changing-yarn-colors-crochet']
   .flatMap((id) => lessons.filter((lesson) => lesson.id === id));
-const journalHighlights = ['seven-amigurumi-mistakes-and-how-to-fix-them', 'choosing-yarn-for-amigurumi', 'the-little-art-of-stuffing-amigurumi']
+const journalHighlights = ['why-your-amigurumi-looks-different', 'crocheting-tiny-amigurumi-pieces', 'planning-your-first-crochet-animal']
   .flatMap((id) => journal.filter((note) => note.id === id));
 const spotlightNotes = journalHighlights.length ? journalHighlights : journal.slice(0, 3);
 
