@@ -64,6 +64,17 @@ const flowerPicks = findPosts([
   'hibiscus-flower-pen',
 ]);
 
+const lessons = (await getCollection('lessons', ({ data }) => !data.draft)).sort((a, b) => a.data.order - b.data.order);
+const journal = (await getCollection('journal', ({ data }) => !data.draft)).sort((a, b) =>
+  Number(b.data.featured) - Number(a.data.featured)
+  || b.data.publishedDate.valueOf() - a.data.publishedDate.valueOf()
+);
+const starterLessons = ['crochet-supplies-for-beginners', 'magic-ring-crochet-in-the-round', 'how-to-read-crochet-patterns']
+  .flatMap((id) => lessons.filter((lesson) => lesson.id === id));
+const journalHighlights = ['seven-amigurumi-mistakes-and-how-to-fix-them', 'choosing-yarn-for-amigurumi', 'the-little-art-of-stuffing-amigurumi']
+  .flatMap((id) => journal.filter((note) => note.id === id));
+const spotlightNotes = journalHighlights.length ? journalHighlights : journal.slice(0, 3);
+
 const categories = [
   {
     name: 'Amigurumi',
@@ -148,6 +159,45 @@ const categories = [
     </div>
   </div>
 
+
+  <nav class="home-discover site-container" aria-label="Explore Thread and Petal">
+    <div class="home-discover-heading">
+      <span class="home-eyebrow">WHAT BRINGS YOU HERE TODAY?</span>
+      <h2>Find your little <em>corner of lovely.</em></h2>
+      <p>Whether you're picking your next project or learning your very first stitch, there's an easy place to begin.</p>
+    </div>
+    <div class="home-discover-grid">
+      <a class="home-discover-tile tile-patterns" href="/patterns/">
+        <span class="tile-icon" aria-hidden="true">✿</span>
+        <span class="tile-kicker">01 / MAKE</span>
+        <strong>Free patterns</strong>
+        <span>Browse amigurumi, flowers, gifts and more, with difficulty filters.</span>
+        <span class="tile-link">Find a pattern <span aria-hidden="true">↗</span></span>
+      </a>
+      <a class="home-discover-tile tile-learn" href="/learn/">
+        <span class="tile-icon" aria-hidden="true">✳</span>
+        <span class="tile-kicker">02 / LEARN</span>
+        <strong>Learn crochet</strong>
+        <span>Follow gentle, step-by-step lessons from the first chain onward.</span>
+        <span class="tile-link">Start learning <span aria-hidden="true">↗</span></span>
+      </a>
+      <a class="home-discover-tile tile-journal" href="/blog/">
+        <span class="tile-icon" aria-hidden="true">♡</span>
+        <span class="tile-kicker">03 / DISCOVER</span>
+        <strong>The Journal</strong>
+        <span>Explore stitch secrets, troubleshooting tips and ideas for making.</span>
+        <span class="tile-link">Read the Journal <span aria-hidden="true">↗</span></span>
+      </a>
+      <a class="home-discover-tile tile-about" href="/about/">
+        <span class="tile-icon" aria-hidden="true">❀</span>
+        <span class="tile-kicker">04 / SAY HELLO</span>
+        <strong>Our little story</strong>
+        <span>Get to know the spirit behind Thread & Petal.</span>
+        <span class="tile-link">About us <span aria-hidden="true">↗</span></span>
+      </a>
+    </div>
+  </nav>
+
   <section class="site-container home-section home-featured" aria-labelledby="home-featured-title">
     <div class="home-section-heading">
       <div>
@@ -227,6 +277,74 @@ const categories = [
         <div class="home-learn-step"><span class="home-step-number">01</span><div><h3>Gather your tools</h3><p>Learn what you really need for your first crochet project.</p></div></div>
         <div class="home-learn-step"><span class="home-step-number">02</span><div><h3>Get comfortable with the basics</h3><p>Begin with a slip knot and chain, then build your confidence.</p></div></div>
         <div class="home-learn-step"><span class="home-step-number">03</span><div><h3>Make a little something</h3><p>Choose a small project and celebrate every stitch.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="home-school" aria-labelledby="home-school-title">
+    <div class="site-container">
+      <div class="home-section-heading home-school-heading">
+        <div>
+          <span class="home-eyebrow">THE CROCHET SCHOOL</span>
+          <h2 id="home-school-title">Learn a little. <em>Make a lot.</em></h2>
+          <p>New to crochet, or refreshing a technique? Pick a lesson and grow your confidence one stitch at a time.</p>
+        </div>
+        <a class="home-text-link" href="/learn/">See all {lessons.length} lessons <span aria-hidden="true">↗</span></a>
+      </div>
+      <div class="home-school-list">
+        {starterLessons.map((lesson, index) => (
+          <a class="home-school-card" href={'/learn/' + lesson.id + '/'}>
+            <span class="home-school-number">{String(index + 1).padStart(2, '0')}</span>
+            <span class="home-school-body">
+              <span class="home-school-level">{lesson.data.level} · {lesson.data.duration}</span>
+              <strong>{lesson.data.title}</strong>
+              <span>{lesson.data.description}</span>
+            </span>
+            <span class="home-school-arrow" aria-hidden="true">↗</span>
+          </a>
+        ))}
+      </div>
+      <p class="home-school-hint">Not sure where to start? <a href="/learn/">Follow the complete beginner learning path <span aria-hidden="true">→</span></a></p>
+    </div>
+  </section>
+
+  <section class="site-container home-section home-journal" aria-labelledby="home-journal-title">
+    <div class="home-section-heading">
+      <div>
+        <span class="home-eyebrow">NOTES FROM THE MAKING TABLE</span>
+        <h2 id="home-journal-title">A little wisdom for <em>every stitch.</em></h2>
+        <p>Meet the Journal: helpful crochet advice, small discoveries, and the answers to those “why did that happen?” moments.</p>
+      </div>
+      <a class="home-text-link" href="/blog/">Explore all {journal.length} Journal notes <span aria-hidden="true">↗</span></a>
+    </div>
+    <div class="home-journal-grid">
+      {spotlightNotes.map((note, index) => (
+        <article class="home-journal-card">
+          <a href={'/blog/' + note.id + '/'}>
+            <span class="home-journal-top"><span>{note.data.category}</span><span>{note.data.readTime}</span></span>
+            <span class="home-journal-illustration" aria-hidden="true">{index === 0 ? '✳' : index === 1 ? '❀' : '♡'}</span>
+            <h3>{note.data.title}</h3>
+            <p>{note.data.description}</p>
+            <span class="home-journal-read">Read the note <span aria-hidden="true">↗</span></span>
+          </a>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="home-explore-band" aria-label="Find more crochet inspiration">
+    <div class="site-container home-explore-inner">
+      <div>
+        <span class="home-eyebrow">A LITTLE HELP ALONG THE WAY</span>
+        <h2>Stuck on a stitch? <em>We've got a guide.</em></h2>
+        <p>From making a magic ring to sewing your pieces together, find practical help whenever you need it.</p>
+      </div>
+      <div class="home-explore-links">
+        <a href="/learn/magic-ring-crochet-in-the-round/">Magic ring basics <span aria-hidden="true">↗</span></a>
+        <a href="/learn/crochet-increases-and-decreases/">Increases & decreases <span aria-hidden="true">↗</span></a>
+        <a href="/learn/fix-crochet-mistakes-and-finish/">Fix common mistakes <span aria-hidden="true">↗</span></a>
+        <a href="/learn/sew-amigurumi-pieces-together/">Assemble your amigurumi <span aria-hidden="true">↗</span></a>
       </div>
     </div>
   </section>
@@ -399,4 +517,57 @@ const categories = [
   @media (prefers-reduced-motion: reduce) {
     .home-hero-photo img, .home-project-image img, .home-category-card, .home-flower-card img { transition: none; }
   }
+
+  /* Homepage discovery and content hubs */
+  .home-discover{padding-block:clamp(62px,8vw,104px) 26px}
+  .home-discover-heading{max-width:740px;margin-bottom:30px}
+  .home-discover h2,.home-school h2,.home-journal h2,.home-explore-band h2{font-size:clamp(34px,4.6vw,56px);line-height:1.12;margin:13px 0 16px;letter-spacing:-.052em}
+  .home-discover h2 em,.home-school h2 em,.home-journal h2 em,.home-explore-band h2 em{color:var(--berry)}
+  .home-discover-heading p,.home-school-heading p,.home-journal .home-section-heading p,.home-explore-band p{font-size:15px;line-height:1.8;color:var(--muted);max-width:650px;margin:0}
+  .home-discover-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px}
+  .home-discover-tile{position:relative;display:flex;flex-direction:column;align-items:flex-start;min-width:0;min-height:300px;padding:26px 23px 22px;border-radius:22px;border:1px solid #e9dcd1;transition:transform .2s,box-shadow .2s}
+  .home-discover-tile:hover{transform:translateY(-4px);box-shadow:0 14px 28px #5c434014}
+  .tile-patterns{background:#fff0e9}.tile-learn{background:#eaf0e6}.tile-journal{background:#f3eaf1}.tile-about{background:#fff5e3}
+  .tile-icon{display:grid;place-items:center;background:#ffffff9c;border-radius:16px;width:54px;height:54px;font-size:30px;color:#99667a;margin-bottom:23px}
+  .tile-kicker{font-size:10px;font-weight:800;letter-spacing:.13em;color:#906b75;margin-bottom:12px}
+  .home-discover-tile strong{font:500 clamp(23px,2.2vw,29px)/1.2 Georgia,serif;letter-spacing:-.03em;margin-bottom:11px}
+  .home-discover-tile>span:nth-last-child(2){font-size:12px;line-height:1.75;color:#706664;flex:1}
+  .tile-link{margin-top:20px;font-size:12px;font-weight:800;color:#85475d}
+  .tile-link span{margin-left:5px}
+  .home-school{background:linear-gradient(125deg,#f1f4eb,#e9efe4);padding-block:clamp(68px,8vw,104px)}
+  .home-school-heading{margin-bottom:31px}
+  .home-school-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:17px}
+  .home-school-card{display:flex;gap:18px;position:relative;min-width:0;border-radius:19px;padding:27px 23px;background:#fffdf8;border:1px solid #dbe2d5;transition:transform .2s,box-shadow .2s}
+  .home-school-card:hover{transform:translateY(-3px);box-shadow:0 14px 24px #44553a12}
+  .home-school-number{font:italic 31px Georgia,serif;color:#9eac93}
+  .home-school-body{display:flex;flex-direction:column;gap:10px;min-width:0}
+  .home-school-level{font-size:10px;font-weight:750;text-transform:uppercase;letter-spacing:.06em;color:#667d64}
+  .home-school-body strong{font:500 23px/1.25 Georgia,serif}
+  .home-school-body>span:last-child{font-size:12px;color:#6c7569;line-height:1.7}
+  .home-school-arrow{margin-left:auto;color:#667d64}
+  .home-school-hint{font-size:13px;color:#596a56;margin:24px 0 0}
+  .home-school-hint a{text-decoration:underline;text-underline-offset:4px;font-weight:700}
+  .home-journal{padding-block:clamp(72px,8vw,105px)}
+  .home-journal-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+  .home-journal-card{min-width:0}
+  .home-journal-card a{height:100%;min-height:335px;display:flex;flex-direction:column;border:1px solid #eadbd5;border-radius:20px;padding:25px 25px 22px;background:#fff5ee;transition:transform .2s,box-shadow .2s}
+  .home-journal-card:nth-child(2) a{background:#f1f4ea;border-color:#e0e7da}
+  .home-journal-card:nth-child(3) a{background:#f6edf2;border-color:#ebdfe7}
+  .home-journal-card a:hover{transform:translateY(-4px);box-shadow:0 12px 25px #5c434014}
+  .home-journal-top{display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between;font-size:10px;letter-spacing:.045em;color:#8c6672;font-weight:750}
+  .home-journal-illustration{font:48px/1 Georgia,serif;color:#bf91a1;margin:22px 0 12px}
+  .home-journal-card h3{font:500 clamp(22px,2.4vw,29px)/1.18 Georgia,serif;letter-spacing:-.035em;margin:0 0 14px}
+  .home-journal-card p{font-size:12px;color:#796b6b;line-height:1.78;flex:1;margin:0 0 20px}
+  .home-journal-read{border-top:1px solid #ddcbc8;padding-top:15px;font-weight:800;color:#92586d;font-size:12px}
+  .home-explore-band{background:#f7e9e6;padding-block:clamp(57px,7vw,83px)}
+  .home-explore-inner{display:grid;grid-template-columns:1.1fr 1fr;align-items:center;gap:clamp(25px,6vw,80px)}
+  .home-explore-links{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+  .home-explore-links a{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:73px;border-radius:13px;border:1px solid #e5d1cd;background:#fffaf6;padding:17px;font-size:12px;font-weight:750;line-height:1.4}
+  .home-explore-links a:hover{background:#fff}
+  .home-explore-links a span{color:var(--berry)}
+  @media(max-width:1020px){.home-discover-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.home-discover-tile{min-height:244px}.home-school-list{grid-template-columns:1fr}.home-school-card{min-height:118px}.home-explore-inner{grid-template-columns:1fr}}
+  @media(max-width:720px){.home-journal-grid{grid-template-columns:1fr}.home-journal-card a{min-height:0}.home-journal-illustration{margin:13px 0}.home-discover{padding-top:60px}.home-discover-tile{min-height:255px}.home-explore-links{grid-template-columns:1fr 1fr}}
+  @media(max-width:480px){.home-discover-grid{gap:11px}.home-discover-tile{padding:18px 15px;min-height:256px;border-radius:16px}.tile-icon{width:44px;height:44px;font-size:26px;margin-bottom:17px}.tile-kicker{font-size:9px}.home-discover-tile strong{font-size:22px}.home-discover-tile>span:nth-last-child(2){font-size:11px}.home-school-card{padding:20px 15px;gap:12px}.home-school-number{font-size:25px}.home-school-body strong{font-size:21px}.home-explore-links{grid-template-columns:1fr}.home-discover h2,.home-school h2,.home-journal h2,.home-explore-band h2{font-size:clamp(32px,9vw,42px)}}
+  @media(prefers-reduced-motion:reduce){.home-discover-tile,.home-school-card,.home-journal-card a{transition:none}}
+
 </style>
