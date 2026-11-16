@@ -27,8 +27,8 @@ const discoveries = [
         <span class="about-small-label">HELLO, LOVELY MAKER ♡</span>
         <h2 id="about-welcome">Welcome to <em>Thread & Petal.</em></h2>
         <p>Pull up a cozy chair, find your favorite yarn, and make yourself at home.</p>
-        <p><strong>Thread & Petal</strong> is an independently run crochet blog celebrating the little joys of making things by hand. Whether you're picking up a crochet hook for the very first time or looking for your next creative challenge, there's a place for you here.</p>
-        <p>To us, crochet is more than a collection of stitches. It's a chance to slow down, try something new, and watch a simple strand of yarn become something wonderful.</p>
+        <p><strong>Thread & Petal</strong> is an independently maintained crochet learning and inspiration blog. We share practical lessons, thoughtful Journal articles, and free patterns, so you can learn a technique, understand why it works, and try it in a real project.</p>
+        <p>We believe a helpful crochet website should do more than show a finished object. It should explain the tricky bits, help you find mistakes, and make the next stitch a little less mysterious.</p>
         <p>And the lovely thing about making? There's always another idea waiting at the end of the thread.</p>
       </div>
       <figure class="about-photo-card">
@@ -56,7 +56,8 @@ const discoveries = [
             <span class="about-card-icon" aria-hidden="true">{item.icon}</span>
             <h3>{item.title}</h3>
             <p>{item.description}</p>
-          </article>
+            <span class="about-discover-action">{item.action} <span aria-hidden="true">↗</span></span>
+          </a>
         ))}
       </div>
       <p class="about-honest-note">Our lessons follow a gentle learning path, the Journal answers broader questions, and the patterns let you practice at your own pace. We identify difficulty where applicable, and encourage you to read the supplies and construction notes before starting.</p>
@@ -82,8 +83,9 @@ const discoveries = [
       <h2 id="about-next-title">Your next little discovery <em>starts here.</em></h2>
       <p>Visit the crochet school for hands-on guidance, open the Journal for thoughtful advice, or choose a pattern to bring your skills to life.</p>
       <div class="about-actions">
-        <a class="btn btn-primary" href="/patterns/">Explore free patterns <span aria-hidden="true">↗</span></a>
-        <a class="btn btn-outline" href="/learn/">Learn crochet from scratch <span aria-hidden="true">→</span></a>
+        <a class="btn btn-primary" href="/learn/">Explore crochet lessons <span aria-hidden="true">↗</span></a>
+        <a class="btn btn-outline" href="/blog/">Read the Journal <span aria-hidden="true">↗</span></a>
+        <a class="btn btn-outline" href="/patterns/">Browse free patterns <span aria-hidden="true">↗</span></a>
       </div>
     </section>
 
