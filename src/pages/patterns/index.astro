@@ -331,7 +331,7 @@ const paths = [
     });
     for (const button of quickButtons) button.addEventListener('click', () => {
       const selection = button.dataset.quickLevel as Level;
-      if (levelValues.includes(selection)) chooseLevel(selection);
+      if (levelValues.includes(selection)) chooseLevel(selection, true);
     });
     showAll?.addEventListener('click', () => chooseLevel('all', true));
     search?.addEventListener('input', applyFilters);
