@@ -153,7 +153,7 @@ const dateLabel = (date: Date) =>
   search?.addEventListener('input', applyFilters);
   document.querySelector('#journal-reset')?.addEventListener('click', () => { topic = ''; if (search) search.value = ''; applyFilters(); search?.focus(); });
   applyFilters();
-  if (topic || search?.value) document.querySelector('#journal-notes')?.scrollIntoView({ block: 'start', behavior: 'instant' });
+  if (topic || search?.value) document.querySelector('#journal-notes')?.scrollIntoView({ block: 'start', behavior: 'auto' });
 </script>
 
 <style>
