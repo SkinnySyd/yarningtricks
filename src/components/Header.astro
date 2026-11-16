@@ -9,18 +9,18 @@ const path = Astro.url.pathname;
       <span class="brand-type">thread <em>&</em> petal<span class="brand-period">.</span></span>
     </a>
     <nav class="desktop-nav" aria-label="Main navigation">
+      <a href="/learn/" class:list={[{ active: path.startsWith('/learn') }]}>Crochet lessons</a>
+      <a href="/blog/" class:list={[{ active: path.startsWith('/blog') }]}>The Journal</a>
       <a href="/patterns/" class:list={[{ active: path.startsWith('/patterns') }]}>Free patterns</a>
-      <a href="/learn/" class:list={[{ active: path.startsWith('/learn') }]}>Learn crochet</a>
-      <a href="/blog/" class:list={[{ active: path.startsWith('/blog') }]}>The journal</a>
       <a href="/about/" class:list={[{ active: path === '/about/' }]}>About</a>
     </nav>
-    <a href="/patterns/" class="header-cta">Explore patterns <span aria-hidden="true">↗</span></a>
+    <a href="/learn/" class="header-cta">Start learning <span aria-hidden="true">↗</span></a>
     <details class="mobile-nav">
       <summary aria-label="Open menu"><span></span><span></span><span></span></summary>
       <nav aria-label="Mobile navigation">
+        <a href="/learn/">Crochet lessons</a>
+        <a href="/blog/">The Journal</a>
         <a href="/patterns/">Free patterns</a>
-        <a href="/learn/">Learn crochet</a>
-        <a href="/blog/">The journal</a>
         <a href="/about/">About</a>
       </nav>
     </details>
