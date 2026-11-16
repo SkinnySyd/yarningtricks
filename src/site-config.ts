@@ -2,7 +2,7 @@
 export const siteConfig = {
   name: 'Thread & Petal',
   tagline: 'The slow, lovely art of crochet',
-  description: 'Free, beginner-friendly crochet patterns, stitch guides, and cozy little projects.',
+  description: 'Crochet lessons, helpful Journal articles, and free patterns to inspire your next handmade project.',
   author: 'Thread & Petal',
   pinterestUrl: '', // TODO (Optional) 
   contactEmail: 'contact@threadnpetal.blog',
