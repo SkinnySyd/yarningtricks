@@ -30,6 +30,16 @@ const steps = [
   }] : []),
 ].sort((a, b) => a.order - b.order);
 
+const chapters = [
+  { id: 'first-stitches', number: '01', label: 'Start here', title: 'Find your first rhythm', summary: 'Your hook, the first stitches, and a comfortable foundation.', start: 0, end: 5, accent: 'peach' },
+  { id: 'grow-your-skills', number: '02', label: 'Build confidence', title: 'Make the stitches yours', summary: 'Shaping, reading patterns, fixing mistakes, and working with color.', start: 5, end: 11, accent: 'sage' },
+  { id: 'little-details', number: '03', label: 'Make with confidence', title: 'Shape, join & finish', summary: 'Thoughtful finishes, special techniques, and amigurumi construction.', start: 11, end: Infinity, accent: 'lavender' },
+];
+const groupedLessons = chapters.map(chapter => ({
+  ...chapter,
+  items: steps.filter(step => step.order >= chapter.start + 1 && step.order <= chapter.end),
+}));
+
 const firstProjects = ['simple-yarn-bookmark', 'crochet-flower', 'granny-square-coaster']
   .flatMap((id) => {
     const post = patterns.find((entry) => entry.id === id);
@@ -42,47 +52,84 @@ const firstProjects = ['simple-yarn-bookmark', 'crochet-flower', 'granny-square-
   description="Learn to crochet step by step with free lessons on hooks, chains, single crochet, double crochet, magic rings, shaping, US/UK terms and beginner projects."
   image="/images/chain.png"
 >
-  <section class="learn-hero" aria-labelledby="learn-title">
-    <div class="site-container learn-hero-grid">
-      <div class="learn-hero-copy">
-        <span class="learn-eyebrow">✿ A KINDER WAY TO LEARN CROCHET</span>
-        <h1 id="learn-title">Your crochet journey <em>starts with a loop.</em></h1>
-        <p>Never held a hook before? You're in the right place. Follow a gentle, free learning path from your very first chain to the little projects you've been dreaming of.</p>
-        <div class="learn-hero-actions">
-          <a class="btn btn-primary" href="#learning-path">Explore the lessons <span aria-hidden="true">↘</span></a>
-          <a href="#first-projects" class="learn-text-link">Or choose a first project <span aria-hidden="true">→</span></a>
+  <section class="school-cover" aria-labelledby="learn-title">
+    <div class="site-container school-cover-inner">
+      <div class="school-intro">
+        <span class="school-overline">THE THREAD & PETAL CROCHET SCHOOL</span>
+        <h1 id="learn-title">A little more confidence <em>with every stitch.</em></h1>
+        <p>A welcoming place to learn crochet from your first loop to your first handmade friend. Follow the chapters in order, or find the exact skill you need today.</p>
+        <div class="school-cover-actions">
+          <a href="#lesson-finder" class="btn btn-primary">Explore the lessons <span aria-hidden="true">↓</span></a>
+          <a href="#first-projects" class="school-soft-link">I'd rather make something <span aria-hidden="true">↗</span></a>
         </div>
-        <p class="learn-hero-footnote">No signup required · US crochet terms with UK equivalents · At your own pace</p>
+        <div class="school-cover-foot"><span><strong>{steps.length}</strong> practical tutorials</span><span>Free to explore</span><span>Learn at your pace</span></div>
       </div>
-      <div class="learn-hero-art" aria-label="Illustration of a crochet chain and a hook">
-        <div class="learn-art-spark learn-art-spark-one" aria-hidden="true">✳</div>
-        <div class="learn-art-spark learn-art-spark-two" aria-hidden="true">✿</div>
-        <div class="learn-art-image"><img src="/images/chain.png" alt="Pastel illustration of a lavender crochet chain with a hook" width="600" height="680" fetchpriority="high" /></div>
-        <div class="learn-art-label"><span>made of</span><strong>little beginnings</strong><span aria-hidden="true">♡</span></div>
+      <div class="school-cover-art">
+        <div class="school-art-frame">
+          <img src="/images/chain.png" alt="Pastel crochet chain illustration with a hook" width="600" height="680" fetchpriority="high" />
+          <div class="school-art-caption"><span>01 — THE FIRST LOOP</span><strong>Every beautiful thing starts somewhere.</strong></div>
+        </div>
+        <span class="school-art-flower" aria-hidden="true">✿</span>
       </div>
     </div>
   </section>
 
-  <div class="learn-strip"><div class="site-container learn-strip-inner"><span>✳ Practice at your pace</span><span>♡ Small steps, real skills</span><span>✿ Learn by making</span></div></div>
-
-  <section id="learning-path" class="site-container learn-section" aria-labelledby="learning-title">
-    <div class="learn-section-heading">
-      <div><span class="learn-eyebrow">YOUR FREE MINI-COURSE</span><h2 id="learning-title">One stitch at a <em>time.</em></h2><p>Start with lesson one or jump to the skill you need today. Each lesson explains what to do, how to check your work, and what to try next.</p></div>
-      <span class="learn-section-count">{steps.length} simple steps</span>
+  <section class="school-guide site-container" aria-labelledby="school-guide-title">
+    <div class="school-guide-heading">
+      <span class="school-overline">CHOOSE YOUR WAY IN</span>
+      <h2 id="school-guide-title">Three little chapters. <em>Your own pace.</em></h2>
+      <p>These aren't separate courses or locked levels. They're simply a friendly way to find your place.</p>
     </div>
-    <div class="learn-path-grid">
-      {steps.map((step) => (
-        <a class="learn-path-card" href={step.href} aria-label={`Lesson ${step.order}: ${step.title}`}>
-          <span class="learn-path-number">{String(step.order).padStart(2, '0')}</span>
-          <div class="learn-path-content">
-            <span class="learn-path-kicker">{step.focus} <span aria-hidden="true">·</span> {step.duration}</span>
-            <h3>{step.title}</h3>
-            <p>{step.description}</p>
-            <span class="learn-path-footer"><span>{step.level}</span><strong>Open lesson <span aria-hidden="true">↗</span></strong></span>
-          </div>
+    <nav class="school-chapter-jumps" aria-label="Jump to a learning chapter">
+      {groupedLessons.map(chapter => (
+        <a href={'#' + chapter.id} class={'school-chapter-jump tone-' + chapter.accent}>
+          <span class="school-chapter-numeral">{chapter.number}</span>
+          <span class="school-chapter-jump-copy"><small>{chapter.label} · {chapter.items.length} lessons</small><strong>{chapter.title}</strong><span>{chapter.summary}</span></span>
+          <span class="school-jump-arrow" aria-hidden="true">↘</span>
         </a>
       ))}
+    </nav>
+  </section>
+
+  <section id="lesson-finder" class="school-library site-container" aria-labelledby="learning-title">
+    <div class="school-library-top">
+      <div><span class="school-overline">YOUR LESSON LIBRARY</span><h2 id="learning-title">Find the skill <em>for today.</em></h2><p>Search by a stitch, technique, or problem. Each tutorial gives you something useful to practice.</p></div>
+      <a href="/patterns/" class="school-soft-link">Browse crochet patterns <span aria-hidden="true">↗</span></a>
     </div>
+    <div class="school-toolbox">
+      <label class="school-search-label" for="school-search">Search the lessons</label>
+      <div class="school-search-line"><span aria-hidden="true">⌕</span><input id="school-search" type="search" placeholder="Try ‘color’, ‘magic ring’ or ‘joining’…" autocomplete="off" /></div>
+      <div class="school-toolbox-bottom">
+        <div class="school-level-filters" role="group" aria-label="Filter lessons by experience">
+          <button type="button" data-school-filter="all" aria-pressed="true" class="is-active">All lessons</button>
+          <button type="button" data-school-filter="Absolute beginner" aria-pressed="false">Just starting</button>
+          <button type="button" data-school-filter="Beginner" aria-pressed="false">Beginner</button>
+          <button type="button" data-school-filter="Growing confidence" aria-pressed="false">Growing confidence</button>
+        </div>
+        <p class="school-results-count" role="status" aria-live="polite"><span id="school-visible-count">{steps.length}</span> lessons found</p>
+      </div>
+    </div>
+    <div class="school-chapters">
+      {groupedLessons.map(chapter => (
+        <section id={chapter.id} class={'school-chapter school-chapter-' + chapter.accent} data-school-chapter aria-labelledby={chapter.id + '-title'}>
+          <div class="school-chapter-heading">
+            <span class="school-chapter-heading-number">{chapter.number}</span>
+            <div><span class="school-overline">{chapter.label}</span><h3 id={chapter.id + '-title'}>{chapter.title}</h3><p>{chapter.summary}</p></div>
+            <span class="school-chapter-count">{chapter.items.length} lessons</span>
+          </div>
+          <div class="school-lesson-list">
+            {chapter.items.map(step => (
+              <a href={step.href} class="school-lesson" data-school-lesson data-level={step.level} data-search={[step.title,step.description,step.focus,step.level].join(' ').toLowerCase()}>
+                <span class="school-lesson-index">{String(step.order).padStart(2,'0')}</span>
+                <span class="school-lesson-copy"><span class="school-lesson-eyebrow">{step.focus} <span aria-hidden="true">·</span> {step.duration}</span><strong>{step.title}</strong><span class="school-lesson-description">{step.description}</span></span>
+                <span class="school-lesson-end"><span>{step.level}</span><span class="school-read-action">Open lesson <span aria-hidden="true">↗</span></span></span>
+              </a>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+    <div id="school-no-results" class="school-empty" hidden><strong>No stitches found this time.</strong><p>Try another word or show all levels to find your next lesson.</p><button type="button" id="school-reset">Show all lessons</button></div>
   </section>
 
   <section class="learn-reference" aria-labelledby="learn-reference-title">
@@ -164,3 +211,115 @@ const firstProjects = ['simple-yarn-bookmark', 'crochet-flower', 'granny-square-
   @media(max-width:650px){.learn-hero-grid{padding-block:42px 64px}.learn-hero h1{font-size:clamp(42px,10vw,60px)}.learn-hero-copy>p:not(.learn-hero-footnote){font-size:14px}.learn-hero-actions{align-items:flex-start;flex-direction:column}.learn-hero-footnote{line-height:1.8}.learn-art-label{width:115px;height:115px;font-size:11px;left:0;border-width:6px}.learn-art-label strong{font-size:14px}.learn-art-label span:last-child{font-size:18px}.learn-strip-inner{flex-wrap:wrap;justify-content:center;gap:8px 18px}.learn-strip-inner span{font-size:9px}.learn-section{padding-block:64px}.learn-section-heading{flex-direction:column;align-items:flex-start}.learn-path-grid{grid-template-columns:1fr}.learn-path-card{padding:24px 19px;gap:15px}.learn-path-number{flex-basis:32px;font-size:25px}.learn-reference{padding-block:60px}.learn-terms-card{padding:17px;box-shadow:7px 7px 0 #e1e8db}.learn-faq{padding-block:26px 75px}.learn-last-ornament{font-size:43px}.learn-last-inner{gap:15px}.learn-project-grid{grid-template-columns:1fr}.learn-last-note{padding-block:50px}}
   @media(prefers-reduced-motion:reduce){.learn-path-card{transition:none}}
 </style>
+
+
+<style>
+.school-cover{background:#edf0e5;border-bottom:1px solid #dbe1d4;overflow:hidden}
+.school-cover-inner{display:grid;grid-template-columns:1.14fr .86fr;gap:clamp(35px,6vw,92px);align-items:center;padding-block:clamp(56px,8vw,110px)}
+.school-overline{display:inline-block;font-size:11px;letter-spacing:.16em;font-weight:800;color:#64775b;text-transform:uppercase}
+.school-intro h1{font-size:clamp(43px,5.8vw,77px);letter-spacing:-.065em;line-height:1.08;max-width:760px;margin:21px 0 25px}
+.school-intro h1 em,.school-guide h2 em,.school-library h2 em{color:#785d72}
+.school-intro>p{font-size:16px;line-height:1.85;color:#5d6859;max-width:570px}
+.school-cover-actions{display:flex;align-items:center;gap:23px;flex-wrap:wrap;margin-top:29px}
+.school-soft-link{font-size:13px;color:#73516a;font-weight:750;text-decoration:underline;text-underline-offset:5px;line-height:1.5}
+.school-cover-foot{display:flex;gap:11px 23px;flex-wrap:wrap;border-top:1px solid #cdd9c6;margin-top:45px;padding-top:22px;font-size:12px;color:#66765f}
+.school-cover-foot span+span:before{content:'✳';margin-right:18px;color:#8b9d7d}
+.school-cover-foot strong{font-size:20px;color:#4f654a}
+.school-cover-art{position:relative;padding:20px 23px 24px 0;max-width:490px;width:100%;justify-self:center}
+.school-art-frame{overflow:hidden;position:relative;background:#fcf9f2;border:9px solid #fffdf8;border-radius:230px 230px 25px 25px;box-shadow:20px 20px 0 #dce5d5}
+.school-art-frame img{width:100%;height:auto;aspect-ratio:1/1.13;object-fit:contain}
+.school-art-caption{padding:17px 20px;background:#fffdf9;border-top:1px solid #e6dfd1;display:flex;flex-direction:column;gap:6px}
+.school-art-caption span{font-size:9px;letter-spacing:.13em;font-weight:800;color:#71816b}
+.school-art-caption strong{font:italic 20px Georgia,serif;color:#66596a;line-height:1.3}
+.school-art-flower{position:absolute;font-size:74px;color:#ab8493;right:-8px;top:3px}
+.school-guide{padding-block:80px 86px}
+.school-guide-heading{max-width:760px;margin-bottom:28px}
+.school-guide h2,.school-library h2{font-size:clamp(37px,4.5vw,56px);line-height:1.13;letter-spacing:-.05em;margin:13px 0 15px}
+.school-guide-heading p,.school-library-top p{color:var(--muted);font-size:14px;line-height:1.8;max-width:620px;margin:0}
+.school-chapter-jumps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
+.school-chapter-jump{display:flex;gap:16px;position:relative;padding:24px;border-radius:19px;min-height:192px;border:1px solid #ddd8cf;transition:transform .2s,box-shadow .2s}
+.school-chapter-jump:hover{transform:translateY(-3px);box-shadow:0 13px 23px #50453e16}
+.school-chapter-jump.tone-peach{background:#fff0e8}.school-chapter-jump.tone-sage{background:#ebf0e7}.school-chapter-jump.tone-lavender{background:#f4ebf3}
+.school-chapter-numeral{font:italic 31px Georgia,serif;color:#906c79;flex:0 0 36px}
+.school-chapter-jump-copy{display:flex;flex-direction:column;gap:10px;min-width:0}
+.school-chapter-jump-copy small{font-size:10px;font-weight:750;letter-spacing:.06em;text-transform:uppercase;color:#846973}
+.school-chapter-jump-copy strong{font:500 24px/1.22 Georgia,serif}
+.school-chapter-jump-copy>span{font-size:12px;color:#6b6263;line-height:1.6}
+.school-jump-arrow{position:absolute;bottom:19px;right:20px;color:#85546a}
+.school-library{padding-bottom:95px;scroll-margin-top:22px}
+.school-library-top{display:flex;justify-content:space-between;gap:28px;align-items:end;margin-bottom:30px}
+.school-toolbox{background:#fffdf9;border:1px solid #ddd8d0;border-radius:18px;padding:25px;margin-bottom:36px;box-shadow:0 5px 18px #60443d0a}
+.school-search-label{font-size:12px;font-weight:800;color:#584e4b;display:block;margin-bottom:10px}
+.school-search-line{position:relative;max-width:780px}
+.school-search-line>span{position:absolute;top:50%;left:15px;transform:translateY(-50%);font-size:25px;color:#765d6d;pointer-events:none}
+.school-search-line input{width:100%;border:1px solid #c9bab6;border-radius:12px;padding:15px 16px 15px 48px;background:#fff;min-height:52px;color:#443638;font-size:14px}
+.school-toolbox-bottom{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-top:21px;flex-wrap:wrap}
+.school-level-filters{display:flex;flex-wrap:wrap;gap:8px}
+.school-level-filters button{cursor:pointer;background:#f5f0e8;border:1px solid #d9cfc6;border-radius:999px;color:#604f52;font-size:12px;font-weight:700;padding:11px 16px;min-height:44px}
+.school-level-filters button:hover{border-color:#8d687b}
+.school-level-filters button.is-active{background:#63556b;color:#fff;border-color:#63556b}
+.school-results-count{margin:0;color:#695d62;font-size:12px;font-weight:700}
+.school-chapters{display:grid;gap:40px}
+.school-chapter{scroll-margin-top:25px;border-radius:21px;overflow:hidden;border:1px solid #e5ddd3}
+.school-chapter-heading{display:flex;align-items:center;gap:22px;padding:28px 31px;background:#f7eee8}
+.school-chapter-sage .school-chapter-heading{background:#edf1e8}.school-chapter-lavender .school-chapter-heading{background:#f3edf4}
+.school-chapter-heading-number{font:italic 43px Georgia,serif;color:#926b77}
+.school-chapter-heading h3{font:500 clamp(25px,3vw,36px)/1.16 Georgia,serif;margin:8px 0}
+.school-chapter-heading p{margin:0;color:#6e6463;font-size:13px;line-height:1.6}
+.school-chapter-count{margin-left:auto;white-space:nowrap;font-size:11px;color:#695b65;font-weight:750}
+.school-lesson-list{background:#fffdf9}
+.school-lesson{display:grid;grid-template-columns:50px minmax(0,1fr) minmax(110px,.24fr);align-items:center;gap:20px;padding:23px 30px;min-height:125px;border-top:1px solid #e8dfd8;transition:background .2s}
+.school-lesson:hover{background:#f7f3ed}
+.school-lesson-index{font:italic 25px Georgia,serif;color:#9b8790;align-self:start}
+.school-lesson-copy{display:flex;flex-direction:column;gap:8px;min-width:0}
+.school-lesson-eyebrow{font-size:10px;letter-spacing:.075em;text-transform:uppercase;font-weight:750;color:#7b6570}
+.school-lesson-copy strong{font:500 clamp(21px,2.25vw,27px)/1.19 Georgia,serif;letter-spacing:-.03em;color:#3f3438}
+.school-lesson-description{font-size:12px;color:#776e6a;line-height:1.7}
+.school-lesson-end{display:flex;flex-direction:column;align-items:flex-end;gap:16px;text-align:right;font-size:11px;color:#6a5e66}
+.school-read-action{font-weight:800;color:#775068}
+.school-empty{text-align:center;background:#f2eee7;border-radius:18px;padding:35px;color:#4f4248}
+.school-empty strong{font:500 25px Georgia,serif}.school-empty p{margin:12px 0 20px;font-size:13px}
+.school-empty button{background:#63556b;color:#fff;border-radius:999px;border:0;padding:12px 18px;cursor:pointer}
+@media(max-width:900px){.school-cover-inner{grid-template-columns:1fr;gap:35px}.school-cover-art{max-width:400px}.school-chapter-jumps{grid-template-columns:1fr}.school-chapter-jump{min-height:140px}.school-chapter-jump-copy>span{max-width:560px}}
+@media(max-width:650px){.school-cover-inner{padding-block:49px 62px}.school-intro h1{font-size:clamp(43px,11vw,62px)}.school-cover-foot{gap:9px 17px}.school-cover-foot span+span:before{margin-right:12px}.school-cover-art{max-width:310px}.school-art-flower{font-size:48px;right:0}.school-guide{padding-block:58px}.school-library{padding-bottom:65px}.school-library-top{align-items:flex-start;flex-direction:column}.school-chapter-heading{padding:22px 17px;gap:13px;align-items:flex-start}.school-chapter-heading-number{font-size:31px}.school-chapter-count{display:none}.school-lesson{grid-template-columns:32px minmax(0,1fr);gap:9px 12px;padding:21px 15px}.school-lesson-end{grid-column:2;flex-direction:row;align-items:center;justify-content:space-between;text-align:left;gap:10px}.school-lesson-index{font-size:23px}.school-lesson-copy strong{font-size:22px}.school-toolbox{padding:18px}.school-level-filters button{padding:10px 12px}}
+@media(prefers-reduced-motion:reduce){.school-chapter-jump,.school-lesson{transition:none}}
+</style>
+<script>
+  const searchInput = document.querySelector<HTMLInputElement>('#school-search');
+  const filterButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-school-filter]'));
+  const chapters = Array.from(document.querySelectorAll<HTMLElement>('[data-school-chapter]'));
+  const lessonLinks = Array.from(document.querySelectorAll<HTMLElement>('[data-school-lesson]'));
+  const count = document.querySelector<HTMLElement>('#school-visible-count');
+  const empty = document.querySelector<HTMLElement>('#school-no-results');
+  const query = new URLSearchParams(window.location.search);
+  const choices = ['all', 'Absolute beginner', 'Beginner', 'Growing confidence'];
+  let level = choices.includes(query.get('level') || '') ? query.get('level')! : 'all';
+  if (searchInput) searchInput.value = query.get('q') || '';
+  function filterLessons() {
+    const term = (searchInput?.value || '').toLocaleLowerCase().trim();
+    let visible = 0;
+    for (const lesson of lessonLinks) {
+      const matches = (level === 'all' || lesson.dataset.level === level) && (!term || (lesson.dataset.search || '').includes(term));
+      lesson.hidden = !matches;
+      if (matches) visible++;
+    }
+    for (const chapter of chapters) chapter.hidden = !chapter.querySelector('[data-school-lesson]:not([hidden])');
+    for (const button of filterButtons) {
+      const active = button.dataset.schoolFilter === level;
+      button.classList.toggle('is-active', active);
+      button.setAttribute('aria-pressed', String(active));
+    }
+    if (count) count.textContent = String(visible);
+    if (empty) empty.hidden = visible > 0;
+    const url = new URL(window.location.href);
+    if (term) url.searchParams.set('q', searchInput?.value.trim() || '');
+    else url.searchParams.delete('q');
+    if (level !== 'all') url.searchParams.set('level', level);
+    else url.searchParams.delete('level');
+    window.history.replaceState(null,'',url.pathname + url.search + url.hash);
+  }
+  filterButtons.forEach(button => button.addEventListener('click', () => { level = button.dataset.schoolFilter || 'all'; filterLessons(); }));
+  searchInput?.addEventListener('input',filterLessons);
+  document.querySelector('#school-reset')?.addEventListener('click',() => {level='all'; if(searchInput) searchInput.value=''; filterLessons(); searchInput?.focus();});
+  filterLessons();
+</script>

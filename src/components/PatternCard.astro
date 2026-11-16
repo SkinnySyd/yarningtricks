@@ -2,11 +2,14 @@
 import type { CollectionEntry } from 'astro:content';
 interface Props { post: CollectionEntry<'patterns'>; compact?: boolean }
 const { post, compact = false } = Astro.props;
-const { title, description, image, imageAlt, difficulty, category, duration } = post.data;
+const { title, description, image, imageAlt, heroImage, heroImageAlt, difficulty, category, duration } = post.data;
+// Prefer the completed-project cover used by the pattern page.
+const cardImage = heroImage || image;
+const cardImageAlt = heroImageAlt || imageAlt;
 ---
-<article class:list={['pattern-card', { compact }]} data-filter-card data-category={category.toLowerCase()} data-keywords={`${title} ${description} ${post.data.tags.join(' ')} ${category}`.toLowerCase()}>
+<article class:list={['pattern-card', { compact }]} data-filter-card data-category={category.toLowerCase()} data-difficulty={difficulty.toLowerCase()} data-sort-title={title.toLowerCase()} data-published={post.data.publishedDate.valueOf()} data-keywords={`${title} ${description} ${post.data.tags.join(' ')} ${category} ${difficulty}`.toLowerCase()}>
   <a class="pattern-thumb-link" href={`/patterns/${post.id}/`} aria-label={`Read ${title}`}>
-    <img class="pattern-thumb" src={image} alt={imageAlt} loading="lazy" width="600" height="750" />
+    <img class="pattern-thumb" src={cardImage} alt={cardImageAlt} loading="lazy" width="600" height="750" />
     <span class="image-corner" aria-hidden="true">↗</span>
   </a>
   <div class="pattern-meta"><span>{category}</span><span aria-hidden="true">·</span><span>{duration}</span></div>
