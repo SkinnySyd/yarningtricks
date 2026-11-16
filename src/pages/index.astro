@@ -113,21 +113,21 @@ const categories = [
 
 <BaseLayout
   title="Thread & Petal"
-  description="Find free crochet patterns, amigurumi friends, flower pens and beginner-friendly stitch guides at Thread & Petal. A welcoming crochet corner for makers everywhere."
+  description="Learn crochet step by step, discover helpful making advice in the Journal, and explore free patterns at Thread & Petal."
 >
   <section class="home-hero" aria-labelledby="home-title">
     <div class="site-container home-hero-grid">
       <div class="home-hero-copy">
         <span class="home-eyebrow"><span aria-hidden="true">✿</span> WELCOME TO THREAD & PETAL</span>
-        <h1 id="home-title">A little yarn.<br />A lot of <em>lovely.</em></h1>
-        <p class="home-hero-lede">A cozy place to discover free crochet patterns, playful amigurumi, happy little flowers, and the joy of making something by hand.</p>
+        <h1 id="home-title">Learn a little.<br />Make something <em>lovely.</em></h1>
+        <p class="home-hero-lede">A thoughtful crochet corner for learning new stitches, finding answers in the Journal, and bringing your ideas to life with free patterns.</p>
         <div class="home-hero-actions">
-          <a class="btn btn-primary" href="/patterns/">Explore free patterns <span aria-hidden="true">↗</span></a>
-          <a class="home-text-link" href="/learn/">New to crochet? Start here <span aria-hidden="true">→</span></a>
+          <a class="btn btn-primary" href="/learn/">Explore crochet lessons <span aria-hidden="true">↗</span></a>
+          <a class="home-text-link" href="/blog/">Read the Journal <span aria-hidden="true">→</span></a>
         </div>
         <div class="home-welcome-note">
           <span class="home-note-flower" aria-hidden="true">✳</span>
-          <span><strong>For every kind of maker.</strong><br />From first-time stitches to wonderfully ambitious projects.</span>
+          <span><strong>For every kind of maker.</strong><br />Learn the basics, understand the little details, and enjoy every handmade project.</span>
         </div>
       </div>
 
@@ -153,9 +153,9 @@ const categories = [
 
   <div class="home-ribbon" aria-label="What you'll find at Thread and Petal">
     <div class="site-container home-ribbon-inner">
-      <span>✿ Free crochet patterns</span>
-      <span>♡ A welcoming space to learn</span>
-      <span>✳ Little projects, big joy</span>
+      <span>✿ Practical crochet lessons</span>
+      <span>♡ Thoughtful Journal notes</span>
+      <span>✳ Free patterns to make</span>
     </div>
   </div>
 
@@ -164,29 +164,29 @@ const categories = [
     <div class="home-discover-heading">
       <span class="home-eyebrow">WHAT BRINGS YOU HERE TODAY?</span>
       <h2>Find your little <em>corner of lovely.</em></h2>
-      <p>Whether you're picking your next project or learning your very first stitch, there's an easy place to begin.</p>
+      <p>Find a technique, solve a crochet problem, or choose a project worth making.</p>
     </div>
     <div class="home-discover-grid">
-      <a class="home-discover-tile tile-patterns" href="/patterns/">
-        <span class="tile-icon" aria-hidden="true">✿</span>
-        <span class="tile-kicker">01 / MAKE</span>
-        <strong>Free patterns</strong>
-        <span>Browse amigurumi, flowers, gifts and more, with difficulty filters.</span>
-        <span class="tile-link">Find a pattern <span aria-hidden="true">↗</span></span>
-      </a>
       <a class="home-discover-tile tile-learn" href="/learn/">
         <span class="tile-icon" aria-hidden="true">✳</span>
-        <span class="tile-kicker">02 / LEARN</span>
+        <span class="tile-kicker">01 / LEARN</span>
         <strong>Learn crochet</strong>
         <span>Follow gentle, step-by-step lessons from the first chain onward.</span>
         <span class="tile-link">Start learning <span aria-hidden="true">↗</span></span>
       </a>
       <a class="home-discover-tile tile-journal" href="/blog/">
         <span class="tile-icon" aria-hidden="true">♡</span>
-        <span class="tile-kicker">03 / DISCOVER</span>
+        <span class="tile-kicker">02 / READ</span>
         <strong>The Journal</strong>
         <span>Explore stitch secrets, troubleshooting tips and ideas for making.</span>
         <span class="tile-link">Read the Journal <span aria-hidden="true">↗</span></span>
+      </a>
+      <a class="home-discover-tile tile-patterns" href="/patterns/">
+        <span class="tile-icon" aria-hidden="true">✿</span>
+        <span class="tile-kicker">03 / MAKE</span>
+        <strong>Free patterns</strong>
+        <span>Browse amigurumi, flowers, gifts and more, with difficulty filters.</span>
+        <span class="tile-link">Find a pattern <span aria-hidden="true">↗</span></span>
       </a>
       <a class="home-discover-tile tile-about" href="/about/">
         <span class="tile-icon" aria-hidden="true">❀</span>
@@ -197,90 +197,6 @@ const categories = [
       </a>
     </div>
   </nav>
-
-  <section class="site-container home-section home-featured" aria-labelledby="home-featured-title">
-    <div class="home-section-heading">
-      <div>
-        <span class="home-eyebrow">THE PATTERN BASKET</span>
-        <h2 id="home-featured-title">A few things you'll <em>love to make.</em></h2>
-        <p>Soft little friends, blooms that never wilt, and projects full of personality. Find a favorite and get stitching.</p>
-      </div>
-      <a class="home-text-link home-heading-link" href="/patterns/">Browse all {posts.length} patterns <span aria-hidden="true">↗</span></a>
-    </div>
-    <div class="home-project-grid">
-      {displayPicks.map((post) => (
-        <article class="home-project-card">
-          <a class="home-project-image" href={`/patterns/${post.id}/`} aria-label={`View ${post.data.title}`}>
-            <img src={pictureFor(post).src} alt={pictureFor(post).alt} loading="lazy" decoding="async" width="600" height="750" />
-            <span class="home-image-arrow" aria-hidden="true">↗</span>
-          </a>
-          <div class="home-project-meta"><span>{post.data.category}</span><span aria-hidden="true">·</span><span>{post.data.difficulty}</span></div>
-          <h3><a href={`/patterns/${post.id}/`}>{post.data.title}</a></h3>
-          <div class="home-project-footer"><span>{post.data.duration}</span><a href={`/patterns/${post.id}/`}>Free pattern <span aria-hidden="true">→</span></a></div>
-        </article>
-      ))}
-    </div>
-  </section>
-
-  <section class="home-categories" aria-labelledby="home-categories-title">
-    <div class="site-container">
-      <div class="home-section-heading home-category-heading">
-        <div>
-          <span class="home-eyebrow">FOLLOW YOUR CURIOSITY</span>
-          <h2 id="home-categories-title">What's in your <em>making mood?</em></h2>
-          <p>Browse by the kinds of projects you love — or discover something completely new.</p>
-        </div>
-      </div>
-      <div class="home-category-grid">
-        {categories.map((category) => (
-          <a class={`home-category-card home-category-${category.tint}`} href={category.href}>
-            <span class="home-category-image"><img src={category.image} alt={category.alt} loading="lazy" decoding="async" width="360" height="390" /></span>
-            <span class="home-category-content">
-              <span class="home-category-count">{category.count} {category.count === 1 ? 'project' : 'projects'}</span>
-              <strong>{category.name}</strong>
-              <span class="home-category-description">{category.detail}</span>
-              <span class="home-category-arrow" aria-hidden="true">↗</span>
-            </span>
-          </a>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <section class="site-container home-section home-flower-section" aria-labelledby="home-flowers-title">
-    <div class="home-flower-copy">
-      <span class="home-eyebrow">A LITTLE GARDEN IN YARN</span>
-      <h2 id="home-flowers-title">Flowers that <em>stay forever.</em></h2>
-      <p>Sunflowers, roses, crocuses, and hibiscus blooms — our crochet flower pens bring a little cheer to desks, gifts, and quiet afternoons.</p>
-      <p class="home-flower-note">Each flower has its own pattern, with the skill level and supplies listed before you begin.</p>
-      <a class="btn btn-primary" href="/patterns/sunflower-flower-pen/">Make a sunflower <span aria-hidden="true">↗</span></a>
-    </div>
-    <div class="home-flower-grid" aria-label="Crochet flower pen patterns">
-      {flowerPicks.map((post) => (
-        <a href={`/patterns/${post.id}/`} class="home-flower-card" aria-label={`Read ${post.data.title}`}>
-          <img src={pictureFor(post).src} alt={pictureFor(post).alt} loading="lazy" decoding="async" width="350" height="420" />
-          <span>{post.id.startsWith('sunflower') ? 'Sunflower' : post.id.startsWith('rose') ? 'Rose' : post.id.startsWith('crocus') ? 'Crocus' : 'Hibiscus'} <span aria-hidden="true">↗</span></span>
-        </a>
-      ))}
-    </div>
-  </section>
-
-  <section class="home-learn" aria-labelledby="home-learn-title">
-    <div class="site-container home-learn-grid">
-      <div class="home-learn-intro">
-        <span class="home-eyebrow">YOUR FIRST STITCH IS A BIG DEAL</span>
-        <h2 id="home-learn-title">Never crocheted before? <em>You're in the right place.</em></h2>
-        <p>You don't need fancy supplies or years of practice to get started. Just a hook, some yarn, and the curiosity to try.</p>
-        <a class="btn btn-light" href="/learn/">Take your first steps <span aria-hidden="true">↗</span></a>
-      </div>
-      <div class="home-learn-steps">
-        <div class="home-learn-step"><span class="home-step-number">01</span><div><h3>Gather your tools</h3><p>Learn what you really need for your first crochet project.</p></div></div>
-        <div class="home-learn-step"><span class="home-step-number">02</span><div><h3>Get comfortable with the basics</h3><p>Begin with a slip knot and chain, then build your confidence.</p></div></div>
-        <div class="home-learn-step"><span class="home-step-number">03</span><div><h3>Make a little something</h3><p>Choose a small project and celebrate every stitch.</p></div></div>
-      </div>
-    </div>
-  </section>
-
 
   <section class="home-school" aria-labelledby="home-school-title">
     <div class="site-container">
@@ -346,6 +262,73 @@ const categories = [
         <a href="/learn/fix-crochet-mistakes-and-finish/">Fix common mistakes <span aria-hidden="true">↗</span></a>
         <a href="/learn/sew-amigurumi-pieces-together/">Assemble your amigurumi <span aria-hidden="true">↗</span></a>
       </div>
+    </div>
+  </section>
+
+  <section class="site-container home-section home-featured" aria-labelledby="home-featured-title">
+    <div class="home-section-heading">
+      <div>
+        <span class="home-eyebrow">PUT YOUR SKILLS INTO PRACTICE</span>
+        <h2 id="home-featured-title">A few things you'll <em>love to make.</em></h2>
+        <p>Soft little friends, blooms that never wilt, and projects full of personality. Find a favorite and get stitching.</p>
+      </div>
+      <a class="home-text-link home-heading-link" href="/patterns/">Browse all {posts.length} patterns <span aria-hidden="true">↗</span></a>
+    </div>
+    <div class="home-project-grid">
+      {displayPicks.map((post) => (
+        <article class="home-project-card">
+          <a class="home-project-image" href={`/patterns/${post.id}/`} aria-label={`View ${post.data.title}`}>
+            <img src={pictureFor(post).src} alt={pictureFor(post).alt} loading="lazy" decoding="async" width="600" height="750" />
+            <span class="home-image-arrow" aria-hidden="true">↗</span>
+          </a>
+          <div class="home-project-meta"><span>{post.data.category}</span><span aria-hidden="true">·</span><span>{post.data.difficulty}</span></div>
+          <h3><a href={`/patterns/${post.id}/`}>{post.data.title}</a></h3>
+          <div class="home-project-footer"><span>{post.data.duration}</span><a href={`/patterns/${post.id}/`}>Free pattern <span aria-hidden="true">→</span></a></div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="home-categories" aria-labelledby="home-categories-title">
+    <div class="site-container">
+      <div class="home-section-heading home-category-heading">
+        <div>
+          <span class="home-eyebrow">FOLLOW YOUR CURIOSITY</span>
+          <h2 id="home-categories-title">What's in your <em>making mood?</em></h2>
+          <p>Browse by the kinds of projects you love — or discover something completely new.</p>
+        </div>
+      </div>
+      <div class="home-category-grid">
+        {categories.map((category) => (
+          <a class={`home-category-card home-category-${category.tint}`} href={category.href}>
+            <span class="home-category-image"><img src={category.image} alt={category.alt} loading="lazy" decoding="async" width="360" height="390" /></span>
+            <span class="home-category-content">
+              <span class="home-category-count">{category.count} {category.count === 1 ? 'project' : 'projects'}</span>
+              <strong>{category.name}</strong>
+              <span class="home-category-description">{category.detail}</span>
+              <span class="home-category-arrow" aria-hidden="true">↗</span>
+            </span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="site-container home-section home-flower-section" aria-labelledby="home-flowers-title">
+    <div class="home-flower-copy">
+      <span class="home-eyebrow">A LITTLE GARDEN IN YARN</span>
+      <h2 id="home-flowers-title">Flowers that <em>stay forever.</em></h2>
+      <p>Sunflowers, roses, crocuses, and hibiscus blooms — our crochet flower pens bring a little cheer to desks, gifts, and quiet afternoons.</p>
+      <p class="home-flower-note">Each flower has its own pattern, with the skill level and supplies listed before you begin.</p>
+      <a class="btn btn-primary" href="/patterns/sunflower-flower-pen/">Make a sunflower <span aria-hidden="true">↗</span></a>
+    </div>
+    <div class="home-flower-grid" aria-label="Crochet flower pen patterns">
+      {flowerPicks.map((post) => (
+        <a href={`/patterns/${post.id}/`} class="home-flower-card" aria-label={`Read ${post.data.title}`}>
+          <img src={pictureFor(post).src} alt={pictureFor(post).alt} loading="lazy" decoding="async" width="350" height="420" />
+          <span>{post.id.startsWith('sunflower') ? 'Sunflower' : post.id.startsWith('rose') ? 'Rose' : post.id.startsWith('crocus') ? 'Crocus' : 'Hibiscus'} <span aria-hidden="true">↗</span></span>
+        </a>
+      ))}
     </div>
   </section>
 
