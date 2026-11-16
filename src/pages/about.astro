@@ -3,33 +3,21 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { siteConfig } from '../site-config';
 
 const discoveries = [
-  {
-    icon: '✳',
-    title: 'Free crochet patterns',
-    description: 'Thoughtful little projects, cozy accessories, seasonal favorites, and handmade gifts worth sharing.',
-  },
-  {
-    icon: '♡',
-    title: 'Amigurumi & playful makes',
-    description: 'Sweet characters, soft companions, cheerful flowers, and unexpected things to create with yarn.',
-  },
-  {
-    icon: '✿',
-    title: 'Guides for growing makers',
-    description: 'Stitch explanations, illustrated steps, and gentle encouragement as your skills grow.',
-  },
+  { icon: '✳', title: 'Learn crochet, one stitch at a time', description: 'A structured crochet school with approachable lessons, practical exercises, and explanations for the little things that trip us up.', href: '/learn/', action: 'Explore the lessons' },
+  { icon: '♡', title: 'Read the crochet Journal', description: 'Thoughtful notes about yarn, shaping, fixing mistakes, and making each handmade project feel more like your own.', href: '/blog/', action: 'Browse the Journal' },
+  { icon: '✿', title: 'Make with free patterns', description: 'Crochet animals, cheerful flowers, and other projects where you can put those new skills to good use.', href: '/patterns/', action: 'Find a project' },
 ];
 ---
 
 <BaseLayout
   title="About Thread & Petal"
-  description="Get to know Thread & Petal, a welcoming crochet blog sharing free patterns, amigurumi, flowers, and creative inspiration for makers around the world."
+  description="Learn about Thread & Petal, an independent crochet learning and inspiration blog sharing lessons, Journal articles, and free patterns."
 >
   <section class="page-heading page-heading-pink about-page-heading">
     <div class="site-container">
       <span class="eyebrow">A LITTLE ABOUT OUR CROCHET CORNER</span>
-      <h1>Made with yarn, <em>shared with love.</em></h1>
-      <p>A welcoming place for curious hands and creative hearts, wherever in the world you happen to be.</p>
+      <h1>Here to help you <em>grow with every stitch.</em></h1>
+      <p>Crochet lessons, thoughtful Journal notes, and free projects—made for curious hands wherever you are.</p>
     </div>
   </section>
 
@@ -60,18 +48,18 @@ const discoveries = [
       <div class="about-section-heading">
         <span class="eyebrow">TAKE A PEEK INSIDE</span>
         <h2 id="about-find">What you'll find <em>around here.</em></h2>
-        <p>Some projects are quick and simple. Others take a little more patience. We love the whole journey.</p>
+        <p>Three ways to explore, depending on what you need today.</p>
       </div>
       <div class="about-discover-grid">
         {discoveries.map((item) => (
-          <article class="about-discover-card">
+          <a class="about-discover-card" href={item.href}>
             <span class="about-card-icon" aria-hidden="true">{item.icon}</span>
             <h3>{item.title}</h3>
             <p>{item.description}</p>
           </article>
         ))}
       </div>
-      <p class="about-honest-note">You'll find a mix of beginner-friendly lessons and more involved patterns. Each tutorial shows its skill level, so you can choose the project that feels right for you.</p>
+      <p class="about-honest-note">Our lessons follow a gentle learning path, the Journal answers broader questions, and the patterns let you practice at your own pace. We identify difficulty where applicable, and encourage you to read the supplies and construction notes before starting.</p>
     </section>
 
     <section class="about-world" aria-labelledby="about-everywhere">
@@ -90,9 +78,9 @@ const discoveries = [
     </section>
 
     <section class="about-next" aria-labelledby="about-next-title">
-      <span class="eyebrow">READY TO MAKE SOMETHING?</span>
-      <h2 id="about-next-title">Your next lovely project <em>starts here.</em></h2>
-      <p>Browse the pattern basket or begin with the basics. There's plenty to explore, one stitch at a time.</p>
+      <span class="eyebrow">WHAT WILL YOU EXPLORE NEXT?</span>
+      <h2 id="about-next-title">Your next little discovery <em>starts here.</em></h2>
+      <p>Visit the crochet school for hands-on guidance, open the Journal for thoughtful advice, or choose a pattern to bring your skills to life.</p>
       <div class="about-actions">
         <a class="btn btn-primary" href="/patterns/">Explore free patterns <span aria-hidden="true">↗</span></a>
         <a class="btn btn-outline" href="/learn/">Learn crochet from scratch <span aria-hidden="true">→</span></a>
@@ -133,7 +121,9 @@ const discoveries = [
   .about-section-heading { max-width: 680px; margin-bottom: 32px; }
   .about-section-heading h2 { margin-bottom: 12px; }
   .about-discover-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
-  .about-discover-card { padding: 30px 28px 24px; border-radius: 18px; background: #fff4ed; border: 1px solid #f0dfd3; }
+  .about-discover-card {display:flex;flex-direction:column; min-height:295px; transition:transform .2s,box-shadow .2s; padding: 30px 28px 24px; border-radius: 18px; background: #fff4ed; border: 1px solid #f0dfd3; }
+  .about-discover-card:hover {transform:translateY(-3px);box-shadow:0 12px 24px #5d40391a}
+  .about-discover-action {display:block;margin-top:auto;padding-top:19px;font-size:12px;font-weight:800;color:var(--berry)}
   .about-discover-card:nth-child(2) { background: #f2f0e8; border-color: #e5e7d8; }
   .about-discover-card:nth-child(3) { background: #f2eaf3; border-color: #e9dbed; }
   .about-card-icon { font-size: 38px; color: var(--berry); line-height: 1; }
