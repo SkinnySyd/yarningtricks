@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" role="img" aria-label="Illustration of a soft beige amigurumi bunny holding a coral garden radish, with rose-lined ears and a sage-green neck ribbon"><defs><radialGradient id="bg"><stop stop-color="#fffaf4"/><stop offset="1" stop-color="#ecdcd7"/></radialGradient><filter id="drop" x="-35%" y="-35%" width="170%" height="180%"><feGaussianBlur stdDeviation="15"/></filter><pattern id="loops" width="21" height="18" patternUnits="userSpaceOnUse"><path d="M2 11q4 -10 8 0t9 0" stroke="#442e27" stroke-opacity=".22" stroke-width="1.4" fill="none"/><path d="M4 14q6 -4 12 0" stroke="#fff" stroke-opacity=".26" fill="none" stroke-width="1.2"/></pattern></defs><rect width="800" height="800" fill="url(#bg)"/><circle cx="405" cy="346" r="295" fill="#fffaf7" opacity=".6"/><ellipse cx="400" cy="713" rx="235" ry="30" fill="#5f4e4b" opacity=".12" filter="url(#drop)"/>
+<g stroke="#936c60" stroke-width="6" stroke-linejoin="round">
+<ellipse cx="276" cy="206" rx="49" ry="164" transform="rotate(-14 276 206)" fill="#dec6ad"/>
+<ellipse cx="523" cy="208" rx="49" ry="164" transform="rotate(14 523 208)" fill="#dec6ad"/>
+<ellipse cx="276" cy="205" rx="25" ry="127" transform="rotate(-14 276 205)" fill="#e7a7b1" stroke="none"/>
+<ellipse cx="523" cy="208" rx="25" ry="127" transform="rotate(14 523 208)" fill="#e7a7b1" stroke="none"/>
+<ellipse cx="402" cy="531" rx="135" ry="163" fill="#dec6ad"/>
+<ellipse cx="327" cy="646" rx="83" ry="65" fill="#dec6ad"/>
+<ellipse cx="473" cy="646" rx="83" ry="65" fill="#dec6ad"/>
+<ellipse cx="400" cy="335" rx="162" ry="145" fill="#e5cfb5"/>
+</g>
+<g fill="url(#loops)" opacity=".55"><ellipse cx="402" cy="531" rx="128" ry="155"/><ellipse cx="400" cy="335" rx="153" ry="135"/><ellipse cx="327" cy="646" rx="76" ry="58"/><ellipse cx="473" cy="646" rx="76" ry="58"/></g>
+<ellipse cx="400" cy="563" rx="89" ry="120" fill="#f5e5d1"/><path d="M308 477q92 55 184 0" fill="none" stroke="#779482" stroke-width="28" stroke-linecap="round"/><path d="M367 472l29 31 24-30" fill="none" stroke="#e7f1e8" stroke-width="4"/>
+<ellipse cx="348" cy="336" rx="12" ry="16" fill="#352929"/><ellipse cx="451" cy="336" rx="12" ry="16" fill="#352929"/><ellipse cx="321" cy="371" rx="25" ry="12" fill="#e8a9a9" opacity=".85"/><ellipse cx="478" cy="371" rx="25" ry="12" fill="#e8a9a9" opacity=".85"/>
+<ellipse cx="373" cy="388" rx="50" ry="32" fill="#fbf3e9"/><ellipse cx="425" cy="388" rx="50" ry="32" fill="#fbf3e9"/><path d="M384 374q16 -11 32 0q-16 20-32 0" fill="#c9878c"/><path d="M400 388v14m0 0q-11 14-24 2m24-2q11 14 24 2" fill="none" stroke="#7c5a56" stroke-width="4" stroke-linecap="round"/>
+<g transform="translate(484 554) rotate(-17)"><path d="M-6 -78q-40 -44 -13 -72m13 72q32 -52 48 -67" stroke="#649379" stroke-width="12" fill="none" stroke-linecap="round"/><path d="M-22 -72q50 -37 75 -15" fill="#91b49b"/><path d="M-35 -57q-35 80 34 141q69 -60 34 -141Z" fill="#ea806b" stroke="#bc5e50" stroke-width="5"/></g><path d="M292 502q49 -20 74 19" fill="none" stroke="#dec6ad" stroke-width="48" stroke-linecap="round"/>
+<g fill="none" stroke="#b39a88" stroke-width="2" opacity=".6"><path d="M272 658q38 -25 73 0m117 0q35 -25 73 0"/></g>
+<text x="400" y="752" text-anchor="middle" font-size="17" font-family="Georgia,serif" letter-spacing="3" fill="#756961">THREAD &amp; PETAL • PROJECT ILLUSTRATION</text></svg>
